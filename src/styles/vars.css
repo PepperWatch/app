@@ -1,0 +1,12 @@
+:root {
+  --text-color: #000000;
+  --back-color: #ffffff;
+
+  --brand-color: #800000;
+  --brand-border-color: #b30000;
+  --brand-header-color: #800000aa;
+  --brand-footer-color: #800000aa;
+  --brand-back-filter: blur(7px);
+
+  --on-brand-text-color: #ffe5e5;
+}
