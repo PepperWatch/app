@@ -1,10 +1,8 @@
-# Vue + Mongo Starter Project
+# PepperWatch | The App
 
 ## Check it
 
-[check it in action](https://the-organization-app.herokuapp.com/)
-
-Basic auth, username: `gazkvas` password: `vodkapivo`
+[check it in action](https://pepperwatch.com/)
 
 
 ## Project setup ( UI )
