@@ -64,6 +64,9 @@
                 </q-card>
             </q-dialog>
 
+
+        <MP4StegAsync />
+
     </div>
 
 </template>
@@ -72,6 +75,8 @@
 import PreparedMints from '../classes/PreparedMints.js';
 
 import PreparedMint from '../components/PreparedMint';
+
+import MP4StegAsync from '../components/AsyncComponents/MP4StegAsync';
 
 export default {
 	name: 'Prepared',
@@ -82,6 +87,7 @@ export default {
 	},
     components: {
         PreparedMint,
+        MP4StegAsync,
     },
 	data() {
 		return {

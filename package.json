@@ -43,6 +43,7 @@
     "quasar": "^2.3.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "replace-in-file-webpack-plugin": "^1.0.6",
     "styled-components": "^5.3.3",
     "vue": "^3.0.0",
     "vue-cli-plugin-quasar": "~4.0.2",

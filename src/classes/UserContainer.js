@@ -1,6 +1,6 @@
 
 // const { MP4, Writable, Readable } = require('mp4steg');
-const { MP4 } = require('mp4steg');
+// const { MP4 } = require('mp4steg');
 // import FileListFileSet from './FileListFileSet.js';
 
 import UserFile from './UserFile.js';
@@ -439,7 +439,7 @@ export default class UserContainer {
 			throw new Error('Nothing to encode');
 		}
 
-		const mp4 = new MP4();
+		const mp4 = await window.newMP4Steg();
 		if (!this._password) {
 			this._password = await this.generateRandomKey();
 		}

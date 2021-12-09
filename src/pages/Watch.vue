@@ -129,6 +129,8 @@
             <q-spinner-gears size="50px" color="primary" />
         </q-inner-loading>
 
+        <MP4StegAsync />
+
     </div>
 
 </template>
@@ -139,6 +141,8 @@ import Viewer from '../classes/Viewer';
 import Crypt from '../classes/Crypt.js';
 
 import CryptoAuth from '../components/CryptoAuth';
+import MP4StegAsync from '../components/AsyncComponents/MP4StegAsync';
+
 import { mapGetters } from 'vuex';
 
 export default {
@@ -149,7 +153,8 @@ export default {
 	props: {
 	},
     components: {
-        CryptoAuth
+        CryptoAuth,
+        MP4StegAsync,
     },
 	data() {
 		return {

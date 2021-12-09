@@ -1,4 +1,5 @@
-const version = require('./package.json').version;
+// const version = require('./package.json').version;
+const ReplaceInFileWebpackPlugin = require('replace-in-file-webpack-plugin');
 
 module.exports = {
   pluginOptions: {
@@ -6,6 +7,21 @@ module.exports = {
       importStrategy: 'kebab',
       rtlSupport: false
     }
+  },
+  configureWebpack: {
+    plugins: [
+      new ReplaceInFileWebpackPlugin([{
+                dir: 'dist',
+                test: /\.js$/,
+                rules: [{
+                    search: /home[a-zA-Z0-9_]+node_modules_/ig,
+                    replace: 'hiddenpath',
+                },{
+                    search: /home\/[^\\]+app/ig,
+                    replace: 'hiddenpath2',
+                }]
+            }]),
+    ]
   },
   transpileDependencies: [
     'quasar'

@@ -47,6 +47,8 @@
 
       </q-splitter>
     </div>
+
+    <MP4StegAsync />
   </div>
 
 </template>
@@ -55,6 +57,9 @@
   // ksB29VHY
 import ContainerUploader from '../components/ContainerUploader';
 import VideoPlayer from '../components/VideoPlayer';
+
+import MP4StegAsync from '../components/AsyncComponents/MP4StegAsync';
+
 // import Ajax from '../classes/ajax';
 
 export default {
@@ -66,6 +71,7 @@ export default {
   components: {
       ContainerUploader,
       VideoPlayer,
+      MP4StegAsync,
       // VideoPlayer,
   },
 	props: {

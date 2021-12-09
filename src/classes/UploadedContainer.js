@@ -1,7 +1,5 @@
 
 // const { MP4, Writable, Readable } = require('mp4steg');
-const { MP4 } = require('mp4steg');
-// import FileListFileSet from './FileListFileSet.js';
 import UserFile from './UserFile.js';
 import Crypt from './Crypt.js';
 
@@ -54,7 +52,8 @@ export default class UploadedContainer {
 		this.setKey(key);
 		this._decodedBlob = null;
 		try {
-			this._mp4 = new MP4();
+			// this._mp4 = new MP4();
+			this._mp4 = await window.newMP4Steg();
 			this._mp4.setKey(this._key);
 
 			console.error('this._key', this._key);

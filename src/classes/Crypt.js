@@ -1,5 +1,5 @@
 
-const sigUtil = require('@metamask/eth-sig-util');
+// const sigUtil = require('@metamask/eth-sig-util');
 
 export default class Crypt {
 	constructor() {
@@ -78,7 +78,6 @@ export default class Crypt {
 		if (!publicKeyAsHexString && !privateKeyAsHexString) {
 
 			console.log(videoKeyHexString);
-			console.log(sigUtil);
 
 			const privateKey = '0000000000000000000000000000000000000000000000000000000000000003';
 			const privateKeyAsUintArray  =this.hex2u8a(privateKey);
