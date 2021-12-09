@@ -1,5 +1,8 @@
 // const version = require('./package.json').version;
 const ReplaceInFileWebpackPlugin = require('replace-in-file-webpack-plugin');
+const zlib = require("zlib");
+const CompressionPlugin = require('compression-webpack-plugin');
+
 
 module.exports = {
   pluginOptions: {
@@ -21,6 +24,19 @@ module.exports = {
                     replace: 'hiddenpath2',
                 }]
             }]),
+      new CompressionPlugin({
+        filename: "[path][base].br",
+        algorithm: "brotliCompress",
+        test: /\.(js|css|html|svg|woff|woff2)$/,
+        compressionOptions: {
+          params: {
+            [zlib.constants.BROTLI_PARAM_QUALITY]: 11,
+          },
+        },
+        threshold: 10240,
+        minRatio: 0.8,
+        deleteOriginalAssets: false,
+      }),
     ]
   },
   transpileDependencies: [

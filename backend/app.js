@@ -20,6 +20,7 @@ const run = async()=>{
 			root: path.join(__dirname, '../dist'),
 			wildcard: true,
 			maxAge: "31536000000",
+			preCompressed: true,
 		});
 		fastify.setNotFoundHandler(async(request,reply)=>{
 			console.log('here');
