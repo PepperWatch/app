@@ -84,7 +84,7 @@ export default {
 			// });
 		});
 
-		this.$emit('loaded');
+		this.$emit('loaded', this.terra);
 	},
 	computed: {
 		// displayAddress() {

@@ -3,8 +3,8 @@ const ReplaceInFileWebpackPlugin = require('replace-in-file-webpack-plugin');
 const zlib = require("zlib");
 const CompressionPlugin = require('compression-webpack-plugin');
 
-
 module.exports = {
+  productionSourceMap: process.env.NODE_ENV != 'production',
   pluginOptions: {
     quasar: {
       importStrategy: 'kebab',
@@ -12,7 +12,7 @@ module.exports = {
     }
   },
   configureWebpack: {
-    plugins: [
+    plugins: (process.env.NODE_ENV === 'production' ? ([
       new ReplaceInFileWebpackPlugin([{
                 dir: 'dist',
                 test: /\.js$/,
@@ -37,7 +37,7 @@ module.exports = {
         minRatio: 0.8,
         deleteOriginalAssets: false,
       }),
-    ]
+    ]) : [])
   },
   transpileDependencies: [
     'quasar'

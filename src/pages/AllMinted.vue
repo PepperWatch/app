@@ -3,9 +3,9 @@
     <div>
         <h6>All Minted</h6>
 
-        <CryptoAuth v-if="!loading && !loaded" />
+        <CryptoAuth v-if="!connected" @loaded="providerLoaded" ref="cryptoAuth"/>
 
-        <q-toggle label="Show yours only" v-model="yours"/>
+        <q-toggle label="Show yours only" v-model="yours" v-if="connected" />
 
         <div class="rounded-borders q-pa-md q-my-md bg-light-blue-1 q-card--bordered" v-if="loaded">
             <q-icon size="20px" name="info" color="primary" />Move mouse over to preload thumbs. Click to go to the watch page
@@ -50,8 +50,10 @@ export default {
 
 			isActive: false,
             tokens: [],
+
             loaded: false,
             loading: false,
+            connected: false,
 
             yours: false,
 		}
@@ -66,23 +68,49 @@ export default {
         },
     },
 	methods: {
+        queryTheProvider: async function(provider) {
+            this.loading = true;
+
+            const data = await provider.getAllTokens(this.yours);
+            if (data.tokens) {
+                this.tokens = data.tokens;
+            }
+
+            this.loaded = true;
+            this.loading = false;
+        },
+        providerLoaded: function(provider) {
+            this.queryTheProvider(provider);
+        },
         checkTheBlockchain: async function() {
             const blockchainProvider = this.$store.getters['blockchain/provider'];
             if (blockchainProvider) {
-                this.loading = true;
+                this.connected = true;
 
-                const data = await blockchainProvider.getAllTokens(this.yours);
-                if (data.tokens) {
-                    this.tokens = data.tokens;
-                }
+                await this.queryTheProvider(blockchainProvider);
+                // this.loading = true;
 
-                this.loaded = true;
-                this.loading = false;
+                // const data = await blockchainProvider.getAllTokens(this.yours);
+                // if (data.tokens) {
+                //     this.tokens = data.tokens;
+                // }
+
+                // this.loaded = true;
+                // this.loading = false;
+                //
+                return true;
             }
+
+            return false;
         }
 	},
     mounted() {
-        this.checkTheBlockchain();
+        this.checkTheBlockchain()
+            .then((success)=>{
+                if (!success) {
+                    this.$refs.cryptoAuth.requestTerra();
+                }
+            });
     },
     computed: {
         ...mapGetters({

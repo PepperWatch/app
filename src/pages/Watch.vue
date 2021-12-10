@@ -71,7 +71,7 @@
                         </div>
 
                         <div v-if="mintIpfsHash"  class="q-pt-sm">
-                            <CryptoAuth @connected="connectedToBlockchain" />
+                            <CryptoAuth @connected="connectedToBlockchain"/>
                         </div>
 
                         <div v-if="connectedAddress"  class="q-pt-sm">
@@ -130,6 +130,8 @@
         </q-inner-loading>
 
         <MP4StegAsync />
+
+        <CryptoAuth @loaded="providerLoaded" ref="publicCryptoAuth" :visible="false"/> <!-- this is the one to connect to query function (no auth) -->
 
     </div>
 
@@ -306,6 +308,22 @@ export default {
             this.getVideoInfo();
 
         },
+        async providerLoaded(blockchainProvider) {
+            // loaded, but not connected
+            await this.getVideoPublicInfo(blockchainProvider);
+        },
+        async getVideoPublicInfo(withProvider) {
+            try {
+                const info = await withProvider.queryContract({
+                    query: { nft_info: {token_id: this.mintIpfsHash}}
+                });
+                if (info && info.extension && info.extension.watch_price) {
+                    this.price = parseInt(info.extension.watch_price, 10);
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        },
         async getVideoInfo() {
             const blockchainProvider = this.$store.getters['blockchain/provider'];
 
@@ -367,6 +385,11 @@ export default {
 	},
     mounted() {
         this.initialize();
+
+        const blockchainProvider = this.$store.getters['blockchain/provider'];
+        if (!blockchainProvider) {
+            this.$refs.publicCryptoAuth.requestTerra();
+        }
         // alert(this.$route.params.hash);
         // this.viewer = new Viewer({
         //     $store: this.$store,

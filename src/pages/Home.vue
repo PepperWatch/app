@@ -93,14 +93,15 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
     h6 {
         font-size: 16px;
         font-weight: bold;
+        margin: 0 0 16px 0;
     }
 
     h5 {
-        margin-bottom: 16px;
+        margin: 0 0 16px 0;
     }
 
     .video_container {

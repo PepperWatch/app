@@ -1,6 +1,6 @@
 <template>
 
-	<div>
+	<div :class="{ hidden: !visible }">
 
 		<div v-if="!signedAddress">
 
@@ -84,7 +84,13 @@ import { mapGetters } from 'vuex';
 
 export default {
 	name: 'CryptoAuth',
-    emits: ['connected'],
+    emits: ['connected', 'loaded'],
+	props: {
+		visible: {
+			type: Boolean,
+			default: true,
+		},
+	},
 	data() {
 		return {
 			signedAddress: null,
@@ -117,10 +123,6 @@ export default {
 		MetamaskAsync,
 	},
 	methods: {
-		async deployNFT() {
-			this.terra.mint('QmWy14jwgNfA1ms3k9MoYobRp98KrzHpgkHFiz9t96rYs9');
-
-		},
 		async request(provider) {
 			if (provider == 'terra') {
 				return await this.requestTerra();
@@ -152,12 +154,14 @@ export default {
 
 			return await this.__requestPromiseMetamask;
 		},
-		terraLoaded() {
+		terraLoaded(terra) {
 			this.loaded.terra = true;
 
 			if (this.__requestPromiseTerraResolver) {
 				this.__requestPromiseTerraResolver();
 			}
+
+			this.$emit('loaded', terra);
 		},
 		metamaskLoaded() {
 			this.loaded.metamask = true;

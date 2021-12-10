@@ -78,6 +78,10 @@ export default class Terra extends EventTarget {
 		}
 	}
 
+
+
+
+
 	get connectedNetName() {
 		return this._netName;
 	}
@@ -213,7 +217,31 @@ export default class Terra extends EventTarget {
 		this.log('querying contract '+contractAddress);
 		console.log(query);
 
-		const resp = await this._LCDClient.wasm.contractQuery(
+		let lcd = this._LCDClient;
+
+		if (!lcd) {
+			const chainOptions = await getChainOptions();
+
+			let optionToUse = chainOptions.walletConnectChainIds[0];
+			if (params.netId) {
+				for (let option of chainOptions.walletConnectChainIds) {
+					if (option.name == params.netId) {
+						optionToUse = option;
+					}
+				}
+			}
+
+			console.error('optionToUse', optionToUse);
+
+			lcd = new LCDClient({
+				URL: optionToUse.lcd,
+				chainID: optionToUse.chainID,
+				gasPrices: { uluna: 0.015 },
+				gasAdjustment: 1.4,
+			});
+		}
+
+		const resp = await lcd.wasm.contractQuery(
 			contractAddress,
 			query // query msg
 		);
