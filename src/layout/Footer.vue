@@ -10,6 +10,7 @@
 
           <q-btn flat type="a" href="https://twitter.com/pepper_watch" label="Twitter" />
           <q-btn flat type="a" href="https://t.me/s/pepperwatch" label="Telegram" />
+          <q-btn flat type="a" href="https://github.com/PepperWatch" label="GitHub" />
 
         </div>
 

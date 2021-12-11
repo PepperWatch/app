@@ -3,8 +3,11 @@ const ReplaceInFileWebpackPlugin = require('replace-in-file-webpack-plugin');
 const zlib = require("zlib");
 const CompressionPlugin = require('compression-webpack-plugin');
 
+const isProd = process.env.NODE_ENV === 'production';
+
 module.exports = {
   productionSourceMap: process.env.NODE_ENV != 'production',
+  filenameHashing: false,
   pluginOptions: {
     quasar: {
       importStrategy: 'kebab',
@@ -12,7 +15,14 @@ module.exports = {
     }
   },
   configureWebpack: {
-    plugins: (process.env.NODE_ENV === 'production' ? ([
+    // output: {
+    //   filename: '[name].js',
+    //   chunkFilename: '[name].js',
+    // },
+    output: {
+      // chunkFilename: `[name].js`,
+    },
+    plugins: (isProd ? ([
       new ReplaceInFileWebpackPlugin([{
                 dir: 'dist',
                 test: /\.js$/,
@@ -20,7 +30,7 @@ module.exports = {
                     search: /home[a-zA-Z0-9_]+node_modules_/ig,
                     replace: 'hiddenpath',
                 },{
-                    search: /home\/[^\\]+app/ig,
+                    search: /home\/[a-zA-Z0-9/]+app/ig,
                     replace: 'hiddenpath2',
                 }]
             }]),
@@ -43,6 +53,23 @@ module.exports = {
     'quasar'
   ],
   chainWebpack: config => {
+
+    // console.log(config.output);
+
+    // config
+    //   .plugin('output')
+    //   .tap(args => {
+    //     console.log(args);
+    // //   });
+    // config.output.filename = '[name].js';
+    // config.output.chunkFilename = '[name].js';
+
+    if (isProd) {
+      config
+        .output
+        .filename('js/[name].js?_hash=[contenthash:8]')
+        .chunkFilename('js/[name].js?_hash=[contenthash:8]');
+    }
 
     config.plugins.store.delete('prefetch');
     config.plugins.store.delete('preload');
