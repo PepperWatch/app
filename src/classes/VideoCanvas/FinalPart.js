@@ -2,8 +2,8 @@ const { AwesomeQR } = require("awesome-qr");
 
 export default class FinalPart {
 	constructor() {
-		this.sampleWidth = 700;
-		this.sampleHeight = 700;
+		this.sampleWidth = 720;
+		this.sampleHeight = 720;
 	}
 
 	log(str) {

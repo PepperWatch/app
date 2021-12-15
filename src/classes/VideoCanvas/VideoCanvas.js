@@ -19,7 +19,7 @@ export default class MediaDownsample {
 
 		this.sampleWidth = null;
 		this.sampleHeight = null;
-		this.maxSampleDimension = 900;
+		this.maxSampleDimension = 720;
 
 		this.blurValue = 0.01;
 		this.blurFadeValue = 20;

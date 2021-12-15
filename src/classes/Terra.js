@@ -1,47 +1,17 @@
 import {
   getChainOptions,
-  // ConnectType,
-  // CreateTxFailed,
-
-  // Timeout,
-  // TxFailed,
-  // TxResult,
-  // TxUnspecifiedError,
-  // UserDenied,
   WalletController,
-  // useConnectedWallet,
-  // WalletStatus,
-  // WalletProvider,
 } from '@terra-money/wallet-provider';
-
-// import ReactDOM from 'react-dom';
 
 import {
   Fee,
-  // LCDClient,
   MsgExecuteContract,
   MsgInstantiateContract,
-  // Extension,
   LCDClient,
-  // SyncTxBroadcastResult,
 } from '@terra-money/terra.js';
 
 
 const sigUtil = require('@metamask/eth-sig-util');
-// function App() {
-//   return (
-// 	<main
-// 		style={{
-// 		margin: 20,
-// 		display: 'flex',
-// 		flexDirection: 'column',
-// 		gap: 40,
-// 		}}
-// 	>
-// 	</main>
-//   );
-// }
-//
 import Crypt from './Crypt.js';
 
 export default class Terra extends EventTarget {
@@ -77,9 +47,6 @@ export default class Terra extends EventTarget {
 			return Terra.__singleInstance;
 		}
 	}
-
-
-
 
 
 	get connectedNetName() {
@@ -152,8 +119,6 @@ export default class Terra extends EventTarget {
 	}
 
 	async getPrivateKey(mediaId) {
-		// const contractAddress = 'terra1tndcaqxkpc5ce9qee5ggqf430mr2z3pefe5wj6';
-		// const contractAddress = 'terra12pj5psnwuu0nfpftjdyqgparurcl32tkzdyck0';
 		const contractAddress = this._contractAddress;
 
 		this.log('getting encoded media password from blockchain...');
@@ -170,18 +135,37 @@ export default class Terra extends EventTarget {
 			this.log('encoded media password on blockchain: '+onBlockhainKey);
 
 			return onBlockhainKey;
-			// try {
-			// 	decrypted = await this.decryptMessage(onBlockhainKey);
-			// } catch(e) {
-			// 	console.error('decrypt error', e);
-			// 	decrypted = null;
-			// }
 		} else {
 
 			this.log('there is nothing');
 		}
 
 		return null;
+	}
+
+	async getMinimumPrice() {
+		if (this._getPricePromise) {
+			return await this._getPricePromise;
+		}
+
+		this._getPricePromiseResolver = null;
+		this._getPricePromise = new Promise((res)=>{
+			this._getPricePromiseResolver = res;
+		});
+
+		try {
+			const onBlockhain = await this.queryContract({
+				query: {"get_minimum_price":{}},
+				sync: true,
+			});
+
+			const val = parseFloat(onBlockhain.uluna, 10);
+			this._getPricePromiseResolver(val);
+			return val;
+		} catch(e) {
+			this._getPricePromiseResolver(0);
+			return 0;
+		}
 	}
 
 	async disconnect() {

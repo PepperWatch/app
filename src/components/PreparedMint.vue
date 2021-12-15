@@ -180,7 +180,7 @@
 					<q-item-section>
 					<q-slider
 					v-model="price"
-					:min="0"
+					:min="minimumPrice"
 					:max="0.1"
 					:step="0.001"
 					label
@@ -267,6 +267,8 @@ export default {
 			priceChangeAvailable: false,
 			haveToChangePriceOnBlockchain: false,
 			commitingPriceChange: false,
+
+			minimumPrice: 0,
 		}
 	},
 	mounted: function() {
@@ -333,6 +335,11 @@ export default {
 			} else {
 				this.mintAvailable = false;
 				this.priceChangeAvailable = false;
+			}
+
+			const blockchainProvider = this.$store.getters['blockchain/provider'];
+			if (blockchainProvider) {
+				this.minimumPrice = await blockchainProvider.getMinimumPrice();
 			}
 		},
 		mint: async function() {
