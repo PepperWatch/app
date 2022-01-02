@@ -62,7 +62,7 @@ export default class UserContainer {
 		}
 	}
 
-	async getMintJSON() {
+	async getMintJSON(contractAddress) {
 		const object = {
 			"name": (''+this._title),
 			"description": (''+this._description),
@@ -76,6 +76,10 @@ export default class UserContainer {
 				"pepper_unique": this.id,
 			},
 		};
+
+		if (contractAddress) {
+			object.properties.contract_address = contractAddress;
+		}
 
 		return JSON.stringify(object, null, '\t');
 	}
@@ -96,7 +100,7 @@ export default class UserContainer {
 		return false;
 	}
 
-	async uploadToIPFS() {
+	async uploadToIPFS(contractAddress) {
 		if (!this.encodedBlob) {
 			await this.makeEncoded();
 		}
@@ -109,7 +113,7 @@ export default class UserContainer {
 
 		this._publicThumbIPFSHash = await ipfs.upload(thumbBlob);
 
-		const mintJSON = await this.getMintJSON();
+		const mintJSON = await this.getMintJSON(contractAddress);
 
 		this._mintIPFSHash = await ipfs.upload(mintJSON);
 

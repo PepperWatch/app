@@ -421,6 +421,91 @@ export default class Terra extends EventTarget {
 		}
 	}
 
+	async estimateGas(params = {}) {
+		const senderAddress = 'terra1x46rqay4d3cssq8gxxvqz8xt6nwlz4td20k38v';
+
+		const contractAddress = params.contractAddress || this._contractAddress || null;
+		// const fromAddress = this._connectedAddress;
+		const instructions = params.instructions || {};
+
+		let lcd = this._LCDClient;
+
+		if (!lcd) {
+			const chainOptions = await getChainOptions();
+
+			let optionToUse = chainOptions.walletConnectChainIds[0];
+			if (params.netId) {
+				for (let option of chainOptions.walletConnectChainIds) {
+					if (option.name == params.netId) {
+						optionToUse = option;
+					}
+				}
+			}
+
+			// console.error('optionToUse', optionToUse);
+
+			lcd = new LCDClient({
+				URL: optionToUse.lcd,
+				chainID: optionToUse.chainID,
+				gasPrices: { uluna: 0.015 },
+				gasAdjustment: 1.4,
+			});
+		}
+
+		const coins = {};
+		if (params.uluna) {
+			coins.uluna = params.uluna;
+		}
+
+		const signerDatas = [];
+
+        const account = await lcd.auth.accountInfo(senderAddress);
+        // console.error('account', account);
+        const sequenceNumber = account.getSequenceNumber();
+        // console.error('sequenceNumber', sequenceNumber);
+
+        const publicKey = account.getPublicKey();
+
+
+		signerDatas.push({
+			sequenceNumber,
+			publicKey,
+		});
+
+
+		const msgExecuteContract = new MsgExecuteContract(senderAddress, contractAddress, instructions, coins);
+		const memo = params.memo || undefined;
+
+		// const tx = await lcd.tx.create([{address: 'terra1x46rqay4d3cssq8gxxvqz8xt6nwlz4td20k38v'}], {
+		// 	// fee: fee,
+		// 	msgs: [
+		// 		msgExecuteContract,
+		// 	],
+		// 	memo: memo,
+		// });
+
+		const options = {
+			// fee: fee,
+			msgs: [
+				msgExecuteContract,
+			],
+			memo: memo,
+		};
+
+
+
+		const fee = await lcd.tx.estimateFee(signerDatas, options);
+
+		console.error('fee', fee);
+		console.error('coins', fee.amount.toString());
+
+		// console.error('tx', tx);
+
+		// const resp = await lcd.tx.estimateGas(tx);
+
+		// console.error('resp', resp);
+	}
+
 
 	async executeContract(params = {}) {
 		const contractAddress = params.contractAddress || this._contractAddress || null;

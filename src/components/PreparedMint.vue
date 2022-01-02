@@ -199,9 +199,10 @@
 		<q-card-actions  class="justify-around">
 			<!-- <q-btn flat color="primary" icon="upload" label="Test" @click="test" /> -->
 
+			<q-btn flat color="info" icon="info" label="Connect to Blockchain" @click="scrollToConnect" v-if="!ipfsAvailable" />
 
 			<!-- <q-btn flat color="primary" icon="download" label="Download" :loading="downloading" @click="download"/> -->
-			<q-btn flat color="primary" icon="upload" label="Upload to IPFS" :loading="uploading" @click="upload" v-if="!ipfsHash || !mintIpfsHash"/>
+			<q-btn flat color="primary" icon="upload" :disable="!ipfsAvailable" label="Upload to IPFS" :loading="uploading" @click="upload" v-if="!ipfsHash || !mintIpfsHash"/>
 			<!-- <q-btn flat type="a" :href="ipfsURL" target="_blank" color="primary" icon="open_in_new" label="Check on IPFS" v-if="ipfsHash"/> -->
 
 
@@ -257,6 +258,7 @@ export default {
 			ipfsHash: null,
 			mintIpfsHash: null,
 			publicThumbIpfsHash: null,
+			ipfsAvailable: false,
 
 			mintAvailable: false,
 			minting: false,
@@ -269,6 +271,7 @@ export default {
 			commitingPriceChange: false,
 
 			minimumPrice: 0,
+			contractAddress: null,
 		}
 	},
 	mounted: function() {
@@ -312,6 +315,9 @@ export default {
 		},
 	},
 	methods: {
+		scrollToConnect: function() {
+			window.scrollTo(0,0);
+		},
 		test: async function() {
 			let c = new Crypt();
 			let encoded = await c.videoKeyToPublicKey(this.password);
@@ -332,13 +338,16 @@ export default {
 			if (storeSignedAddress) {
 				this.mintAvailable = true;
 				this.priceChangeAvailable = true;
+				this.ipfsAvailable = true;
 			} else {
 				this.mintAvailable = false;
 				this.priceChangeAvailable = false;
+				this.ipfsAvailable = false;
 			}
 
 			const blockchainProvider = this.$store.getters['blockchain/provider'];
 			if (blockchainProvider) {
+				this.contractAddress = blockchainProvider.contractAddress;
 				this.minimumPrice = await blockchainProvider.getMinimumPrice();
 			}
 		},
@@ -407,7 +416,7 @@ export default {
         },
 		async upload() {
 			this.uploading = true;
-			await this.userContainer.uploadToIPFS();
+			await this.userContainer.uploadToIPFS(this.contractAddress);
 
 			this.ipfsHash = this.userContainer.getIPFSHash();
 			this.mintIpfsHash = this.userContainer.getMintIPFSHash();

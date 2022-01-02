@@ -78,6 +78,10 @@ export default {
 
             this.loaded = true;
             this.loading = false;
+
+
+            // await provider.estimateGas({uluna: 1000000, instructions: {"ask_for_key":{"media": "Qme5WuoHFFfvWcbs7SVDuwEvCX5QVdhqZKbbXgEAwZUgqj", "key": "testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"}}});
+
         },
         providerLoaded: function(provider) {
             this.queryTheProvider(provider);
