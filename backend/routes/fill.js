@@ -49,6 +49,8 @@ module.exports = async function(request, reply) {
 		const txhash = await b.storeMediaKeyForUser(data.media, data.userAccount, encodedKeyForUser);
 		return reply.send({success: true, txhash: txhash});
 	} catch(e) {
+		console.error(e);
+
 		reply.send({success: false, message: 'Can not store encoded key on blockchain :('});
 	}
 };

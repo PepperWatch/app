@@ -24,13 +24,17 @@ class Blockchainer {
 		if (mkName == 'test') {
 			return 'panic polar menu cargo stock space hobby decline absorb police curve corn lazy apple curtain glove toast slice reunion journey alien window school gain';
 		}
+		if (mkName == 'test2') {
+			return 'notice oak worry limit wrap speak medal online prefer cluster roof addict wrist behave treat actual wasp year salad speed social layer crew genius';
+		}
 
 		return null;
 	}
 
 	isContractOk() {
 		const okContracts = [
-			{address: 'terra1mwt8z6raw2270n6jmdu5ce2p8kkla7u4rch3d6', provider: 'terra', server: 'bombay-lcd.terra.dev', chainID: 'bombay-12', mkName: 'test'}
+			{address: 'terra1mwt8z6raw2270n6jmdu5ce2p8kkla7u4rch3d6', provider: 'terra', server: 'bombay-lcd.terra.dev', chainID: 'bombay-12', mkName: 'test'},
+			{address: 'terra1gw4kp9sustq89y5m8wl9q7h8flljhazvnarxhp', provider: 'terra', server: 'bombay-lcd.terra.dev', chainID: 'bombay-12', mkName: 'test2'}
 		];
 
 		let foundOk = false;
@@ -117,7 +121,7 @@ class Blockchainer {
 	}
 
 	async executeContract(instructions) {
-		const msgExecuteContract = new MsgExecuteContract(this._wallet.key.accAddress, this._contract, instructions, { uluna: 100000 });
+		const msgExecuteContract = new MsgExecuteContract(this._wallet.key.accAddress, this._contract, instructions, {});
 
 		const tx = await this._wallet.createAndSignTx({
 			msgs: [msgExecuteContract],

@@ -71,7 +71,11 @@ export default {
         queryTheProvider: async function(provider) {
             this.loading = true;
 
-            const data = await provider.getAllTokens(this.yours);
+            const data = await provider.getAllTokens({
+                    mintedByConnected: this.yours,
+                    allContracts: true,
+                });
+
             if (data.tokens) {
                 this.tokens = data.tokens;
             }

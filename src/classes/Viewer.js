@@ -14,6 +14,7 @@ export default class Viewer {
 
 		this._videoHash = null;
 		this._mintIpfsHash = null;
+		this._contractAddress = null;
 
 		this._isOkOnAPI = false;
 	}
@@ -28,6 +29,10 @@ export default class Viewer {
 
 	async getPepperUnique() {
 		return this._pepper_unique;
+	}
+
+	async getContractAddress() {
+		return this._contractAddress;
 	}
 
 	async getVideoURL() {
@@ -75,6 +80,9 @@ export default class Viewer {
 			if (json) {
 				if (json.properties && json.properties.pepper_unique) {
 					this._videoHash = json.properties.pepper_unique;
+				}
+				if (json.properties && json.properties.contract_address) {
+					this._contractAddress = json.properties.contract_address;
 				}
 				if (json.animation_url) {
 					this._serverData.encodedIpfsHash = json.animation_url.split('/').slice(-1)[0];

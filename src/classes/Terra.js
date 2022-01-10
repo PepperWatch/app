@@ -30,10 +30,63 @@ export default class Terra extends EventTarget {
 
 		this._encryptionPublicKey = null;
 
-		this._contractAddress = 'terra1mwt8z6raw2270n6jmdu5ce2p8kkla7u4rch3d6';
+		this._contractAddress = null;
+
+		// this._contractAddress = 'terra1mwt8z6raw2270n6jmdu5ce2p8kkla7u4rch3d6';
 		// this._contractAddress = 'terra159wc47nf8szw06warnm4wa3vfqk68j3g7rkwzu';
 		// const contractAddress = 'terra12pj5psnwuu0nfpftjdyqgparurcl32tkzdyck0';
+		//
+
+		this._toUseNetId = null; // net id to use for contract queries by default
+		this._availableContracts = [
+			{address: 'terra1mwt8z6raw2270n6jmdu5ce2p8kkla7u4rch3d6', default: false, netId: 'testnet'},
+			{address: 'terra1gw4kp9sustq89y5m8wl9q7h8flljhazvnarxhp', default: true, netId: 'testnet'},
+		];
 	}
+
+	setContractAddressIfAvaialble(contractAddress) {
+
+		if (this._contractAddress && !contractAddress) {
+			// we have already define it before
+
+			return;
+		}
+
+		this._contractAddress = null;
+		this._toUseNetId = null;
+
+
+		if (this.connectedNetName) {
+			// if we are connected to user's wallet
+
+			for (let availableContract of this._availableContracts) {
+				if (contractAddress && availableContract.address == contractAddress && availableContract.netId == this.connectedNetName) {
+					this._contractAddress = availableContract.address;
+				}
+				if (availableContract.default && !this._contractAddress && availableContract.netId == this.connectedNetName) {
+					this._contractAddress = availableContract.address;
+				}
+			}
+
+			this._toUseNetId = this.connectedNetName;
+		} else {
+			// if we are not connected to user wallet
+
+			for (let availableContract of this._availableContracts) {
+				if (contractAddress && availableContract.address == contractAddress) {
+					this._contractAddress = availableContract.address;
+					this._toUseNetId = availableContract.netId;
+				}
+				if (availableContract.default && !this._contractAddress) {
+					this._contractAddress = availableContract.address;
+					this._toUseNetId = availableContract.netId;
+				}
+			}
+		}
+
+
+	}
+
 
 	log(str) {
 		console.log('Terra | '+str);
@@ -61,18 +114,66 @@ export default class Terra extends EventTarget {
 		return this._contractAddress;
 	}
 
-	async getAllTokens(mintedByConnected = false) {
+	async guessContractAddressByTokenId(token_id) {
+		let query = {"get_price":{"media": token_id}};
+		for (let availableContract of this._availableContracts) {
+			try {
+				const onBlockhain = await this.queryContract({
+					query: query,   // start_after
+					sync: true,
+					contractAddress: availableContract.address,
+				});
+
+				if (onBlockhain && onBlockhain.uluna) {
+					this.log('Nft is on '+availableContract.address);
+					return availableContract.address;
+				}
+
+			} catch(e) {
+				this.log('Nft not on '+availableContract.address);
+			}
+		}
+
+		this.log('Contract for this nft not found');
+	}
+
+	async getAllTokens(params = {}) {
+		let mintedByConnected = !!(params.mintedByConnected);
+
 		let query = {"all_tokens":{"limit": 1000}};
 		if (mintedByConnected) {
 			query = {"tokens":{"limit": 1000, "owner": this._connectedAddress}};
 		}
 
-		const onBlockhain = await this.queryContract({
-			query: query,   // start_after
-			sync: true,
-		});
+		if (params.allContracts) {
 
-		return onBlockhain;
+			// loop over all contracts we had
+			let ret = [];
+			for (let availableContract of this._availableContracts) {
+				const onBlockhain = await this.queryContract({
+					query: query,   // start_after
+					sync: true,
+					contractAddress: availableContract.address,
+				});
+
+				console.error('onBlockhain', onBlockhain);
+				if (onBlockhain.tokens) {
+					ret = ret.concat(onBlockhain.tokens);
+				}
+			}
+
+			return {tokens: ret};
+
+		} else {
+
+			const onBlockhain = await this.queryContract({
+				query: query,   // start_after
+				sync: true,
+			});
+
+			return onBlockhain;
+
+		}
 	}
 
 	async withdraw() {
@@ -195,6 +296,8 @@ export default class Terra extends EventTarget {
 	}
 
 	async queryContract(params = {}) {
+		this.setContractAddressIfAvaialble(params.contractAddress ? params.contractAddress : null);
+
 		const contractAddress = params.contractAddress || this._contractAddress || null;
 		const query = params.query || {};
 
@@ -206,10 +309,19 @@ export default class Terra extends EventTarget {
 		if (!lcd) {
 			const chainOptions = await getChainOptions();
 
+			console.error('chainOptions', chainOptions);
 			let optionToUse = chainOptions.walletConnectChainIds[0];
 			if (params.netId) {
-				for (let option of chainOptions.walletConnectChainIds) {
+				for (let k in chainOptions.walletConnectChainIds) {
+					let option = chainOptions.walletConnectChainIds[k];
 					if (option.name == params.netId) {
+						optionToUse = option;
+					}
+				}
+			} else if (this._toUseNetId) {
+				for (let k in chainOptions.walletConnectChainIds) {
+					let option = chainOptions.walletConnectChainIds[k];
+					if (option.name == this._toUseNetId) {
 						optionToUse = option;
 					}
 				}
@@ -602,6 +714,8 @@ export default class Terra extends EventTarget {
 				});
 
 				this._isConnected = true;
+
+				this.setContractAddressIfAvaialble();
 
 				if (this._connectPromiseResolver) {
 					this._connectPromiseResolver();

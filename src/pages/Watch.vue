@@ -180,6 +180,7 @@ export default {
             videoTitle: null,
             videoDescription: null,
             videoHash: null,
+            expectedContractAddress: null,
 
             connectedAddress: null,
             encryptionPublicKey: null,
@@ -310,12 +311,25 @@ export default {
         },
         async providerLoaded(blockchainProvider) {
             // loaded, but not connected
+            blockchainProvider.setContractAddressIfAvaialble();
             await this.getVideoPublicInfo(blockchainProvider);
         },
         async getVideoPublicInfo(withProvider) {
             try {
+                await this._initializationPromise; // @todo: is it defined in all cases? Check
+
+                if (!this.expectedContractAddress) {
+                    const foundContractAddress = await withProvider.guessContractAddressByTokenId(this.mintIpfsHash);
+                    if (foundContractAddress) {
+                        this.expectedContractAddress = foundContractAddress;
+                    }
+                }
+
+                withProvider.setContractAddressIfAvaialble(this.expectedContractAddress);
+
                 const info = await withProvider.queryContract({
-                    query: { nft_info: {token_id: this.mintIpfsHash}}
+                    query: { nft_info: {token_id: this.mintIpfsHash}},
+                    contractAddress: this.expectedContractAddress,
                 });
                 if (info && info.extension && info.extension.watch_price) {
                     this.price = parseInt(info.extension.watch_price, 10);
@@ -330,6 +344,13 @@ export default {
             this.blockchainProvider = blockchainProvider;
 
             if (this.blockchainProvider) {
+                if (!this.expectedContractAddress) {
+                    const foundContractAddress = await this.blockchainProvider.guessContractAddressByTokenId(this.mintIpfsHash);
+                    if (foundContractAddress) {
+                        this.expectedContractAddress = foundContractAddress;
+                    }
+                }
+
                 this.connectedAddress = blockchainProvider.connectedAddress;
 
                 const info = await this.blockchainProvider.queryContract({
@@ -355,6 +376,12 @@ export default {
             }
         },
         async initialize() {
+            // keeping ref to promise, so we query terra contract after ipfs info loaded
+            // in case we need to change contract address
+            // while still having terra lib loaded in background async
+            this._initializationPromiseResolver = null;
+            this._initializationPromise = new Promise((res)=>{ this._initializationPromiseResolver = res; });
+
             this.mintIpfsHash = this.$route.params.hash;
             this.viewer = new Viewer({
                 $store: this.$store,
@@ -373,6 +400,7 @@ export default {
             this.videoTitle = await this.viewer.getVideoTitle();
             this.videoDescription = await this.viewer.getVideoDescription();
             this.videoHash = await this.viewer.getVideoHash();
+            this.expectedContractAddress = await this.viewer.getContractAddress();
 
             try {
                 await this.getVideoInfo();
@@ -381,6 +409,7 @@ export default {
             }
 
             this.initializing = false;
+            this._initializationPromiseResolver();
         },
 	},
     mounted() {
