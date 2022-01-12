@@ -110,7 +110,7 @@ export default {
 <style scoped>
 .tag-card {
   width: 100%;
-  max-width: 33%;
+  /*max-width: 33%;*/
 }
 
 </style>
