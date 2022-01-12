@@ -14,6 +14,7 @@
       <!-- <q-btn stretch flat label="Minted" to="/minted" v-if="!maintenance" /> -->
 
       <q-btn stretch flat label="All Minted" to="/allminted" v-if="!maintenance" />
+      <q-btn stretch flat label="Tags" to="/tags" v-if="!maintenance" />
 
 <!--       <Auth />
 

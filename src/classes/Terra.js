@@ -139,10 +139,13 @@ export default class Terra extends EventTarget {
 
 	async getAllTokens(params = {}) {
 		let mintedByConnected = !!(params.mintedByConnected);
+		let tag = (params.tag);
 
 		let query = {"all_tokens":{"limit": 1000}};
 		if (mintedByConnected) {
 			query = {"tokens":{"limit": 1000, "owner": this._connectedAddress}};
+		} else if (tag) {
+			query = {"tokens":{"limit": 1000, "tag": tag}};
 		}
 
 		if (params.allContracts) {
@@ -175,6 +178,53 @@ export default class Terra extends EventTarget {
 
 		}
 	}
+
+
+	async getAllTags(params = {}) {
+		let mintedByConnected = !!(params.mintedByConnected);
+
+		let query = {"all_tags":{"limit": 1000}};
+		if (mintedByConnected) {
+			query = {"tags":{"limit": 1000, "owner": this._connectedAddress}};
+		}
+
+		if (params.allContracts) {
+
+			// loop over all contracts we had
+			let ret = [];
+			for (let availableContract of this._availableContracts) {
+				try {
+					const onBlockhain = await this.queryContract({
+						query: query,   // start_after
+						sync: true,
+						contractAddress: availableContract.address,
+					});
+
+					if (onBlockhain.tags) {
+						this.log('Contract '+availableContract.address+' have '+onBlockhain.tags.length+' tags');
+						ret = ret.concat(onBlockhain.tags);
+					} else {
+						this.log('Contract '+availableContract.address+' have no tags at all');
+					}
+				} catch(e) {
+					this.log('Contract '+availableContract.address+' have no tags implemented?');
+				}
+			}
+
+			return {tags: ret};
+
+		} else {
+
+			const onBlockhain = await this.queryContract({
+				query: query,   // start_after
+				sync: true,
+			});
+
+			return onBlockhain;
+
+		}
+	}
+
 
 	async withdraw() {
 		const tx = await this.executeContract({
