@@ -228,6 +228,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import SelectOnChainTagDialog from './OnChain/SelectOnChainTagDialog';
 import Crypt from '../classes/Crypt.js';
 
 export default {
@@ -315,6 +316,22 @@ export default {
 		},
 	},
 	methods: {
+		selectTag: async function() {
+			return await new Promise((res,rej)=>{
+				const blockchainProvider = this.$store.getters['blockchain/provider'];
+
+				this.$q.dialog({
+					component: SelectOnChainTagDialog,
+					componentProps: {
+						blockchainProvider: blockchainProvider,
+					}
+				}).onOk((payload) => {
+					res(payload);
+				}).onCancel(() => {
+					rej();
+				});
+			});
+		},
 		scrollToConnect: function() {
 			window.scrollTo(0,0);
 		},
@@ -353,9 +370,18 @@ export default {
 		},
 		mint: async function() {
 			this.minting = true;
+
+			let tag = null;
+			try {
+				tag = await this.selectTag();
+			} catch(e) {
+				this.minting = false;
+				return;
+			}
+
 			const blockchainProvider = this.$store.getters['blockchain/provider'];
 
-			const success = await this.userContainer.mintOn(blockchainProvider);
+			const success = await this.userContainer.mintOn(blockchainProvider, tag);
 
 			if (!success) {
 				console.error('error minting');

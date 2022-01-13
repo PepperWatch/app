@@ -84,8 +84,8 @@ export default class UserContainer {
 		return JSON.stringify(object, null, '\t');
 	}
 
-	async mintOn(blockchainProvider) {
-		const success = await blockchainProvider.mintContainer(this);
+	async mintOn(blockchainProvider, tag_id = null) {
+		const success = await blockchainProvider.mintContainer(this, tag_id);
 
 		console.log('minted', success);
 

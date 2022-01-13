@@ -39,8 +39,7 @@ export default class Terra extends EventTarget {
 
 		this._toUseNetId = null; // net id to use for contract queries by default
 		this._availableContracts = [
-			{address: 'terra1mwt8z6raw2270n6jmdu5ce2p8kkla7u4rch3d6', default: false, netId: 'testnet'},
-			{address: 'terra1gw4kp9sustq89y5m8wl9q7h8flljhazvnarxhp', default: true, netId: 'testnet'},
+			{address: 'terra1nq2m2vldntvnaq45es7fnskcpze067qgm60zhj', default: true, netId: 'testnet'},
 		];
 	}
 
@@ -145,7 +144,7 @@ export default class Terra extends EventTarget {
 		if (mintedByConnected) {
 			query = {"tokens":{"limit": 1000, "owner": this._connectedAddress}};
 		} else if (tag) {
-			query = {"tokens":{"limit": 1000, "tag": tag}};
+			query = {"tokens":{"limit": 1000, "tag_id": tag}};
 		}
 
 		if (params.allContracts) {
@@ -444,7 +443,7 @@ export default class Terra extends EventTarget {
 		return resp;
 	}
 
-	async mintContainer(userContainer) {
+	async mintContainer(userContainer, tag_id = null) {
 		const contractAddress = this._contractAddress;
 		const token_uri = "ipfs://"+userContainer.getMintIPFSHash();
 		const token_id = userContainer.getMintIPFSHash();
@@ -477,6 +476,10 @@ export default class Terra extends EventTarget {
 				token_key_version: token_key.token_key_version,
 			}
 		};
+
+		if (tag_id) {
+			msg.mint.extension.tag_id = tag_id;
+		}
 
 		const price = userContainer.getPrice();
 		if (price) {

@@ -16,7 +16,7 @@
             </q-card>
 
             <q-card v-for="token in tokens" v-bind:key="token" class="q-card my-card">
-                <MintedToken :token="token"/>
+                <MintedToken :token="token" />
             </q-card>
         </div>
 
@@ -26,6 +26,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import MintedToken from '../components/MintedToken';
 import CryptoAuth from '../components/CryptoAuth';
 
 export default {
@@ -37,6 +38,7 @@ export default {
     },
     components: {
         CryptoAuth,
+        MintedToken,
     },
     data() {
         return {
@@ -62,7 +64,10 @@ export default {
 
             if (data.tokens) {
                 this.tokens = data.tokens;
+            console.error(this.tokens)
             }
+
+            console.error(data)
 
             this.loaded = true;
             this.loading = false;
