@@ -10,10 +10,7 @@
                 <h5 class="text-primary">an experiment on the Solana blockchain</h5>
 
                 <p class="text-primary">
-                    Play with our browser-based video editor, encode your video files and mint them as NFTs to blockchain.
-                </p>
-                <p class="text-primary">
-                    Play with our browser-based video editor, encode your video files and mint them as NFTs to blockchain. PepperWatch uses a sort of steganography to encode the private part of the video inside the public one. Playable in any media player, it has private media encoded inside.
+                    Play with our <router-link to="/encode" class="text-primary">browser-based video editor</router-link>, encode your video files and mint them as NFTs to blockchain. PepperWatch uses a sort of steganography to encode the private part of the video inside the public one. Playable in any media player, it has private media encoded inside.
                 </p>
                 <p class="text-primary">
                     NFT owner can set any price for encoded part of NFT, so anybody can purchase unique key and watch NFT's private media.

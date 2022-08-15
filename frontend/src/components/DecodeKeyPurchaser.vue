@@ -3,7 +3,7 @@
 	<div>
 
 		<div class="fixed-bottom-right q-ma-lg row q-gutter-xs" style="z-index: 2;">
-			<q-btn color="primary" square flat text-color="white" :label="currentStatus" class="gt-sm" />
+			<q-btn color="primary" square flat text-color="primary" :label="currentStatus" class="gt-sm" />
 			<q-btn :color="invalidChainType ? 'negative' : 'primary'" square text-color="white" label="" icon="help_outline" :loading="!videoInfoLoaded" @click="showInfoDialog = true" />
 			<q-btn-group push square>
 				<q-btn color="white" text-color="primary" :label="priceLabel" />

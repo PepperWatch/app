@@ -41,7 +41,6 @@ export default {
 	},
 	methods: {
 		onError() {
-			alert('error');
 			this.urlDebounced = null;
 			this.__onErrorRetryTimeout = setTimeout(()=>{
 				this.urlDebounced = this.url;
