@@ -10,8 +10,6 @@ const pjson = require(path.join(__dirname, '../package.json'));
 // 	isHeroku = true;
 // }
 
-
-
 module.exports = {
 	"name": pjson.description || pjson.name,
 	"version": pjson.version,
@@ -20,14 +18,21 @@ module.exports = {
 		"commands": path.join(__dirname, "../commands"),
 		"models": path.join(__dirname, "../models"),
 	},
+	"statics": [
+		{
+			root: path.join(__dirname, '../../admin/dist'),
+			prefix: '/admin',
+		},
+		{
+			root: path.join(__dirname, '../../frontend/dist'),
+			prefix: '/',
+		},
+	],
 	server: {
 		port: process.env.PORT || 9090
 	},
 	database: {
-		"database": process.env.MONGODB_URI || "mongodb://localhost:27017/pepper",
+		"database": process.env.MONGODB_URI || "mongodb://localhost:27017/special",
 		"dialect": "mongodb"
-	},
-	terra: {
-		walleyMnemonicKey: (process.env.TERRA_WALLET_MK || 'notice oak worry limit wrap speak medal online prefer cluster roof addict wrist behave treat actual wasp year salad speed social layer crew genius'),
-	},
+	}
 };

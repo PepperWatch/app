@@ -3,6 +3,7 @@
 module.exports = function(mongoose, connection, db) {
     var modelName = 'Video';
     var schema = mongoose.Schema({
+        title: String,
         uniqId: String, // uniqId of the video. hash of both original and container concatenated
         originalHash: String, // the hash of original video file (the one encoded inside)
         containerHash: String, // the hash of container blob
@@ -10,9 +11,16 @@ module.exports = function(mongoose, connection, db) {
         encodedIpfsHash: String,
         publicThumbIpfsHash: String,
         mintIpfsHash: String,
+
+        key: String,
+
+        mintedAddress: String,
+        chainType: String,
+        price: Number,
+
         isMinted: {type: Boolean, default: false}
     },
-    { collection: 'videos' });
+    { collection: 'videos', timestamps: true });
 
 
     // schema.virtual('APIValues').get(function () {    });  //// - item.APIValues
@@ -31,18 +39,27 @@ module.exports = function(mongoose, connection, db) {
     schema.statics.byHash = async function(hash) {
         let splet = hash.split('_');
 
+        let found = null;
 
         if (splet.length == 2) {
-            return await db.Video.findOne({containerHash: splet[1], originalHash: splet[0]}).exec();
+            found = await db.Video.findOne({containerHash: splet[1], originalHash: splet[0]});
         }
 
-        return await db.Video.findOne({mintIpfsHash: hash}).exec();
+        if (!found) {
+            found = await db.Video.findOne({mintIpfsHash: hash});
+        }
+        if (!found) {
+            found = await db.Video.findOne({mintedAddress: hash});
+        }
+
+        return found;
     }
 
     schema.methods.apiValues = function() {
         const response = this.toObject();
         response._id = undefined;
         response.__v = undefined;
+        response.key = undefined;
 
         return response;
     }

@@ -1,50 +1,52 @@
 const settings = require('./settings/settings.js');
 const DB = require('./includes/DB.js');
 const Server = require('./includes/Server.js');
-const path = require('path');
 
-// const t = require('./routes/testEnc.js');
-// import { LCDClient, MsgExecuteContract, MnemonicKey } from '@terra-money/terra.js';
+const extraRoutes = require('./routes');
 
 const run = async()=>{
 	const db = new DB(settings);
 
 	settings.db = await db.init();
+
+	// create default settings for classes if needed
+	await settings.db.Setting.initialize();
+
+	// make seeds for models if needed
+	for (let key in settings.db.connection.models) {
+		if (settings.db.connection.models[key].seed) {
+			await settings.db.connection.models[key].seed();
+		}
+	}
+
+	// if we are on Heroku:
+	// check if current deploy is updated and create notification if it is
+	const deployChecker = settings.db.Setting.getDeployChecker();
+	await deployChecker.checkCurrentDeploy();
+
+	// create the server
+	// with fastify-mongoose-api instance for all our mongoose models
 	const server = new Server(settings);
-	await server.init((fastify)=>{
-		// before init
-		//
-		//
-		// fastify.register(require('fastify-compress'));
-		fastify.register(require('fastify-static'), {
-			root: path.join(__dirname, '../dist'),
-			wildcard: true,
-			maxAge: "31536000000",
-			preCompressed: true,
+
+	// add and initialize extra routes
+	const extraRoutesHandlers = await extraRoutes.loadRoutes();
+	const handlers = [];
+	for (let Handler of extraRoutesHandlers) {
+		const handler = new Handler({
+			fastify: server,
+			db: settings.db,
+			settings: settings,
 		});
-		fastify.setNotFoundHandler(async(request,reply)=>{
-			console.log('here');
+		handlers.push(handler);
+	}
 
-			console.error(request.url);
-			const isInRoot = (request.url.split('/').length === 2 || (request.url.split('/').length === 3 && request.url.split('/')[1] == 'v')); // only one slash in the begining
-			if (isInRoot) {
-				console.error('isInRoot');
-				reply.sendFile('index.html', { cacheControl: false });
-			} else {
-				reply.code(404).send(new Error('Not found'));
-			}
-		});
+	const beforeInit = async()=>{
+		for (let handler of handlers) {
+			await handler.init();
+		}
+	};
 
-		// fastify.get('/storevideo', {}, async (request, reply) => await (require('./routes/storeVideo.js'))(request, reply, server.db));
-		fastify.post('/storevideo', {}, async (request, reply) => await (require('./routes/storeVideo.js'))(request, reply, server.db));
-		fastify.post('/storeipfs', {}, async (request, reply) => await (require('./routes/storeIPFS.js'))(request, reply, server.db));
-		fastify.post('/byhash', {}, async (request, reply) => await (require('./routes/videoByHash.js'))(request, reply, server.db));
-
-		fastify.post('/testenc', {}, async (request, reply) => await (require('./routes/testEnc.js'))(request, reply, server.db));
-
-		fastify.post('/fill', {}, async (request, reply) => await (require('./routes/fill.js'))(request, reply, server.db));
-	});
-
+	await server.init(beforeInit);
 };
 
 run();
