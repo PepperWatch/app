@@ -110,15 +110,15 @@ export default class UserContainer {
 
 		// const ipfs = IPFS.getSingleton();
 
-		this._encodedIPFSHash = await blockchainProvider.upload(this.encodedBlob);
+		this._encodedIPFSHash = await blockchainProvider.upload(this.encodedBlob, 'video');
 
 		const thumbBlob = await this.getPublicThumbBlob();
 
-		this._publicThumbIPFSHash = await blockchainProvider.upload(thumbBlob);
+		this._publicThumbIPFSHash = await blockchainProvider.upload(thumbBlob, 'image');
 
 		const mintJSON = await this.getMintJSON(blockchainProvider.contractAddress);
 
-		this._mintIPFSHash = await blockchainProvider.upload(mintJSON);
+		this._mintIPFSHash = await blockchainProvider.upload(mintJSON, 'json');
 
 
 		if (this.indexedDBRecord) {

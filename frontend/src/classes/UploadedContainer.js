@@ -82,55 +82,6 @@ export default class UploadedContainer {
 		return false;
 	}
 
-	// static async extractFileList(fileListFile, password) {
-	// 	console.error('D Password', password);
-	// 	const mp4 = new MP4();
-
-	// 	if (password) {
-	// 		mp4.setPassword(password);
-	// 	}
-	// 	await mp4.loadFile({file: fileListFile.file});
-
-	// 	const embedFiles = mp4.getEmbedFiles();
-	// 	const fileListFileSet = new FileListFileSet();
-
-	// 	if (embedFiles && embedFiles.length) {
-	// 		for (let i = 0; i < embedFiles.length; i++) {
-	// 			let embedFile = embedFiles[i];
-	// 			// console.error(embedFile);
-
-	// 			// const writable = await mp4.extractFile(i);
-	// 			// const blob = await writable.toBlob();
-
-	// 			let meta = '';
-	// 			if (embedFile.meta && embedFile.meta.meta) {
-	// 				meta = embedFile.meta.meta;
-	// 			}
-
-	// 			if (!embedFile.meta || !embedFile.meta.thumbnail) {
-
-	// 				let fileListFile = new FileListFile({
-	// 					filename: embedFile.filename,
-	// 					size: embedFile.size,
-	// 					fileSet: fileListFileSet,
-	// 					meta: meta,
-	// 					// file: blob,
-	// 					mp4: mp4,
-	// 					nInMp4: i,
-	// 				});
-
-	// 				fileListFileSet.push(fileListFile);
-	// 			}
-	// 		}
-	// 	}
-
-	// 	console.error(fileListFileSet);
-	// 	console.error(embedFiles);
-
-	// 	return fileListFileSet;
-	// }
-
-
 
 	composeHumanSize() {
 		// nice one. https://stackoverflow.com/a/20732091/1119169  thanks Andrew!

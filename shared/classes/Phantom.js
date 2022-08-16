@@ -180,15 +180,31 @@ export default class Phantom extends EventTarget {
 		return false;
 	}
 
-	async upload(browserFile) {
+	async upload(browserFile, type = false) {
 		let file = browserFile;
+
+		let fileName = 'video.mp4';
+		let mimeType = 'video/mp4';
+
+		if (type == 'image') {
+			fileName = 'image.jpg';
+			mimeType = 'image/jpeg';
+		} else if (type == 'json' || type == 'text') {
+			fileName = 'data.text';
+			if (type == 'json') {
+				fileName = 'data.json';
+			}
+			mimeType = 'text/plain';
+		}
+
 		if (file instanceof Blob) {
-			file = new File([file], "video.mp4", {
-				type: "video/mp4",
+
+			file = new File([file], fileName, {
+				type: mimeType,
 			});
 		} else if ((typeof file === 'string' || file instanceof String)) {
-			file = new File([file], "foo.txt", {
-				type: "text/plain",
+			file = new File([file], fileName, {
+				type: mimeType,
 			});
 		}
 		return await this.uploadFile(file);

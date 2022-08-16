@@ -383,7 +383,7 @@ export default class UserFile {
 
 						this.log('generated video preview.');
 						res(thumbURL);
-					});
+					}, 'image/jpeg', 0.9);
 			};
 
 			video.preload = 'metadata';
