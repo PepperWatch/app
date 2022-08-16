@@ -1,16 +1,21 @@
 <template>
 
-	<q-btn-dropdown flat color="white" @click="onClick" :disable-dropdown="!isConnected" :disabled="!isSolanaLoaded" :loading="isConnecting">
+	<q-btn-dropdown v-model="menuState" flat color="white" :disabled="!isSolanaLoaded" :loading="isConnecting">
 		<template v-slot:label>
-			<img :src="phantomIcon" :class="{ muted: !isMetaplexInitialized }" v-if="phantomIcon" />{{displayCaption}}
+			<div class="btnLabel" @click="onClick" ><img :src="phantomIcon" :class="{ muted: !isMetaplexInitialized }" v-if="phantomIcon" /><span>{{displayCaption}}</span></div>
 		</template>
 		<q-list>
-			<q-item v-close-popup>
+			<q-item v-close-popup v-if="!isConnected && !isConnecting" clickable @click="switchChainType">
+				<q-item-section>
+					<q-item-label>Switch to {{otherChainType}}</q-item-label>
+				</q-item-section>
+			</q-item>
+			<q-item v-close-popup v-if="isConnected">
 				<q-item-section>
 					<q-item-label>Connected to {{chainType}}</q-item-label>
 				</q-item-section>
 			</q-item>
-			<q-item clickable v-close-popup @click="doDisconnect">
+			<q-item clickable v-close-popup v-if="isConnected" @click="doDisconnect">
 				<q-item-section>
 					<q-item-label>Disconnect</q-item-label>
 				</q-item-section>
@@ -26,9 +31,23 @@
 </template>
 
 <style scoped="scoped">
+	.btnLabel {
+		height: 20px;
+		line-height: 20px;
+		vertical-align: middle;
+	}
+
+	.btnLabel span {
+		height: 20px;
+		line-height: 20px;
+		vertical-align: middle;
+
+	}
+
 	img {
 		height: 20px;
 		margin-right: 8px;
+		vertical-align: middle;
 	}
 
 	img.muted {
@@ -52,8 +71,13 @@ export default {
 	},
 	data() {
 		return {
+			menuState: false,
+
+
 			solanaRequested: false,
 			metaplexRequested: false,
+
+			selectedChainType: null,
 
 			isSolanaLoaded: false,
 			isMetaplexLoaded: false,
@@ -76,11 +100,28 @@ export default {
 			if (this.isConnected) {
 				return this.displayAddress;
 			} else {
-				return 'Connect';
+				const displayChainType = (''+this.selectedChainType).split('-beta').join('');
+				return 'Connect to '+displayChainType;
 			}
 		},
+		otherChainType() {
+			if (this.selectedChainType == 'devnet') {
+				return 'mainnet-beta';
+			} else {
+				return 'devnet';
+			}
+		}
 	},
 	methods: {
+		switchChainType() {
+			if (this.selectedChainType == 'devnet') {
+				this.selectedChainType = 'mainnet-beta';
+			} else {
+				this.selectedChainType = 'devnet';
+			}
+
+			this.$store.solana.setSelectedChainType(''+this.selectedChainType);
+		},
 		onMetaplexStatus(isReady) {
 			this.isMetaplexInitialized = isReady;
 			// alert(isReady);
@@ -113,12 +154,13 @@ export default {
 			this.$store.solana.setProvider(null);
 		},
 		async onClick() {
-			const defaultChainType = this.$q.config.chainType;
-
+			setTimeout(()=>{
+				this.menuState = false;
+			}, 800);
 			this.isConnecting = true;
 
 			try {
-				await this.$refs.solana.connect(defaultChainType);
+				await this.$refs.solana.connect(this.selectedChainType);
 			} catch(e) {
 				this.isConnecting = false;
 
@@ -148,6 +190,11 @@ export default {
 		},
 	},
 	mounted: function() {
+		const defaultChainType = this.$q.config.chainType;
+		this.selectedChainType = defaultChainType;
+
+		this.$store.solana.setSelectedChainType(defaultChainType);
+
 		setTimeout(()=>{
 			this.solanaRequested = true;
 		}, 500);

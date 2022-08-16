@@ -10,7 +10,7 @@ import '@quasar/extras/material-icons/material-icons.css'
 export default {
 	quasar: {
 		config: {
-			dark: false,
+			dark: true,
 			basePath: (process.env.BUILD_PREFIXED ? ('/'+process.env.BUILD_PREFIXED) : ''),
 			brand: {
 				title: 'pepper.watch',

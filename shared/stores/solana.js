@@ -6,6 +6,7 @@ export const useSolanaStore = defineStore('solana', {
 		provider: null,
 		signedAddress: null,
 		chainType: null,
+		selectedChainType: null,
 	}),
 	getters: {
 		sessionId: function(){ // using this to watch
@@ -13,6 +14,9 @@ export const useSolanaStore = defineStore('solana', {
 		},
 	},
 	actions: {
+		setSelectedChainType(chainType) {
+			this.selectedChainType = chainType;
+		},
 		setProvider(provider) {
 			this.provider = provider;
 			if (!provider) {

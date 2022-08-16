@@ -19,9 +19,9 @@
                     <b>What is the economy behind?</b><br />
 
                     We are still working on it. Currently it's:<br />
-                    NFT owner receives 80%<br />
-                    NFT creator receives 10%<br />
-                    PepperWatch receives 10%<br />
+                    - NFT owner receives 80%<br />
+                    - NFT creator receives 10%<br />
+                    - PepperWatch receives 10%<br />
                 </p>
             </div>
             <div class="col-12 col-md-8">
@@ -96,9 +96,17 @@ export default {
             });
         },
         async loadItems() {
+            this.items = {
+                c1: [],
+                c2: [],
+                c3: [],
+            };
+
+            const chainType = this.$store.solana.selectedChainType;
             const resp = await this.$store.api.post({
                 path: 'api/home',
                 data: {
+                    chainType: chainType,
                 }});
 
             let i = 1;
@@ -117,9 +125,17 @@ export default {
         },
 	},
     computed: {
+        chainType: function() {
+            return this.$store.solana.selectedChainType;
+        },
     },
     mounted() {
         this.loadItems();
+
+        this.$watch('chainType', ()=>{
+            this.loadItems();
+        });
+
         // this.scrollHandlerDebounced = debounce((info)=>{
         //     const top = info.position.top;
         //     const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
