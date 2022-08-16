@@ -38,6 +38,18 @@
 							<a :href="'https://arweave.net/'+videoInfo.mintIpfsHash" target="_blank">{{videoInfo.mintIpfsHash}}</a>
 						</div>
 					</div>
+					<div v-if="videoInfo.privateResolution">
+						<div class="text-weight-bold non-selectable">Private Media Resolution</div>
+						<div class="text-grey q-pb-xs cut-text">
+							{{videoInfo.privateResolution}}
+						</div>
+					</div>
+					<div v-if="videoInfo.privateDuration">
+						<div class="text-weight-bold non-selectable">Private Media Duration</div>
+						<div class="text-grey q-pb-xs cut-text">
+							{{videoInfo.privateDuration}}
+						</div>
+					</div>
 					<div>
 						<div class="text-weight-bold non-selectable">Thumb IPFS Hash</div>
 						<div class="text-grey q-pb-xs cut-text">
@@ -384,6 +396,20 @@ export default {
 				this.videoInfo.videoURL = 'https://arweave.net/'+this.videoInfo.encodedIpfsHash;
 				this.videoInfo.videoTitle = ''+this.videoInfo.name;
 				this.videoInfo.videoDescription = ''+this.videoInfo.description;
+
+				if (json.properties && json.properties.private_resolution) {
+					this.videoInfo.privateResolution = json.properties.private_resolution;
+					this.videoInfo.privateDuration = json.properties.private_duration;
+
+					let infoString = 'Private media has resolution: '+this.videoInfo.privateResolution;
+					if (this.videoInfo.privateDuration) {
+						infoString += ' and duration: '+this.videoInfo.privateDuration;
+					}
+
+					setTimeout(()=>{
+						this.pushStatus(infoString);
+					}, 2000);
+				}
 
 				this.videoInfoLoaded = true;
 				this.pushStatus('NFT info loaded');
