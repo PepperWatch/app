@@ -6,6 +6,11 @@ const items = [
 		path: '/notifications',
 	},
 	{
+		title: 'NFTs',
+		path: '/videos',
+		icon: 'smart_display',
+	},
+	{
 		title: 'Users',
 		path: '/users',
 		icon: 'manage_accounts',

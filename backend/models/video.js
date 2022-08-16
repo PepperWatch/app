@@ -18,7 +18,8 @@ module.exports = function(mongoose, connection, db) {
         chainType: String,
         price: Number,
 
-        isMinted: {type: Boolean, default: false}
+        isMinted: {type: Boolean, default: false},
+        isVisibleOnHomepage: {type: Boolean, default: false},
     },
     { collection: 'videos', timestamps: true });
 
@@ -57,12 +58,33 @@ module.exports = function(mongoose, connection, db) {
 
     schema.methods.apiValues = function() {
         const response = this.toObject();
-        response._id = undefined;
+        // response._id = undefined;
         response.__v = undefined;
         response.key = undefined;
+        response.__modelName = 'Video';
 
         return response;
     }
+
+    schema.statics.onListQuery = async function(query, request) {
+        if (!request.user.hasLevelOf('superadmin')) {
+            throw new Error('You dont have rights to list for this path');
+        }
+    }
+    schema.statics.apiPost = async function(data, request) {
+        if (!request.user.hasLevelOf('superadmin')) {
+            throw new Error('You dont have rights for this path');
+        }
+    }
+    schema.methods.apiPut = async function(data, request) {
+        if (!request.user.hasLevelOf('superadmin')) {
+            throw new Error('You dont have rights for this path');
+        }
+    }
+    schema.methods.apiDelete = async function() {
+        throw new Error('You dont have rights for this path');
+    }
+
 
     var model = connection.model(modelName, schema);
     return {

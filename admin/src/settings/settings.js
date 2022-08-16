@@ -29,8 +29,8 @@ export default {
 				warning: '#F2C037'
 			},
 			menuItems: menuItems,
-			registrationDisabled: false, // default - false
-			signInWithGoogleDisabled: false, // default - false
+			registrationDisabled: true, // default - false
+			signInWithGoogleDisabled: true, // default - false
 		},
 		plugins: {
 			Dialog,

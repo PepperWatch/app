@@ -32,7 +32,7 @@ module.exports = {
 		port: process.env.PORT || 9090
 	},
 	database: {
-		"database": process.env.MONGODB_URI || "mongodb://localhost:27017/special",
+		"database": process.env.MONGODB_URI || "mongodb://localhost:27017/pepperwatch",
 		"dialect": "mongodb"
 	}
 };

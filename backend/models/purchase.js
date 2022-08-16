@@ -187,6 +187,25 @@ module.exports = function(mongoose, connection, db) {
         return response;
     }
 
+    schema.statics.onListQuery = async function(query, request) {
+        if (!request.user.hasLevelOf('superadmin')) {
+            throw new Error('You dont have rights to list for this path');
+        }
+    }
+    schema.statics.apiPost = async function(data, request) {
+        if (!request.user.hasLevelOf('superadmin')) {
+            throw new Error('You dont have rights for this path');
+        }
+    }
+    schema.methods.apiPut = async function(data, request) {
+        if (!request.user.hasLevelOf('superadmin')) {
+            throw new Error('You dont have rights for this path');
+        }
+    }
+    schema.methods.apiDelete = async function() {
+        throw new Error('You dont have rights for this path');
+    }
+
     var model = connection.model(modelName, schema);
     return {
         'modelName': modelName,

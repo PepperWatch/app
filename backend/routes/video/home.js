@@ -11,7 +11,7 @@ class Handler extends BaseExtraRoute {
             chainType: (req.body['chainType'] || null),
         };
 
-        const videos = await this.db.Video.find({chainType: data.chainType});
+        const videos = await this.db.Video.find({chainType: data.chainType, isVisibleOnHomepage: true});
         const ret = [];
         for (let video of videos) {
             ret.push(video.apiValues());
