@@ -19,9 +19,17 @@
                     <b>What is the economy behind?</b><br />
 
                     We are still working on it. Currently it's:<br />
-                    - NFT owner receives 80%<br />
-                    - NFT creator receives 10%<br />
-                    - PepperWatch receives 10%<br />
+
+                    <ul class="text-primary">
+                        <li>NFT owner receives 80%</li>
+                        <li>NFT creator receives 10%</li>
+                        <li>PepperWatch receives 10%</li>
+                    </ul>
+                </p>
+                <p class="text-primary">
+                    <a href="https://github.com/PepperWatch/app" target="_blank" class="text-primary">github</a>
+                    &nbsp;&nbsp;&nbsp;
+                    <a href="https://twitter.com/pepper_watch" target="_blank" class="text-primary">twitter</a>
                 </p>
             </div>
             <div class="col-12 col-md-8">

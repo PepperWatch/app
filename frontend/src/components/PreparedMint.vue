@@ -60,9 +60,9 @@
 
 						<div class="text-overline">
 
-							<q-btn size="sm" color="primary" icon="download" label="Download" :loading="downloading" @click="download"/>
-
-							&ndash; you can download encoded MP4 file, minting to blockchain is not required
+							<p class="text-primary" dense>
+								You can <q-btn size="sm" square color="primary" label="Download" :loading="downloading" @click="download"/> encoded MP4 file and <q-btn size="sm" square color="primary" to="/decode" label="Decode"/> it offline, minting is optional
+							</p>
 
 						</div>
 						<div class="text-overline">
@@ -237,7 +237,7 @@ export default {
 		userContainer: Object,
 		displayAsMinted: Boolean,
 	},
-    emits: ['watch', 'remove'],
+	emits: ['watch', 'remove'],
 	data() {
 		return {
 			showPassword: false,
@@ -354,9 +354,9 @@ export default {
 			const resp = await this.$store.api.post({
 				path: 'api/storeipfs',
 				data: {
-                    hash: this.userContainer.id,
-                    key: this.userContainer.getKeyAsHex(),
-                    price: this.price,
+					hash: this.userContainer.id,
+					key: this.userContainer.getKeyAsHex(),
+					price: this.price,
 				}});
 
 			console.log(resp);
@@ -447,27 +447,27 @@ export default {
 			await this.userContainer.download();
 			this.downloading = false;
 		},
-        async storeIPFSOnApi(mintedAddress, chainType) {
+		async storeIPFSOnApi(mintedAddress, chainType) {
 
 			const resp = await this.$store.api.post({
 				path: 'api/storeipfs',
 				data: {
-                    hash: this.userContainer.id,
-                    key: this.userContainer.getKeyAsHex(),
+					hash: this.userContainer.id,
+					key: this.userContainer.getKeyAsHex(),
 
-                    title: this.title,
+					title: this.title,
 
-                    encodedIpfsHash: this.ipfsHash,
-                    mintIpfsHash: this.mintIpfsHash,
-                    publicThumbIpfsHash: this.publicThumbIpfsHash,
+					encodedIpfsHash: this.ipfsHash,
+					mintIpfsHash: this.mintIpfsHash,
+					publicThumbIpfsHash: this.publicThumbIpfsHash,
 
-                    mintedAddress: mintedAddress,
-                    chainType: chainType,
-                    price: this.price,
+					mintedAddress: mintedAddress,
+					chainType: chainType,
+					price: this.price,
 				}});
 
-            return (resp.success || false);
-        },
+			return (resp.success || false);
+		},
 		async upload() {
 			this.uploading = true;
 
