@@ -32,14 +32,20 @@ export default class FileStorage {
 	initDB() {
 		return new Promise((res, rej)=>{
 			let request = indexedDB.open(this._cacheName, 4);
-			request.onerror = function() {
+			request.onerror = function(e) {
+				console.log('indexedDB onerror', e);
+
 				rej();
 			};
 			request.onupgradeneeded = ()=>{
+				console.log('indexedDB store onupgradeneeded');
+
 				const db = request.result;
 				try { db.createObjectStore('files', { keyPath: "url" }); } catch(e){ console.error(e); }
 			};
 			request.onsuccess = function() {
+				console.log('indexedDB store opened');
+
 				const db = request.result;
 				res(db);
 			};
