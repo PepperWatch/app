@@ -386,27 +386,32 @@ export default {
 		mint: async function() {
 			this.minting = true;
 
-			let tag = null;
 			try {
-				tag = await this.selectTag();
+				let tag = null;
+				try {
+					tag = await this.selectTag();
+				} catch(e) {
+					this.minting = false;
+					return;
+				}
+
+				const blockchainProvider = this.$store.solana.provider;
+				const chainType = blockchainProvider.chainType;
+				// const blockchainProvider = this.$store.getters['blockchain/provider'];
+
+				const success = await this.userContainer.mintOn(blockchainProvider, tag);
+
+				if (!success) {
+					console.error('error minting');
+				} else {
+					await this.storeIPFSOnApi(success, chainType); // success = mintedAddress
+				}
+
+				this.isMinted = this.userContainer.getIsMinted();
+
 			} catch(e) {
-				this.minting = false;
-				return;
+				console.error(e);
 			}
-
-			const blockchainProvider = this.$store.solana.provider;
-			const chainType = blockchainProvider.chainType;
-			// const blockchainProvider = this.$store.getters['blockchain/provider'];
-
-			const success = await this.userContainer.mintOn(blockchainProvider, tag);
-
-			if (!success) {
-				console.error('error minting');
-			} else {
-				await this.storeIPFSOnApi(success, chainType); // success = mintedAddress
-			}
-
-			this.isMinted = this.userContainer.getIsMinted();
 
 			this.minting = false;
 		},
@@ -471,14 +476,18 @@ export default {
 		async upload() {
 			this.uploading = true;
 
-			const blockchainProvider = this.$store.solana.provider;
-			await this.userContainer.uploadToIPFS(blockchainProvider);
+			try {
+				const blockchainProvider = this.$store.solana.provider;
+				await this.userContainer.uploadToIPFS(blockchainProvider);
 
-			this.ipfsHash = this.userContainer.getIPFSHash();
-			this.mintIpfsHash = this.userContainer.getMintIPFSHash();
-			this.publicThumbIpfsHash = this.userContainer.getPublicThumbIPFSHash();
+				this.ipfsHash = this.userContainer.getIPFSHash();
+				this.mintIpfsHash = this.userContainer.getMintIPFSHash();
+				this.publicThumbIpfsHash = this.userContainer.getPublicThumbIPFSHash();
 
-			await this.storeIPFSOnApi();
+				await this.storeIPFSOnApi();
+			} catch(e) {
+				console.error(e);
+			}
 
 			this.uploading = false;
 		},
