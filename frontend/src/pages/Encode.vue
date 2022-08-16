@@ -1,7 +1,7 @@
 <template>
 
   <div>
-    <h6>Prepare The Mint</h6>
+    <h6  class="text-primary">Prepare The Mint</h6>
 
     <q-stepper
       v-model="step"

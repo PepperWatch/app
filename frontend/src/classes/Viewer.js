@@ -145,9 +145,23 @@ export default class Viewer {
 				fileURL = await this.getVideoURL();
 			}
 
-			const res = await fetch(fileURL);
-			const blob = await res.blob();
-			blob.name = 'video.mp4';
+			const minSizeToBeTreatedAsError = 50 * 1024; // sometimes arweave returns broken data
+			const maxTries = 3;
+			let curTry = 0;
+
+			let blob = null;
+			do {
+				const res = await fetch(fileURL);
+				blob = await res.blob();
+				blob.name = 'video.mp4';
+			} while((!blob || blob.size < minSizeToBeTreatedAsError) && curTry++ < maxTries);
+
+			if (!blob || blob.size < minSizeToBeTreatedAsError) {
+				console.error('trying to load with extra get parameters');
+				const res = await fetch(fileURL + '?' + Math.random());
+				blob = await res.blob();
+				blob.name = 'video.mp4';
+			}
 
 			const uploadedContainer = new UploadedContainer({file: blob});
 			await uploadedContainer.decode(key);

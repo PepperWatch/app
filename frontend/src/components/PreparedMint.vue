@@ -61,7 +61,7 @@
 						<div class="text-overline">
 
 							<p class="text-primary" dense>
-								You can <q-btn size="sm" square color="primary" label="Download" :loading="downloading" @click="download"/> encoded MP4 file and <q-btn size="sm" square color="primary" to="/decode" label="Decode"/> it offline, minting is optional
+								You can <q-btn size="sm" square color="primary" label="Download" :loading="downloading" @click="download"/> an encoded MP4 file and <q-btn size="sm" square color="primary" to="/decode" label="Decode"/> it offline, minting is optional
 							</p>
 
 						</div>

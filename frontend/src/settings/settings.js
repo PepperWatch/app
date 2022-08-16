@@ -27,8 +27,8 @@ export default {
 				warning: '#F2C037'
 			},
 			registrationDisabled: false,
-			// chainType: 'mainnet-beta',
-			chainType: 'devnet',
+			chainType: 'mainnet-beta', // default one, use can switch to devnet
+			// chainType: 'devnet',
 		},
 		plugins: {
 			Dialog,

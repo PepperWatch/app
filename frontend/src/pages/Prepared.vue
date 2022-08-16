@@ -3,6 +3,9 @@
     <div>
         <h6 class="text-primary">Prepared Mints <q-btn to="/encode" color="primary">Encode New</q-btn> </h6>
 
+        <div class="rounded-borders q-pa-md q-my-md bg-primary q-card--bordered text-white" v-if="!isBrowserOptimizedFor && !initializing">
+            The minting process is optimized for desktop Google Chrome browser with Phantom wallet extension
+        </div>
 
         <div class="rounded-borders q-pa-md q-my-md bg-primary q-card--bordered text-white" style="display: none;">
             <h5><q-icon size="32px" name="info" color="red" bg-color="green" />We do not store your prepared mints</h5>
@@ -15,7 +18,7 @@
             <p>Publish your media to Blockchain (Mint Media) to sell it as NFT and make money selling its private content to the audience.</p>
         </div>
 
-        <div v-if="!records.length" class="rounded-borders q-pa-md q-my-md bg-negative q-card--bordered text-white">
+        <div v-if="!records.length && !initializing" class="rounded-borders q-pa-md q-my-md bg-negative q-card--bordered text-white">
             You have no prepared mints. Ready to <router-link to="/encode" class="text-white">create one</router-link>?
         </div>
 
@@ -67,6 +70,10 @@
 
         <MP4StegAsync />
 
+        <q-inner-loading :showing="initializing">
+            <q-spinner-gears size="50px" color="primary" />
+        </q-inner-loading>
+
     </div>
 
 </template>
@@ -98,6 +105,10 @@ export default {
 
             showSureRemove: false,
             sureRemoveId: null,
+
+            isBrowserOptimizedFor: false,
+
+            initializing: true,
 		}
 	},
     watch: {
@@ -137,7 +148,19 @@ export default {
         mints.restore()
             .then(()=>{
                 this.records = mints.records;
+
+                setTimeout(()=>{
+                    const isPhantomInstalled = window.phantom?.solana?.isPhantom;
+                    if (this.$q.platform.is.chrome &&  this.$q.platform.is.desktop && isPhantomInstalled) {
+                        this.isBrowserOptimizedFor = true;
+                    } else {
+                        this.isBrowserOptimizedFor = false;
+                    }
+
+                    this.initializing = false;
+                }, 500);
             });
+
     },
 }
 </script>

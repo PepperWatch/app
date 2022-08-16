@@ -74,7 +74,7 @@ module.exports = function(mongoose, connection, db) {
                 return false;
             }
 
-            const maxRetries = 10;
+            const maxRetries = 20;
             let curRetry = 0;
             let waitFor = 1000;
 
@@ -90,6 +90,9 @@ module.exports = function(mongoose, connection, db) {
                     }
                     if (curRetry > 7) {
                         waitFor = 5000;
+                    }
+                    if (curRetry > 12) {
+                        waitFor = 15000;
                     }
                 }
             } while(!tx && curRetry++ < maxRetries);
