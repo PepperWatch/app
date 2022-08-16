@@ -71,15 +71,33 @@ module.exports = function(mongoose, connection, db) {
             throw new Error('You dont have rights to list for this path');
         }
     }
-    schema.statics.apiPost = async function(data, request) {
-        if (!request.user.hasLevelOf('superadmin')) {
-            throw new Error('You dont have rights for this path');
-        }
+    schema.statics.apiPost = async function() {
+        throw new Error('You dont have rights for this path');
     }
     schema.methods.apiPut = async function(data, request) {
         if (!request.user.hasLevelOf('superadmin')) {
             throw new Error('You dont have rights for this path');
         }
+
+        // not editable fields
+        delete data.uniqId;
+        delete data.originalHash;
+        delete data.containerHash;
+        delete data.encodedIpfsHash;
+        delete data.publicThumbIpfsHash;
+        delete data.mintIpfsHash;
+        delete data.key;
+
+        ///
+        this.schema.eachPath((pathname) => {
+            if (data[pathname] !== undefined) {
+                this[pathname] = data[pathname];
+            } else if (data[pathname] === null) {
+                this[pathname] = undefined;
+            }
+        });
+
+        await this.save();
     }
     schema.methods.apiDelete = async function() {
         throw new Error('You dont have rights for this path');

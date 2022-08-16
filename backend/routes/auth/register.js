@@ -8,6 +8,9 @@ class Handler extends BaseExtraRoute {
 	}
 
     async handle(req, reply) {
+
+        return reply.send({success: false}); // hard-code disable
+
         const captcha = req.body.captcha;
         const username = ''+req.body.username;
         const email = ''+req.body.email;

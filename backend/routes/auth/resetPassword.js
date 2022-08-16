@@ -13,6 +13,9 @@ class Handler {
 
     async handle(req, reply) {
         await new Promise((res)=>setTimeout(res, 3000));
+
+        return reply.send({success: false}); // hard-code disable
+
         const captcha = req.body.captcha;
 
         let captchaIsGood = false;

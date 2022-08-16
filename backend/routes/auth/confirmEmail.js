@@ -10,6 +10,8 @@ class Handler extends BaseExtraRoute {
         await new Promise((res)=>setTimeout(res, 3000));
         const code = req.body.code;
 
+        return reply.send({success: false}); // hard-code disable
+
         if (!code) {
             return reply.send({
                 success: false,

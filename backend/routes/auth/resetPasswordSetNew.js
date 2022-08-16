@@ -14,6 +14,8 @@ class Handler {
     async handle(req, reply) {
         await new Promise((res)=>setTimeout(res, 3000));
 
+        return reply.send({success: false}); // hard-code disable
+
         const code = req.body.code;
         const password = req.body.password;
 

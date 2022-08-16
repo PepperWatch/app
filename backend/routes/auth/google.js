@@ -10,6 +10,8 @@ class Handler extends BaseExtraRoute {
     async handle(req, reply) {
         const credential = req.body.credential;
 
+        return reply.send({success: false}); // hard-code disable
+
         let ret = {
             success: false,
             authCode: null
