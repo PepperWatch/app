@@ -1,7 +1,9 @@
 # pepper.watch
 ## NFT as TV - an experiment on the Solana blockchain
 Platform/service to create, manage, distribute pay per view video NFTs
+
 [pepperwatch app](https://pepperwatch.com/)
+
 [demo video](https://www.youtube.com/watch?v=4Lw7CA-Fppc)
 
 ### Features
