@@ -23,6 +23,8 @@ class Handler extends BaseExtraRoute {
             mintedAddress: (req.body['mintedAddress'] || null),
             chainType: (req.body['chainType'] || null),
             price: (req.body['price'] || null),
+
+            collectionAddress: (req.body['collectionAddress'] || null),
         };
 
         if (data.hash) {
@@ -63,6 +65,10 @@ class Handler extends BaseExtraRoute {
                     foundByHashes.mintedAddress = data.mintedAddress;
                     foundByHashes.chainType = data.chainType;
                     foundByHashes.isMinted = true;
+
+                    if (data.collectionAddress) {
+                        foundByHashes.collectionAddress = data.collectionAddress;
+                    }
 
                     const price = parseFloat(data.price, 10);
                     if (price && price > 0 && price <= 1) {

@@ -73,6 +73,17 @@
 							</a>
 						</div>
 					</div>
+					<div v-if="videoInfo.collectionAddress">
+						<div class="text-weight-bold non-selectable">Collection Address</div>
+						<div class="text-grey q-pb-xs cut-text">
+							<a v-if="videoInfo.collectionAddress && videoInfo.chainType == 'devnet'" :href="'https://explorer.solana.com/address/'+videoInfo.collectionAddress+'?cluster=devnet'" target="_blank">
+								{{videoInfo.collectionAddress}}
+							</a>
+							<a v-if="videoInfo.collectionAddress && videoInfo.chainType == 'mainnet-beta'" :href="'https://explorer.solana.com/address/'+videoInfo.collectionAddress+''" target="_blank">
+								{{videoInfo.collectionAddress}}
+							</a>
+						</div>
+					</div>
 					<div>
 						<div class="text-weight-bold non-selectable">Chain Type</div>
 						<div class="text-negative q-pb-xs cut-text" v-if="invalidChainType">{{videoInfo.chainType}} (different than your connection)</div>

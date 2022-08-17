@@ -387,24 +387,34 @@ export default {
 			this.minting = true;
 
 			try {
-				let tag = null;
-				try {
-					tag = await this.selectTag();
-				} catch(e) {
-					this.minting = false;
-					return;
-				}
+				// let tag = null;
+				// try {
+				// 	tag = await this.selectTag();
+				// } catch(e) {
+				// 	this.minting = false;
+				// 	return;
+				// }
+
 
 				const blockchainProvider = this.$store.solana.provider;
 				const chainType = blockchainProvider.chainType;
 				// const blockchainProvider = this.$store.getters['blockchain/provider'];
 
-				const success = await this.userContainer.mintOn(blockchainProvider, tag);
+				let collection = null;
+
+				if (chainType == 'devnet') {
+					// todo: get rid of hard-coded addresses
+					collection = '3gRuHSUem719yWPzec3q1BjMDMabGJHvcXhCypXTLtPV';
+				} else {
+					collection = 'Bpj4XqH5FvMMw15ghUxcx5EQ5Zwd7opAffhaXWHJ9dqx'; // mainnet
+				}
+
+				const success = await this.userContainer.mintOn(blockchainProvider, collection);
 
 				if (!success) {
 					console.error('error minting');
 				} else {
-					await this.storeIPFSOnApi(success, chainType); // success = mintedAddress
+					await this.storeIPFSOnApi(success, chainType, collection); // success = mintedAddress
 				}
 
 				this.isMinted = this.userContainer.getIsMinted();
@@ -452,7 +462,7 @@ export default {
 			await this.userContainer.download();
 			this.downloading = false;
 		},
-		async storeIPFSOnApi(mintedAddress, chainType) {
+		async storeIPFSOnApi(mintedAddress, chainType, collectionAddress) {
 
 			const resp = await this.$store.api.post({
 				path: 'api/storeipfs',
@@ -468,6 +478,7 @@ export default {
 
 					mintedAddress: mintedAddress,
 					chainType: chainType,
+					collectionAddress: collectionAddress,
 					price: this.price,
 				}});
 

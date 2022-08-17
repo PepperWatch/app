@@ -158,17 +158,75 @@ export default class Phantom extends EventTarget {
 		console.error('myNfts', myNfts);
 	}
 
-	async mintContainer(userContainer) {
+	// async createCollection(name) {
+	// 	const collectionJson = {
+	// 		name: name,
+	// 	};
+
+	// 	let resp = await this._metaplex
+	// 		.nfts()
+	// 		.uploadMetadata(collectionJson)
+	// 		.run();
+	// 	const collectionUri = resp.uri;
+
+	// 	console.error(resp);
+	// 	console.error(collectionUri);
+
+	// 	resp = await this._metaplex
+	// 		.nfts()
+	// 		.create({
+	// 			uri: collectionUri,
+	// 			name: name,
+	// 			isCollection: true,
+	// 			// sellerFeeBasisPoints: 500, // Represents 5.00%.
+	// 		})
+	// 		.run();
+	// 	const collectionNft = resp.nft;
+
+	// 	console.error(collectionNft);
+	// 	console.error(''+collectionNft.address);
+
+	// 	const nftJson = {
+	// 		name: (name + 'inner'),
+	// 	};
+	// 	resp = await this._metaplex
+	// 		.nfts()
+	// 		.uploadMetadata(nftJson)
+	// 		.run();
+	// 	const nftUri = resp.uri;
+
+	// 	resp = await this._metaplex
+	// 		.nfts()
+	// 		.create({
+	// 			collection: new PublicKey(''+collectionNft.address),
+	// 			uri: nftUri,
+	// 			name: (name + 'inner'),
+	// 			sellerFeeBasisPoints: 500, // Represents 5.00%.
+	// 		})
+	// 		.run();
+	// 	const nft = resp.nft;
+
+	// 	console.error(nft);
+	// 	console.error(''+nft.address);
+	// }
+
+	async mintContainer(userContainer, collection = null) {
 		const token_uri = ""+userContainer.getMintIPFSHashURL();
 		const name = userContainer.getTitle();
 
+		const mintOptions = {
+			uri: token_uri,
+			name: name,
+			sellerFeeBasisPoints: 500, // Represents 5.00%.
+		};
+
+		if (collection) {
+			mintOptions.collection = new PublicKey(collection);
+		}
+
 		const { nft } = await this._metaplex
 			.nfts()
-			.create({
-				uri: token_uri,
-				name: name,
-				sellerFeeBasisPoints: 500, // Represents 5.00%.
-			})
+			.create(mintOptions)
 			.run();
 
 		console.error('nft', nft);

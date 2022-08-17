@@ -18,6 +18,8 @@ module.exports = function(mongoose, connection, db) {
         chainType: String,
         price: Number,
 
+        collectionAddress: String,
+
         isMinted: {type: Boolean, default: false},
         isVisibleOnHomepage: {type: Boolean, default: false},
     },
