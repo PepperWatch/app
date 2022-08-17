@@ -5,7 +5,7 @@
 
         <div class="row q-col-gutter-md">
             <div class="col-12 col-md-4">
-                <h1 class="text-primary" style="margin-top: 0;     margin-bottom: 16px;">NFT as TV</h1>
+                <h1 class="text-primary serif" style="margin-top: 0;     margin-bottom: 16px;">NFT as TV</h1>
 
                 <h5 class="text-primary">an experiment on the Solana blockchain</h5>
 
@@ -184,6 +184,10 @@ export default {
 
     .column-inner-2 {
         /*transform: translate3d(0px, 5vw, 0px);*/
+    }
+
+    .serif {
+        font-family: Helvetica,Arial,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,BlinkMacSystemFont,"Segoe UI",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
     }
 
 </style>
