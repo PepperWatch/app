@@ -9,4 +9,9 @@ module.exports = class User extends AbstractModel {
 		this.isVisibleOnHomepage = isVisible;
 		await this.save();
 	}
+
+	async markAsVerified() {
+		this.isCollectionVerified = true;
+		await this.save();
+	}
 }

@@ -31,6 +31,7 @@ export default {
 			menuItems: menuItems,
 			registrationDisabled: true, // default - false
 			signInWithGoogleDisabled: true, // default - false
+			chainType: 'mainnet-beta', // default one, use can switch to devnet
 		},
 		plugins: {
 			Dialog,

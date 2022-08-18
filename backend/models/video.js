@@ -19,6 +19,7 @@ module.exports = function(mongoose, connection, db) {
         price: Number,
 
         collectionAddress: String,
+        isCollectionVerified: {type: Boolean, default: false},
 
         isMinted: {type: Boolean, default: false},
         isVisibleOnHomepage: {type: Boolean, default: false},
@@ -90,6 +91,11 @@ module.exports = function(mongoose, connection, db) {
         delete data.mintIpfsHash;
         delete data.key;
 
+        delete data.mintedAddress;
+        delete data.chainType;
+        delete data.price;
+        delete data.collectionAddress;
+        delete data.isMinted;
         ///
         this.schema.eachPath((pathname) => {
             if (data[pathname] !== undefined) {

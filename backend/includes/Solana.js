@@ -41,9 +41,8 @@ class Solana {
         );
 
         const owner = ''+largestAccountInfo.value.data.parsed.info.owner;
-
         const metaplex = new Metaplex.Metaplex(this._connection);
-        const nft = await metaplex.nfts().findByMint(mint).run();
+        const nft = await metaplex.nfts().findByMint({mintAddress: mint}).run();
 
         const creator = ''+nft.creators[0].address;
 

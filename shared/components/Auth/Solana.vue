@@ -153,11 +153,20 @@ export default {
 
 			this.$store.solana.setProvider(null);
 		},
-		async onClick() {
+		async onClick(requestedChainType) {
 			setTimeout(()=>{
 				this.menuState = false;
 			}, 800);
 			this.isConnecting = true;
+
+			if (requestedChainType == 'devnet' || requestedChainType == 'mainnet-beta') {
+				if (this.$store.solana.provider) {
+					return;
+				}
+
+				this.selectedChainType = requestedChainType;
+				this.$store.solana.setSelectedChainType(''+requestedChainType);
+			}
 
 			try {
 				await this.$refs.solana.connect(this.selectedChainType);
@@ -199,9 +208,14 @@ export default {
 			this.solanaRequested = true;
 		}, 500);
 
-		this.$store.solana.$onAction(({name}) => {
+		this.$store.solana.$onAction(({name, args}) => {
 			if (name == 'request') {
-				this.onClick();
+				let requestChainType = null;
+				if (args[0]) {
+					requestChainType = args[0];
+				}
+
+				this.onClick(requestChainType);
 			}
 		});
 	}

@@ -114,6 +114,10 @@ export default class Phantom extends EventTarget {
 
 		this.log('Metaplex initialized.');
 
+		if (this.__metaplexWaitResolver) {
+			this.__metaplexWaitResolver();
+		}
+
 		// await this.getMyNFTs();
 	}
 
@@ -143,6 +147,27 @@ export default class Phantom extends EventTarget {
 		} else {
 			return false;
 		}
+	}
+
+	async waitForMetaplex() {
+		if (this.isMetaplexReady) {
+			return this._metaplex;
+		}
+
+		if (this.__metaplexWaitResolver) {
+			await this.__metaplexWait;
+			return this._metaplex;
+		}
+
+		this.__metaplexWaitResolver = null;
+		this.__metaplexWait = new Promise((res)=>{
+			this.__metaplexWaitResolver = res;
+		});
+
+		await this.__metaplexWait;
+		this.__metaplexWaitResolver = null;
+
+		return this._metaplex;
 	}
 
 	getMinimumPrice() {
@@ -209,6 +234,94 @@ export default class Phantom extends EventTarget {
 	// 	console.error(nft);
 	// 	console.error(''+nft.address);
 	// }
+
+	async migrateToSizedCollection(collectionAddress) {
+		await this.waitForMetaplex();
+
+		const migrateOptions = {
+			mintAddress: new PublicKey(collectionAddress),
+			size: 99999999,
+		};
+		const resp = await this._metaplex
+			.nfts()
+			.migrateToSizedCollection(migrateOptions)
+			.run();
+
+		if (resp && resp.response && resp.response.signature) {
+			return resp.response.signature;
+		}
+
+
+		return false;
+	}
+
+	// async moveNFTToCollection(mintedAddress, collectionAddress) {
+	// 	await this.waitForMetaplex();
+
+	// 	const options = {
+	// 		nftOrSft: {
+	// 			address: new PublicKey(mintedAddress),
+	// 		},
+	// 		collection: new PublicKey(collectionAddress),
+	// 		// isSizedCollection: false,
+	// 	};
+	// 	console.error(options);
+
+	// 	const resp = await this._metaplex
+	// 		.nfts()
+	// 		.update(options)
+	// 		.run();
+
+	// 	console.error(resp);
+	// }
+
+	async verifyCollection(mintedAddress, collectionAddress) {
+		await this.waitForMetaplex();
+
+		// await this.moveNFTToCollection(mintedAddress, collectionAddress);
+
+		// const migrateOptions = {
+		// 	mintAddress: new PublicKey(collectionAddress),
+		// 	size: 99999999,
+		// };
+		// const mresp = await this._metaplex
+		// 	.nfts()
+		// 	.migrateToSizedCollection(migrateOptions)
+		// 	.run();
+
+		// console.error(mresp);
+		// // igrateToSizedCollectionNft;
+		// return;
+
+		console.log(mintedAddress, collectionAddress);
+		const verifyOptions = {
+			mintAddress: new PublicKey(mintedAddress),
+			collectionMintAddress: new PublicKey(collectionAddress),
+			// isSizedCollection: false,
+		};
+
+		console.error(verifyOptions);
+
+		try {
+			const resp = await this._metaplex
+				.nfts()
+				.verifyCollection(verifyOptions)
+				.run();
+
+			if (resp && resp.response && resp.response.signature) {
+				return resp.response.signature;
+			}
+
+		} catch(e) {
+			if ((''+e).indexOf('is already verified') !== -1) {
+				return true;
+			}
+
+			console.error(e);
+		}
+
+		return false;
+	}
 
 	async mintContainer(userContainer, collection = null) {
 		const token_uri = ""+userContainer.getMintIPFSHashURL();
@@ -348,6 +461,8 @@ export default class Phantom extends EventTarget {
 					console.log('transaction sent', signature);
 				}
 			} catch(e) {
+				console.error(e);
+
 				success = false;
 				await new Promise((res)=>setTimeout(res, 1000));
 			}

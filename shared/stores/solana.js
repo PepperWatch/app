@@ -26,9 +26,31 @@ export const useSolanaStore = defineStore('solana', {
 				this.signedAddress = provider.connectedAddress;
 				this.chainType = provider.chainType;
 			}
+
+			if (this.__requestPromiseResolver) {
+				this.__requestPromiseResolver();
+				this.__requestPromiseResolver = null;
+			}
 		},
-		request() {
+		async request(chainType = null) {
 			// subscribe to this action in auth component
+			//
+			if (this.provider) {
+				return this.provider;
+			}
+
+			this.__requestPromiseResolver = null;
+			this.__requestPromise = new Promise((res)=>{
+				this.__requestPromiseResolver = res;
+			});
+
+			await this.__requestPromise;
+
+			if (!chainType || this.selectedChainType == chainType) {
+				return this.provider;
+			} else {
+				return null;
+			}
 		},
 	},
 });

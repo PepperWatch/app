@@ -8,6 +8,9 @@
 import DateHuman from 'shared/components/Helpers/DateHuman';
 import VideoPreview from './cells/VideoPreview';
 import VideoIsVisibleOnHomepage from './cells/VideoIsVisibleOnHomepage';
+import VideoCollectionVerified from './cells/VideoCollectionVerified';
+
+
 // import NotificationSubject from './cells/NotificationSubject';
 import { shallowRef} from 'vue';
 
@@ -59,6 +62,14 @@ export default {
 					align: 'left',
 					label: 'Address',
 					field: 'mintedAddress',
+					sortable: true
+				},
+				{
+					name: 'Verified',
+					align: 'left',
+					label: 'Verified',
+					field: 'isCollectionVerified',
+					component: shallowRef(VideoCollectionVerified),
 					sortable: true
 				},
 				{
