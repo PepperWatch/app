@@ -4,8 +4,8 @@
         <q-scroll-observer @scroll="onScroll" />
 
         <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-4">
-                <h1 class="text-primary serif" style="margin-top: 0;     margin-bottom: 16px;">NFT as TV</h1>
+            <div class="col-12 col-md-4 q-mb-sm">
+                <h1 class="text-primary serif" style="margin-top: 0; margin-bottom: 16px;">NFT as TV</h1>
 
                 <h5 class="text-primary">an experiment on the Solana blockchain</h5>
 
@@ -32,7 +32,7 @@
                     <a href="https://twitter.com/pepper_watch" target="_blank" class="text-primary">twitter</a>
                 </p>
             </div>
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-md-8 relative-position video-panes">
 
                 <div class="row q-col-gutter-md">
                     <div class="col-4">
@@ -63,6 +63,11 @@
 
                     </div>
                 </div>
+
+                <q-inner-loading :showing="isLoading">
+                    <q-spinner-rings size="50px" color="primary" />
+                </q-inner-loading>
+
             </div>
 
         </div>
@@ -88,6 +93,7 @@ export default {
                 c2: [],
                 c3: [],
             },
+            isLoading: false,
 		}
 	},
     watch: {
@@ -104,6 +110,8 @@ export default {
             });
         },
         async loadItems() {
+            this.isLoading = true;
+
             this.items = {
                 c1: [],
                 c2: [],
@@ -126,6 +134,8 @@ export default {
                     i = 1;
                 }
             }
+
+            this.isLoading = false;
 
             // this.items = resp.items;
             // const resp = await this.collection.list();
@@ -157,6 +167,18 @@ export default {
     },
 }
 </script>
+
+<style scoped="scoped">
+    .q-inner-loading--dark {
+        background: transparent;
+    }
+    .q-inner-loading {
+        background: transparent;
+    }
+    .video-panes {
+        min-height: 20vh;
+    }
+</style>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>

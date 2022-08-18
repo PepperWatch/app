@@ -15,7 +15,7 @@
 		</div>
 
         <q-inner-loading :showing="initializing">
-            <q-spinner-gears size="50px" color="primary" />
+            <q-spinner-rings size="50px" color="primary" />
         </q-inner-loading>
 	</div>
 
