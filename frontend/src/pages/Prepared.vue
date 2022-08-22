@@ -7,11 +7,13 @@
             The minting process is optimized for desktop Google Chrome browser with Phantom wallet extension
         </div>
 
-        <div class="rounded-borders q-pa-md q-my-md bg-primary q-card--bordered text-white">
+        <div class="rounded-borders q-pa-md q-my-md bg-primary q-card--bordered text-white q-pb-xs ">
             <h5 style="font-size: 20px;"><q-icon size="26px" name="info" color="white" bg-color="primary" />We do not store your prepared media</h5>
 
             <p>Note that everything you see on this page is stored in your browser cache.
             We respect your privacy and do not store any data about you neither your media files. You are free to download encoded media, store it on your local machine and decode any time you want on <router-link to="/decode" style="color: white">decode page</router-link>. Publish your media to Blockchain (Mint Media) to sell it as NFT and make money selling its private content to the audience.</p>
+
+            <p class="q-mb-xs">You can manage your minted NFTs on <router-link to="/yours" style="color: white">this page</router-link></p>
         </div>
 
         <div v-if="!records.length && !initializing" class="rounded-borders q-pa-md q-my-md bg-negative q-card--bordered text-white">
