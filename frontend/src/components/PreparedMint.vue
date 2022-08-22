@@ -83,13 +83,11 @@
 							<span v-if="showPassword">{{password}}</span>
 						</div>
 
-						<q-separator />
-
 					</div>
 
 					<div class="text-h5 q-mb-xs">
 
-						<q-input borderless v-model="title" label="Title" :disable="!!mintIpfsHash || displayAsMinted"/>
+						<q-input filled v-model="title" label="Title" :disable="!!mintIpfsHash || displayAsMinted"/>
 
 					</div>
 					<div class="text-h5 q-mb-xs">

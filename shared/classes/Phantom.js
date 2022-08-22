@@ -384,6 +384,7 @@ export default class Phantom extends EventTarget {
 
 		const mintOptions = {
 			uri: token_uri,
+			symbol: 'PPWATCH',
 			name: name,
 			sellerFeeBasisPoints: 500, // Represents 5.00%.
 		};
