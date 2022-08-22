@@ -100,19 +100,14 @@ export default {
 				this.info = this.nft;
 			}
 
-			console.error(this.info);
-
-			if (this.name == 'Ducks') {
-
-				// try to load from API
-				const resp = await this.$store.api.post({
-					path: 'api/byhash',
-					data: {
-						hash: this.address,
-					}});
-				if (resp && resp.mintedAddress) {
-					this.sInfo = resp;
-				}
+			// try to load from API
+			const resp = await this.$store.api.post({
+				path: 'api/byhash',
+				data: {
+					hash: this.address,
+				}});
+			if (resp && resp.mintedAddress) {
+				this.sInfo = resp;
 			}
 
 
