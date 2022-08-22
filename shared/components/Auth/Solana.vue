@@ -15,6 +15,11 @@
 					<q-item-label>Connected to {{chainType}}</q-item-label>
 				</q-item-section>
 			</q-item>
+			<q-item v-close-popup to="/yours" v-if="isConnected">
+				<q-item-section>
+					<q-item-label>Manage Your NFTs</q-item-label>
+				</q-item-section>
+			</q-item>
 			<q-item clickable v-close-popup v-if="isConnected" @click="doDisconnect">
 				<q-item-section>
 					<q-item-label>Disconnect</q-item-label>

@@ -1,4 +1,4 @@
-
+const crypto = require('crypto');
 
 module.exports = function(mongoose, connection, db) {
     var modelName = 'Video';
@@ -23,6 +23,9 @@ module.exports = function(mongoose, connection, db) {
 
         isMinted: {type: Boolean, default: false},
         isVisibleOnHomepage: {type: Boolean, default: false},
+
+        priceChangeRandomHash: {type: String, default: null},
+        priceChangeValue: {type: Number, default: null},
     },
     { collection: 'videos', timestamps: true });
 
@@ -59,11 +62,64 @@ module.exports = function(mongoose, connection, db) {
         return found;
     }
 
+    schema.methods.getOwnerAddress = async function() {
+        if (!this.mintedAddress) {
+            return null;
+        }
+
+        const solana = db.Setting.getSolana(this.chainType);
+        return await solana.getOwnerAddress(this.mintedAddress);
+    }
+
+    schema.methods.initializePriceChange = async function(price) {
+        const random = await new Promise((res, rej)=>{
+            crypto.randomBytes(64, function(err, buffer) {
+                if (err) {
+                    return rej(err);
+                }
+
+                res(buffer.toString('hex'));
+            });
+        });
+
+        this.priceChangeRandomHash = 'Change price to '+price+' at '+random;
+        this.priceChangeValue = price;
+
+        await this.save();
+    }
+
+    schema.methods.fulfillPriceChange = async function(signature) {
+        if (!this.priceChangeRandomHash || !this.priceChangeValue) {
+            return false;
+        }
+
+        try {
+            const ownerAddress = await this.getOwnerAddress();
+            const solana = db.Setting.getSolana(this.chainType);
+            const verified = await solana.verifySignedString(this.priceChangeRandomHash, signature, ownerAddress);
+
+            if (verified) {
+                this.price = this.priceChangeValue;
+            }
+
+            this.priceChangeValue = null;
+            this.priceChangeRandomHash = null;
+
+            await this.save();
+
+            return verified;
+        } catch(e) {
+            return false;
+        }
+    }
+
     schema.methods.apiValues = function() {
         const response = this.toObject();
         // response._id = undefined;
         response.__v = undefined;
         response.key = undefined;
+        response.priceChangeRandomHash = undefined;
+        response.priceChangeValue = undefined;
         response.__modelName = 'Video';
 
         return response;
@@ -96,6 +152,10 @@ module.exports = function(mongoose, connection, db) {
         delete data.price;
         delete data.collectionAddress;
         delete data.isMinted;
+        delete data.priceChangeRandomHash;
+        delete data.priceChangeValue;
+        ///
+        ///
         ///
         this.schema.eachPath((pathname) => {
             if (data[pathname] !== undefined) {

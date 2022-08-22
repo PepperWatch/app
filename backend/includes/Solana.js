@@ -1,5 +1,7 @@
 const solanaWeb3 =  require("@solana/web3.js");
 const Metaplex = require("@metaplex-foundation/js");
+const nacl = require('tweetnacl');
+const bs58 = require('bs58');
 
 class Solana {
     constructor(params = {}) {
@@ -31,7 +33,31 @@ class Solana {
         // console.error(tx.transaction.message.instructions[0].parsed);
     }
 
-    async getExpectedTransactionInstructionsFor(mintedAddress) {
+    hex2u8a(hexString) {
+        return new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+    }
+
+    async verifySignedString(message, signature, byAddress) {
+        try {
+            const signatureAsU8A = this.hex2u8a(signature);
+            const byAddressAsU8A = bs58.decode(byAddress);
+
+            const verified = nacl
+                .sign
+                .detached
+                .verify(
+                new TextEncoder().encode(message),
+                signatureAsU8A,
+                byAddressAsU8A
+                );
+
+            return verified;
+        } catch(e) {
+            return false;
+        }
+    }
+
+    async getOwnerAddress(mintedAddress) {
         await this.initialize();
         const mint = new solanaWeb3.PublicKey(mintedAddress);
 
@@ -39,8 +65,22 @@ class Solana {
         const largestAccountInfo = await this._connection.getParsedAccountInfo(
             largestAccounts.value[0].address
         );
-
         const owner = ''+largestAccountInfo.value.data.parsed.info.owner;
+
+        return owner;
+    }
+
+    async getExpectedTransactionInstructionsFor(mintedAddress) {
+        await this.initialize();
+        const mint = new solanaWeb3.PublicKey(mintedAddress);
+
+        // const largestAccounts = await this._connection.getTokenLargestAccounts(mint);
+        // const largestAccountInfo = await this._connection.getParsedAccountInfo(
+        //     largestAccounts.value[0].address
+        // );
+
+        const owner = await this.getOwnerAddress(mintedAddress);
+
         const metaplex = new Metaplex.Metaplex(this._connection);
         const nft = await metaplex.nfts().findByMint({mintAddress: mint}).run();
 

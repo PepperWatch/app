@@ -47,6 +47,14 @@ export default class Phantom extends EventTarget {
 		};
 	}
 
+	async getDefaultCollectionAddress() {
+		if (this.connectedNetName == 'devnet') {
+			return '3gRuHSUem719yWPzec3q1BjMDMabGJHvcXhCypXTLtPV';
+		} else {
+			return 'Bpj4XqH5FvMMw15ghUxcx5EQ5Zwd7opAffhaXWHJ9dqx'; // mainnet-dev
+		}
+	}
+
 	static guessAdapterClass() {
 		if (window.braveSolana) {
 			return BraveWalletAdapter;
@@ -174,14 +182,61 @@ export default class Phantom extends EventTarget {
 		return 0.001;
 	}
 
-	async getMyNFTs() {
-		const myNfts = await this._metaplex
+	async loadMetadata(input) {
+		await this.waitForMetaplex();
+
+		const info = await this._metaplex
 			.nfts()
-			.findAllByOwner(this._walletAdapter.publicKey)
+			.load({metadata: input})
 			.run();
 
-		console.error('myNfts', myNfts);
+		return info;
+
 	}
+
+	async getMyNFTs() {
+		await this.waitForMetaplex();
+
+		const myNfts = await this._metaplex
+			.nfts()
+			.findAllByOwner({owner: this._walletAdapter.publicKey})
+			.run();
+
+		const ret = [];
+		const collectionAddress = await this.getDefaultCollectionAddress();
+
+		myNfts.forEach((item)=>{
+			if ((''+item.collection?.address) == collectionAddress) {
+				ret.push(item);
+			}
+		});
+
+		return ret;
+		// console.error('myNfts', myNfts);
+	}
+
+	async getMyCreatedNFTs() {
+		await this.waitForMetaplex();
+
+		const myNfts = await this._metaplex
+			.nfts()
+			.findAllByCreator({creator: this._walletAdapter.publicKey})
+			.run();
+
+		return myNfts;
+		// console.error('myNfts', myNfts);
+	}
+
+	async signString(string) {
+		await this.waitForMetaplex();
+
+		let uint8Array = new TextEncoder("utf-8").encode(string);
+		const signature = await this._walletAdapter.signMessage(uint8Array);
+
+		const c = new Crypt();
+		return c.u8a2hex(signature);
+	}
+
 
 	// async createCollection(name) {
 	// 	const collectionJson = {

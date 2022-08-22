@@ -6,7 +6,7 @@
 		<div class="q-mt-md q-gutter-md text-center absolute-center">
 			<q-icon name="cloud_upload" class="text-primary" style="font-size: 64px;" />
 			<h6 class="text-primary">Upload .mp4 file</h6>
-			<p class="text-primary">max 20 MB</p>
+			<p class="text-primary">max 100 MB</p>
 		</div>
 	</div>
 
@@ -38,13 +38,13 @@ export default {
 				});
 		},
 		uploadUserFile: function(file) {
-			const maxSize = 20 * 1024 * 1024;
+			const maxSize = 100 * 1024 * 1024;
 			if (file.size > maxSize) {
 
 				this.$q.notify({
 					type: 'negative',
 					position: 'top-right',
-					message: 'Maximum file size is 20 MB',
+					message: 'Maximum file size is 100 MB',
 				});
 
 				return;

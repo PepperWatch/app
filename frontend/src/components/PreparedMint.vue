@@ -166,7 +166,7 @@
 
 		<q-separator />
 
-		<q-card-section horizontal class="row">
+		<q-card-section horizontal class="row" v-if="!isMinted">
 			<q-card-section class="col-12">
 
 				<div class="q-mb-xs  text-grey">
@@ -199,16 +199,17 @@
 		<q-card-actions  class="justify-around">
 			<!-- <q-btn flat color="primary" icon="upload" label="Test" @click="test" /> -->
 
+
+
 			<q-btn flat color="info" icon="info" label="Connect to Blockchain" @click="scrollToConnect" v-if="!ipfsAvailable" />
 
 			<!-- <q-btn flat color="primary" icon="download" label="Download" :loading="downloading" @click="download"/> -->
 			<q-btn flat color="primary" icon="upload" :disable="!ipfsAvailable" label="Upload to IPFS" :loading="uploading" @click="upload" v-if="!ipfsHash || !mintIpfsHash"/>
 			<!-- <q-btn flat type="a" :href="ipfsURL" target="_blank" color="primary" icon="open_in_new" label="Check on IPFS" v-if="ipfsHash"/> -->
 
-
-			<q-btn flat color="green" icon="price_change" :disable="!priceChangeAvailable" label="Commit Price Change" v-if="haveToChangePriceOnBlockchain" @click="commitPriceChange"/>
-
 			<q-btn flat type="a" :to="watchURL" color="primary" icon="open_in_new" label="Watch Page" v-if="isMinted"/>
+			<q-btn flat type="a" to="/yours" color="green" icon="price_change" label="Manage Your NFTs" v-if="isMinted"/>
+
 			<q-btn flat color="green" icon="bookmark" :disable="!mintAvailable" label="Mint" @click="mint" :loading="minting" v-if="!!mintIpfsHash && !isMinted"/>
 			<q-btn flat :disable="!!isMinted"  color="negative" icon="delete" label="Remove" @click="remove" v-if="!displayAsMinted" />
 

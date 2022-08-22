@@ -1,0 +1,166 @@
+<template>
+
+
+
+	<q-card class="nft q-mb-md" flat bordered>
+
+		<q-card-section horizontal>
+			<q-img :src="thumbURL" ref="image" class="col-2" height="220px" />
+			<q-card-section class="col-6 q-pt-xs">
+				<div class="text-overline">
+					<a v-if="address && chainType == 'devnet'" :href="'https://explorer.solana.com/address/'+address+'?cluster=devnet'" target="_blank">
+						{{address}}
+					</a>
+					<a v-if="address && chainType == 'mainnet-beta'" :href="'https://explorer.solana.com/address/'+address+''" target="_blank">
+						{{address}}
+					</a>
+				</div>
+				<div class="text-overline">
+				{{name}}
+				</div>
+				<div class="text-caption text-grey">
+				{{description}}
+				</div>
+			</q-card-section>
+			<q-card-section class="col-4 q-pt-xs">
+
+				<div class="text-overline">
+					<div class="text-overline">
+						Private Media
+					</div>
+				</div>
+
+				<div class="text-overline  text-grey">
+					{{privateMediaDuration}} ... {{privateMediaResolution}}
+				</div>
+
+				<div class="text-overline" v-if="priceFormatted">
+					<div class="text-overline">
+						Access Price
+					</div>
+				</div>
+
+				<div class="text-overline  text-grey" v-if="priceFormatted">
+					<q-btn color="primary" icon="edit" size="xs" round @click="editPrice" /> {{priceFormatted}} SOL
+					<!-- https://stackoverflow.com/questions/72414999/how-to-verify-the-signature-of-a-message-in-phantom-solana -->
+				</div>
+
+				<div class="text-overline">
+					<div class="text-overline">
+						Transactions
+					</div>
+				</div>
+
+				<div class="text-overline  text-grey">
+					<q-btn color="primary" icon="search" size="xs" round />
+				</div>
+			</q-card-section>
+		</q-card-section>
+
+	</q-card>
+
+</template>
+<script>
+
+export default {
+	name: 'MyNFT',
+	props: {
+		nft: Object,
+		chainType: String,
+	},
+	data() {
+		return {
+			infoLoaded: false,
+
+			info: {},
+			sInfo: {},
+			price: 1,
+			minimumPrice: 0,
+		}
+	},
+	mounted: function() {
+		this.loadInfo();
+	},
+	watch: {
+	},
+	methods: {
+		editPrice() {
+			this.$emit('editPrice', {
+				info: this.info,
+				sInfo: this.sInfo,
+			});
+		},
+		async loadInfo() {
+			const provider = this.$store.solana.provider;
+
+			if (this.nft.model == 'metadata') {
+				const info = await provider.loadMetadata(this.nft);
+				this.info = info;
+			} else {
+				this.info = this.nft;
+			}
+
+			console.error(this.info);
+
+			if (this.name == 'Ducks') {
+
+				// try to load from API
+				const resp = await this.$store.api.post({
+					path: 'api/byhash',
+					data: {
+						hash: this.address,
+					}});
+				if (resp && resp.mintedAddress) {
+					this.sInfo = resp;
+				}
+			}
+
+
+			this.infoLoaded = true;
+		}
+	},
+	computed: {
+		priceFormatted: function() {
+			if (this.sInfo && this.sInfo.price) {
+				return this.sInfo.price;
+			}
+
+			return null;
+		},
+		address: function() {
+			return (''+this.info?.mint?.address);
+		},
+		name: function() {
+			return (''+this.info?.name);
+		},
+		description: function() {
+			return (''+this.info?.json?.description);
+		},
+		thumbURL: function() {
+			if (this.info && this.info.json && this.info.json.image) {
+				return this.info.json.image;
+			}
+
+			return null;
+		},
+		privateMediaResolution: function() {
+			if (this.info && this.info.json && this.info.json.properties.private_resolution) {
+				return this.info.json.properties.private_resolution;
+			}
+
+			return null;
+		},
+		privateMediaDuration: function() {
+			if (this.info && this.info.json && this.info.json.properties.private_duration) {
+				return this.info.json.properties.private_duration;
+			}
+
+			return null;
+		}
+	}
+}
+</script>
+<style>
+
+
+</style>
