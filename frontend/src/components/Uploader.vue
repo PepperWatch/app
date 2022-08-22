@@ -5,7 +5,7 @@
 
 		<div class="q-mt-md q-gutter-md text-center absolute-center">
 			<q-icon name="cloud_upload" class="text-primary" style="font-size: 64px;" />
-			<h6 class="text-primary">Upload .mp4 file</h6>
+			<h6 class="text-primary">Upload .mp4 or .mov file</h6>
 			<p class="text-primary">max 100 MB</p>
 		</div>
 	</div>
