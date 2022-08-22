@@ -4,71 +4,75 @@
 
 		<q-card-section horizontal>
 			<q-img :src="thumbURL" ref="image" class="col-2" height="220px" />
-			<q-card-section class="col-6 q-pt-xs">
-				<div class="text-overline">
-				{{name}}
-				</div>
-				<div class="text-caption text-grey">
-				{{description}}
-				</div>
-				<div class="text-overline q-pb-xs">
-					<a v-if="address && chainType == 'devnet'" :href="'https://explorer.solana.com/address/'+address+'?cluster=devnet'" target="_blank">
-						{{address}}
-					</a>
-					<a v-if="address && chainType == 'mainnet-beta'" :href="'https://explorer.solana.com/address/'+address+''" target="_blank">
-						{{address}}
-					</a>
-				</div>
-				<div class="text-overline text-grey" v-if="!verified">
-					<q-avatar color="primary" text-color="white" icon="shield" size="20px" />
-					NFT is not yet verified by PepperWatch NFT collection owner
-				</div>
-				<div class="text-overline text-grey" v-if="verified">
-					<q-avatar color="primary" text-color="white" icon="verified_user" size="20px" />
-					NFT is verified
-				</div>
+			<q-card-section class="col-10 q-pt-xs">
+				<div class="row">
+					<div class="col-md-8 col-12">
+
+						<div class="text-overline">
+						{{name}}
+						</div>
+						<div class="text-caption text-grey">
+						{{description}}
+						</div>
+						<div class="text-overline q-pb-xs">
+							{{address}}
+						</div>
+						<div class="text-grey" v-if="!verified">
+							<q-avatar color="primary" text-color="white" icon="shield" size="25px" />
+							NFT is not yet verified by PepperWatch NFT collection owner
+						</div>
+						<div class="text-grey" v-if="verified">
+							<q-avatar color="primary" text-color="white" icon="verified_user" size="25px" />
+							NFT is verified
+						</div>
 
 
-				<div class="text-overline q-gutter-sm" v-if="address">
+						<div class="q-gutter-sm q-pt-sm" v-if="address">
 
-					<NFTLink forWhat="pepperwatch" :address="address" :chainType="chainType" />
-					<NFTLink forWhat="solscan" :address="address" :chainType="chainType" />
-					<NFTLink forWhat="opensea" :address="address" :chainType="chainType"  :disable="!verified" />
+							<NFTLink forWhat="pepperwatch" :address="address" :chainType="chainType" />
+							<NFTLink forWhat="solscan" :address="address" :chainType="chainType" />
+							<NFTLink forWhat="solana" :address="address" :chainType="chainType" />
+							<NFTLink forWhat="opensea" :address="address" :chainType="chainType"  :disable="!verified" />
 
-				</div>
-			</q-card-section>
-			<q-card-section class="col-4 q-pt-xs">
+						</div>
 
-				<div class="text-overline">
-					<div class="text-overline">
-						Private Media
+					</div>
+					<div class="col-md-4 col-12">
+
+						<div class="text-overline">
+							<div class="text-overline">
+								Private Media
+							</div>
+						</div>
+
+						<div class="text-overline  text-grey">
+							{{privateMediaDuration}} ... {{privateMediaResolution}}
+						</div>
+
+						<div class="text-overline" v-if="priceFormatted">
+							<div class="text-overline">
+								Access Price
+							</div>
+						</div>
+
+						<div class="text-overline  text-grey" v-if="priceFormatted">
+							<q-btn color="primary" icon="edit" size="xs" round @click="editPrice" /> {{priceFormatted}} SOL
+							<!-- https://stackoverflow.com/questions/72414999/how-to-verify-the-signature-of-a-message-in-phantom-solana -->
+						</div>
+
+						<div class="text-overline">
+							<div class="text-overline">
+								Transactions
+							</div>
+						</div>
+
+						<div class="text-overline  text-grey">
+							<q-btn color="primary" icon="search" size="xs" round />
+						</div>
+
 					</div>
 				</div>
 
-				<div class="text-overline  text-grey">
-					{{privateMediaDuration}} ... {{privateMediaResolution}}
-				</div>
-
-				<div class="text-overline" v-if="priceFormatted">
-					<div class="text-overline">
-						Access Price
-					</div>
-				</div>
-
-				<div class="text-overline  text-grey" v-if="priceFormatted">
-					<q-btn color="primary" icon="edit" size="xs" round @click="editPrice" /> {{priceFormatted}} SOL
-					<!-- https://stackoverflow.com/questions/72414999/how-to-verify-the-signature-of-a-message-in-phantom-solana -->
-				</div>
-
-				<div class="text-overline">
-					<div class="text-overline">
-						Transactions
-					</div>
-				</div>
-
-				<div class="text-overline  text-grey">
-					<q-btn color="primary" icon="search" size="xs" round />
-				</div>
 			</q-card-section>
 		</q-card-section>
 

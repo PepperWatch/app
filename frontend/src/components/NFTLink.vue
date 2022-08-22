@@ -30,6 +30,8 @@ export default {
 				return 'SolScan';
 			} else if (this.forWhat == 'pepperwatch') {
 				return 'PepperWatch';
+			} else if (this.forWhat == 'solana') {
+				return 'Solana';
 			}
 
 			return null;
@@ -41,6 +43,8 @@ export default {
 				return "https://solscan.io/token/"+this.address;
 			} else if (this.forWhat == 'pepperwatch') {
 				return "/v/"+this.address;
+			} else if (this.forWhat == 'solana') {
+				return "https://explorer.solana.com/address/"+this.address;
 			}
 
 			return '';
