@@ -1,7 +1,7 @@
 <template>
 
 	<div class="uploader text-center relative-position" @click="uploadClick" @dragenter="dragenter" @dragover="dragover" @dragleave="dragleave" @drop="drop" :class="{ dragOver: isDragging }">
-		<input type="file" @change="fileToUploadSelected" ref="fileInput" accept=".mp4">
+		<input type="file" @change="fileToUploadSelected" ref="fileInput" accept=".mp4,.mov">
 
 		<div class="q-mt-md q-gutter-md text-center absolute-center">
 			<q-icon name="cloud_upload" class="text-primary" style="font-size: 64px;" />
