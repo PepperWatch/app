@@ -69,10 +69,10 @@ export default class UserContainer {
 			"external_url": "https://pepperwatch.com/v/"+this.id,
 			"image": (""+this.getPublicThumbIPFSHashURL()),
 			"animation_url": (""+this.getIPFSHashURL()),
-			"collection":{
-				"name":"PepperWatch Master",
-				"family":"PepperWatch Master",
-			},
+			// "collection":{
+			// 	"name":"PepperWatch Master",
+			// 	"family":"PepperWatch Master",
+			// },
 			"attributes": [
 
 			],
