@@ -32,6 +32,8 @@ export default {
 				return 'PepperWatch';
 			} else if (this.forWhat == 'solana') {
 				return 'Solana';
+			} else if (this.forWhat == 'magiceden') {
+				return 'MagicEden';
 			}
 
 			return null;
@@ -45,6 +47,8 @@ export default {
 				return "/v/"+this.address;
 			} else if (this.forWhat == 'solana') {
 				return "https://explorer.solana.com/address/"+this.address;
+			} else if (this.forWhat == 'magiceden') {
+				return "https://magiceden.io/item-details/"+this.address;
 			}
 
 			return '';

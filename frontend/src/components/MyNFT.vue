@@ -32,7 +32,7 @@
 							<NFTLink forWhat="pepperwatch" :address="address" :chainType="chainType" />
 							<NFTLink forWhat="solscan" :address="address" :chainType="chainType" />
 							<NFTLink forWhat="solana" :address="address" :chainType="chainType" />
-							<NFTLink forWhat="opensea" :address="address" :chainType="chainType"  :disable="!verified" />
+							<NFTLink forWhat="magiceden" :address="address" :chainType="chainType" />
 
 						</div>
 
