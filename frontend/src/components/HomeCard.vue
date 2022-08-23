@@ -47,7 +47,9 @@ export default {
 			setTimeout(()=>{
 
 				// alert(this.$el.querySelector('img').height);
-			}, 100)
+			}, 100);
+
+			this.$emit('loaded');
 		},
 		onMouseenter() {
 			this.mouseenter = true;

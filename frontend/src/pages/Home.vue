@@ -37,27 +37,27 @@
                 <div class="row q-col-gutter-md">
                     <div class="col-4">
 
-                        <div class="column-inner-1 column-inner-shift">
+                        <div class="column-inner-1 column-inner-shift" ref="column_1">
                             <template v-for="item in items.c1"  :key="item._id" >
-                                <HomeCard :video="item" />
+                                <HomeCard :video="item" @loaded="homeCardLoaded" />
                             </template>
                         </div>
 
                     </div>
                     <div class="col-4">
 
-                        <div class="column-inner-2 ">
+                        <div class="column-inner-2 " ref="column_2">
                             <template v-for="item in items.c2"  :key="item._id" >
-                                <HomeCard :video="item" />
+                                <HomeCard :video="item" @loaded="homeCardLoaded" />
                             </template>
                         </div>
 
                     </div>
                     <div class="col-4">
 
-                        <div class="column-inner-1 column-inner-shift">
+                        <div class="column-inner-1 column-inner-shift"  ref="column_3">
                             <template v-for="item in items.c3"  :key="item._id" >
-                                <HomeCard :video="item" />
+                                <HomeCard :video="item" @loaded="homeCardLoaded" />
                             </template>
                         </div>
 
@@ -93,6 +93,9 @@ export default {
                 c2: [],
                 c3: [],
             },
+            itemsCount: 0,
+            loadedCount: 0,
+            itemsToAdd: [],
             isLoading: false,
 		}
 	},
@@ -108,6 +111,37 @@ export default {
             document.querySelectorAll('.column-inner-shift').forEach((elem)=>{
                 elem.style.transform = 'translate3d(0px, '+shift+'vw, 0px)';
             });
+        },
+        homeCardLoaded() {
+            this.loadedCount++;
+
+            setTimeout(()=>{
+                this.addWaitingItem();
+            }, 50);
+        },
+        addWaitingItem() {
+            if (!this.itemsToAdd.length) {
+                return;
+            }
+
+            let lowestHeightIsOnId = 1;
+            let lowestHeight = Infinity;
+
+            for (let i = 1; i <= 3; i++) {
+                let height = this.$refs['column_'+i].offsetHeight;
+                if (height < lowestHeight) {
+                    lowestHeight = height;
+                    lowestHeightIsOnId = i;
+                }
+            }
+
+            console.log('lowestHeight', lowestHeightIsOnId, lowestHeight);
+
+            const waitingItem = this.itemsToAdd.shift();
+
+            this.itemsCount++;
+
+            this.items['c'+lowestHeightIsOnId].push(waitingItem);
         },
         async loadItems() {
             this.isLoading = true;
@@ -125,15 +159,18 @@ export default {
                     chainType: chainType,
                 }});
 
-            let i = 1;
-            for (let item of resp.items) {
-                this.items['c'+i].push(item);
+            this.itemsToAdd = resp.items;
 
-                i++;
-                if (!this.items['c'+i]) {
-                    i = 1;
-                }
-            }
+            // let i = 1;
+            // for (let item of resp.items) {
+            //     this.items['c'+i].push(item);
+
+            //     i++;
+            //     if (!this.items['c'+i]) {
+            //         i = 1;
+            //     }
+            // }
+            this.addWaitingItem();
 
             this.isLoading = false;
 
