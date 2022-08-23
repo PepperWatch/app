@@ -3,6 +3,7 @@
 	<span>
 		<q-btn color="primary" icon="verified_user" :disabled="true" size="sm" round v-if="row.isCollectionVerified" :loading="isLoading" />
 		<q-btn color="primary" icon="shield" size="sm" round v-if="!row.isCollectionVerified" @click="onClick()" :loading="isLoading"/>
+		<q-btn color="primary" icon="shield" size="sm" round @click="onClick()" :loading="isLoading"/>
 		<!-- <q-toggle v-model="localValue" /> -->
 	</span>
 
@@ -28,14 +29,25 @@ export default {
 		async onClick() {
 			this.isLoading = true;
 
-			await this.$store.solana.request(this.row.chainType);
-			const provider = this.$store.solana.provider;
+			let provider = this.$store.solana.provider;
+			if (!provider) {
+				await this.$store.solana.request(this.row.chainType);
+				provider = this.$store.solana.provider;
+			}
 
 			let success = false;
 			try {
 				success = await provider.verifyCollection(this.row.mintedAddress, this.row.collectionAddress);
 			} catch(e) {
 				success = false;
+			}
+
+			if (success) {
+				try {
+					success = await provider.verifyCollectionCreator(this.row.mintedAddress);
+				} catch(e) {
+					success = false;
+				}
 			}
 
 			if (success) {

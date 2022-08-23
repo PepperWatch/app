@@ -330,6 +330,34 @@ export default class Phantom extends EventTarget {
 	// 	console.error(resp);
 	// }
 
+	// connected as creator
+	async verifyCollectionCreator(mintedAddress) {
+		await this.waitForMetaplex();
+
+		const verifyOptions = {
+			mintAddress: new PublicKey(mintedAddress),
+		};
+		try {
+			const resp = await this._metaplex
+				.nfts()
+				.verifyCreator(verifyOptions)
+				.run();
+
+			if (resp && resp.response && resp.response.signature) {
+				return resp.response.signature;
+			}
+
+		} catch(e) {
+			if ((''+e).indexOf('is already verified') !== -1) {
+				return true;
+			}
+
+			console.error(e);
+		}
+
+		return false;
+	}
+
 	async verifyCollection(mintedAddress, collectionAddress) {
 		await this.waitForMetaplex();
 
