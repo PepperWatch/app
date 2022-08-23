@@ -159,7 +159,11 @@ export default {
                     chainType: chainType,
                 }});
 
-            this.itemsToAdd = resp.items;
+            // random order
+            const array = resp.items;
+            array.sort(() => Math.random() - 0.5);
+
+            this.itemsToAdd = array;
 
             // let i = 1;
             // for (let item of resp.items) {
