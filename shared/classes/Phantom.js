@@ -382,11 +382,25 @@ export default class Phantom extends EventTarget {
 		const token_uri = ""+userContainer.getMintIPFSHashURL();
 		const name = userContainer.getTitle();
 
+		const creators = [];
+		const walletAdapter = this._walletAdapter;
+		creators.push({
+			address: walletAdapter.publicKey,
+			authority: walletAdapter,
+			share: 100,
+		});
+		creators.push({
+			address: new PublicKey("G1f6Zcykqkf7AWtgDmgh1SXoWcqov4TrAdzh49JY6bSp"),
+			share: 0,
+		});
+
+
 		const mintOptions = {
 			uri: token_uri,
 			symbol: 'PPWATCH',
 			isMutable: false,
 			name: name,
+			creators: creators,
 			sellerFeeBasisPoints: 500, // Represents 5.00%.
 		};
 
