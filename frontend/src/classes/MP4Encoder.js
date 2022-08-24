@@ -28,7 +28,7 @@ export default class MP4Encoder {
 	}
 
 	log(str) {
-		console.log('MP4 Encoder | ', str);
+		console.log('MP4 Encoder | '+(new Date()).toLocaleTimeString(), str);
 	}
 
 	getLastProcessedFrame() {

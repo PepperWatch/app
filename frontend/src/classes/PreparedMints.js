@@ -83,6 +83,8 @@ export default class PreparedMints {
 		}
 
 		console.error(records);
+		records.sort((a,b) => (a.get('createdAt', null) > b.get('createdAt', null)) ? -1 : ((b.get('createdAt', null) > a.get('createdAt', null)) ? 1 : 0))
+
 
 		for (let record of records) {
 			try {

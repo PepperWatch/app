@@ -210,6 +210,10 @@ export default class UserContainer {
 		this._publicThumbBlob = thumbBlob;
 	}
 
+	setPrivateThumbBlob(thumbBlob) {
+		this._privateThumbBlob = thumbBlob;
+	}
+
 	getIPFSHash() {
 		return this._encodedIPFSHash;
 	}
@@ -259,6 +263,14 @@ export default class UserContainer {
 	}
 	getPrice() {
 		return this._price;
+	}
+
+	getCreatedAt() {
+		if (this.indexedDBRecord) {
+			return this.indexedDBRecord.get('createdAt', null);
+		} else {
+			return null;
+		}
 	}
 
 	async setPrice(price, persist = false) {

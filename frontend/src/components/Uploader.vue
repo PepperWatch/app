@@ -1,13 +1,18 @@
 <template>
 
 	<div class="uploader text-center relative-position" @click="uploadClick" @dragenter="dragenter" @dragover="dragover" @dragleave="dragleave" @drop="drop" :class="{ dragOver: isDragging }">
-		<input type="file" @change="fileToUploadSelected" ref="fileInput" accept=".mp4,.mov">
+		<input type="file" @change="fileToUploadSelected" ref="fileInput" :accept="accept">
 
 		<div class="q-mt-md q-gutter-md text-center absolute-center">
 			<q-icon name="cloud_upload" class="text-primary" style="font-size: 64px;" />
-			<h6 class="text-primary">Upload .mp4 or .mov file</h6>
-			<p class="text-primary">max 100 MB</p>
+			<h6 class="text-primary">Upload {{acceptAsString}} file</h6>
+			<p class="text-primary">max {{maxSize}} MB</p>
 		</div>
+
+		<q-inner-loading :showing="isSelected">
+			<q-spinner-gears size="50px" color="primary" />
+			<p class="text-primary">{{selectedFilename}}</p>
+		</q-inner-loading>
 	</div>
 
 </template>
@@ -16,10 +21,28 @@ import UserFile from '../classes/UserFile.js';
 
 export default {
 	name: 'Uploader',
+	props: {
+		accept: {
+			type: String,
+			default: '.mp4,.mov',
+		},
+		maxSize: { // in MB
+			type: Number,
+			default: 100,
+		},
+	},
 	data() {
 		return {
 			dragCounter: 0,
 			isDragging: false,
+
+			isSelected: false,
+			selectedFilename: '',
+		}
+	},
+	computed: {
+		acceptAsString() {
+			return this.accept.split(',').join(' or ');
 		}
 	},
 	methods: {
@@ -38,13 +61,13 @@ export default {
 				});
 		},
 		uploadUserFile: function(file) {
-			const maxSize = 100 * 1024 * 1024;
+			const maxSize = this.maxSize * 1024 * 1024;
 			if (file.size > maxSize) {
 
 				this.$q.notify({
 					type: 'negative',
 					position: 'top-right',
-					message: 'Maximum file size is 100 MB',
+					message: 'Maximum file size is '+this.maxSize+' MB',
 				});
 
 				return;
@@ -53,6 +76,8 @@ export default {
 			const userFile = new UserFile({
 				file: file,
 			});
+			this.isSelected = true;
+			this.selectedFilename = file.name;
 
 			this.$emit('file', userFile);
 
