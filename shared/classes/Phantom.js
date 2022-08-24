@@ -104,7 +104,7 @@ export default class Phantom extends EventTarget {
 		metaplex.use(this._m.walletAdapterIdentity(this._walletAdapter));
 
 		const bundlrOptions = {
-			timeout: 60000,
+			timeout: 3*60000,
 		};
 
 		if (this._chainType == 'devnet') {
@@ -130,7 +130,7 @@ export default class Phantom extends EventTarget {
 	}
 
 	log(str) {
-		console.log('Phantom | '+str);
+		console.log('Phantom | '+(new Date()).toLocaleTimeString()+' | '+str);
 	}
 
 	get chainType() {
@@ -436,10 +436,14 @@ export default class Phantom extends EventTarget {
 			mintOptions.collection = new PublicKey(collection);
 		}
 
+		this.log('minting container...');
+
 		const { nft } = await this._metaplex
 			.nfts()
 			.create(mintOptions)
 			.run();
+
+		this.log('container minted');
 
 		console.error('nft', nft);
 
@@ -483,14 +487,17 @@ export default class Phantom extends EventTarget {
 	async uploadFile(browserFile) {
 		await this.init();
 
-		console.log('bundlr.address', this._bundlr.address);
-		const balance = await this._bundlr.getLoadedBalance()
-		this.log('Bundlr Balance: '+balance);
+		this.log('uploading file...');
+
+		// console.log('bundlr.address', this._bundlr.address);
+		const balance = await this._bundlr.getLoadedBalance();
+
+		this.log('Bundlr balance: '+balance);
 
 		const file = await this._m.toMetaplexFileFromBrowser(browserFile);
-		console.error(file);
+		// console.error(file);
 		const fileSize = file.buffer.length;
-		this.log('File size: '+fileSize);
+		// this.log('File size: '+fileSize);
 
 		const priceToUpload = await this._bundlr.getPrice(fileSize);
 

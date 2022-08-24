@@ -58,6 +58,10 @@ export default class MediaDownsample {
 	}
 
 	async getScreenShotBlob(timeInSeconds) {
+		if (timeInSeconds === undefined) {
+			timeInSeconds = this.originalDuration / 2;
+		}
+
 		timeInSeconds = Math.round(timeInSeconds / 0.01) * 0.01; // snap to 0.01 seconds
 
 		await this.prepare();
