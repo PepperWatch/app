@@ -1,6 +1,6 @@
 <template>
 
-	<span>
+	<span v-if="row.mintedAddress">
 		<q-toggle v-model="localValue" />
 	</span>
 

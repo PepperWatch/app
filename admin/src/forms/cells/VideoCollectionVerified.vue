@@ -1,9 +1,8 @@
 <template>
 
-	<span>
+	<span v-if="row.mintedAddress">
 		<q-btn color="primary" icon="verified_user" :disabled="true" size="sm" round v-if="row.isCollectionVerified" :loading="isLoading" />
 		<q-btn color="primary" icon="shield" size="sm" round v-if="!row.isCollectionVerified" @click="onClick()" :loading="isLoading"/>
-		<q-btn color="primary" icon="shield" size="sm" round @click="onClick()" :loading="isLoading"/>
 		<!-- <q-toggle v-model="localValue" /> -->
 	</span>
 
