@@ -9,6 +9,7 @@ import DateHuman from 'shared/components/Helpers/DateHuman';
 import VideoPreview from './cells/VideoPreview';
 import VideoIsVisibleOnHomepage from './cells/VideoIsVisibleOnHomepage';
 import VideoCollectionVerified from './cells/VideoCollectionVerified';
+import VideoAddress from './cells/VideoAddress';
 
 
 // import NotificationSubject from './cells/NotificationSubject';
@@ -62,6 +63,7 @@ export default {
 					align: 'left',
 					label: 'Address',
 					field: 'mintedAddress',
+					component: shallowRef(VideoAddress),
 					sortable: true
 				},
 				{

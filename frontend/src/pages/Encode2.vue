@@ -21,12 +21,12 @@
 
             <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
-                    <p>Please select the public part, will be visible for everybody:</p>
+                    <p>Please select the public part, which will be visible to everybody:</p>
 
                     <Uploader @filePrepared="filePreparedPublic" ref="originalUploaderPublic" accept="mp4" maxSize="20" />
                 </div>
                 <div class="col-12 col-md-6">
-                    <p>And the one (longer, better quality etc):</p>
+                    <p>And the one available for purchase (longer, better quality, etc):</p>
 
                     <Uploader @filePrepared="filePreparedPrivate" ref="originalUploaderPrivate"/>
                 </div>
@@ -84,7 +84,7 @@
         icon="enhanced_encryption"
         :done="step > 3"
         >
-            Encode content into container
+            Encode content into the container
 
             <q-stepper-navigation>
             <q-btn @click="doEncode" color="primary" label="Encode" :loading="encoding"/>

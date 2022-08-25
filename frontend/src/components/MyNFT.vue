@@ -80,7 +80,7 @@
 
 </template>
 <script>
-import NFTLink from './NFTLink';
+import NFTLink from 'shared/components/NFTLink';
 
 export default {
 	name: 'MyNFT',

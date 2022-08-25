@@ -73,10 +73,9 @@
 								<q-tooltip>
 									<p>Password is the KEY private content encoded inside NFT</p>
 
-									<p>The only case you need a password, if you don't want to mint encoded data as NFT and prefer to store it on your computer,
-										so nobody can purchase it.</p>
+									<p>The only case you need a password is if you don't want to mint encoded data as NFT and prefer to store it on your computer, so nobody can purchase it.</p>
 
-									<p>It would be all your private media, and you can decode anytime on <b>Decode</b> page with password.</p>
+									<p>It would be all your private media, and you can decode it anytime on the <b>Decode</b> page with a password.</p>
 								</q-tooltip>
 							</span>
 							<q-btn v-if="!showPassword" size="xs" flat round color="primary" icon="visibility" @click="showPassword = true;" />

@@ -11,7 +11,7 @@
             <h5 style="font-size: 20px;"><q-icon size="26px" name="info" color="white" bg-color="primary" />We do not store your prepared media</h5>
 
             <p>Note that everything you see on this page is stored in your browser cache.
-            We respect your privacy and do not store any data about you neither your media files. You are free to download encoded media, store it on your local machine and decode any time you want on <router-link to="/decode" style="color: white">decode page</router-link>. Publish your media to Blockchain (Mint Media) to sell it as NFT and make money selling its private content to the audience.</p>
+            We respect your privacy and do not store any data about you or your media files. You are free to download encoded media, store it on your local machine and decode it any time you want on the <router-link to="/decode" style="color: white">decode page</router-link>. Publish your media to Blockchain (Mint Media) to sell it as NFT and make money selling its private content to the audience.</p>
 
             <p class="q-mb-xs">You can manage your minted NFTs on <router-link to="/yours" style="color: white">this page</router-link></p>
         </div>

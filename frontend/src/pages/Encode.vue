@@ -19,12 +19,12 @@
 
             <p>Upload the video file you want to mint as NFT.</p>
 
-            <p>The system will let you extract the copy of it to be available to check out and watch publicly for anybody, while keeping the rest
-            (full-length high resolution original content) to paying watchers.</p>
+            <p>The system will let you extract the copy of it to be available to check out and watch publicly for anybody while keeping the rest
+            (full-length high-resolution original content) to paying watchers.</p>
 
-            <p>You are free to mint it as NFT on Blockchain or download and distribute in traditional ways.</p>
+            <p>You are free to mint it as NFT on Blockchain or download and distribute it in traditional ways.</p>
 
-            <Uploader @filePrepared="filePrepared" ref="originalUploader"/>
+            <Uploader @filePrepared="filePrepared" ref="originalUploader" maxSize="30"/>
             <q-btn color="primary" label="Or Use The Sample Video" @click="useSample" />
 
         </q-step>
@@ -37,14 +37,14 @@
         :done="step > 1"
         >
 
-            <p>Select the part of video you want to be available for public watching for free.</p>
+            <p>Select the part of the video you want to be available for public watching for free.</p>
 
             <p>And adjust blur settings if you want to reduce the quality.</p>
 
             <MediaDown :file="selectedFile" @blob="containerPrepared" @screenshotBlob="screenshotPrepared"/>
 
-            <p>Encoding is time-consuming process, please let it few minutes to do its job.
-            We are doing all calculations and ciphering in your browser window, nothing is sent to our servers, your privacy is important.</p>
+            <p>Encoding is a time-consuming process, please let it a few minutes to do its job.
+            We are doing all calculations and ciphering in your browser window, nothing is sent to our servers, and your privacy is important.</p>
 <!--
             <q-stepper-navigation>
             <q-btn @click="step = 2" color="primary" label="Continue"/>
@@ -80,7 +80,7 @@
         icon="enhanced_encryption"
         :done="step > 3"
         >
-            Encode content into container
+            Encode content into the container
 
             <q-stepper-navigation>
             <q-btn @click="doEncode" color="primary" label="Encode" :loading="encoding"/>

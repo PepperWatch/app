@@ -27,9 +27,15 @@
                     </ul>
                 </p>
                 <p class="text-primary">
-                    <a href="https://github.com/PepperWatch/app" target="_blank" class="text-primary">github</a>
-                    &nbsp;&nbsp;&nbsp;
-                    <a href="https://twitter.com/pepper_watch" target="_blank" class="text-primary">twitter</a>
+                    <b>Ready?</b><br />
+
+                    <q-btn unelevated color="primary" size="md" to="/mint">Mint!</q-btn>
+                </p>
+                <p class="text-primary q-gutter-sm">
+                    <b>or follow us:</b><br />
+
+                    <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://github.com/PepperWatch/app"><Icon forWhat="github" />&nbsp;github</q-btn>
+                    <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://twitter.com/pepper_watch"><Icon forWhat="twitter" />&nbsp;twitter</q-btn>
                 </p>
             </div>
             <div class="col-12 col-md-8 relative-position video-panes">
@@ -77,6 +83,7 @@
 
 <script>
 import HomeCard from '../components/HomeCard';
+import Icon from 'shared/components/Icon';
 
 export default {
 	name: 'Home',
@@ -85,6 +92,7 @@ export default {
 	},
     components: {
         HomeCard,
+        Icon,
     },
 	data() {
 		return {
