@@ -29,7 +29,7 @@
 
                     <q-video v-if="watchDialogVideoURL" :ratio="16/9" :src="watchDialogVideoURL" />
 
-                    <q-linear-progress :value="0.6" color="pink" />
+                    <q-linear-progress :value="0.6" color="primary" />
 
                     <q-card-section class="row items-center no-wrap">
                         <div>
@@ -39,9 +39,13 @@
 
                         <q-space />
 
-                        <q-btn flat round icon="fast_rewind" />
-                        <q-btn flat round icon="pause" />
-                        <q-btn flat round icon="fast_forward" />
+                        <div v-if="showWatchDialogIsPrivate">
+                            You are currently looking at the ciphered version of NFT, available only for users who purchased it.
+                        </div>
+                        <div v-if="!showWatchDialogIsPrivate">
+                            You are currently looking at the public version of NFT, available for anybody.
+                        </div>
+
                     </q-card-section>
                 </q-card>
             </q-dialog>
@@ -99,6 +103,7 @@ export default {
 			isActive: false,
             records: [],
             showWatchDialog: false,
+            showWatchDialogIsPrivate: null,
             watchDialogVideoURL: null,
 
             showSureRemove: false,
@@ -112,9 +117,12 @@ export default {
     watch: {
     },
 	methods: {
-        watch: function(blobURL) {
+        watch: function(blobURL, isPrivate) {
             // alert(blobURL);
 
+            // alert(isPrivate);
+
+            this.showWatchDialogIsPrivate = isPrivate;
             this.watchDialogVideoURL = blobURL;
             this.showWatchDialog = true;
 

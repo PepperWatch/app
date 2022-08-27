@@ -449,11 +449,11 @@ export default {
 		},
 		async watchPublic() {
 			const blobURL = await this.userContainer.getPublicBlobURL();
-			this.$emit('watch', blobURL);
+			this.$emit('watch', blobURL, false);
 		},
 		async watchPrivate() {
 			const blobURL = await this.userContainer.getPrivateBlobURL();
-			this.$emit('watch', blobURL);
+			this.$emit('watch', blobURL, true);
 		},
 		async download() {
 			this.downloading = true;

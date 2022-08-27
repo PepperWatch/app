@@ -5,38 +5,40 @@
 
         <div class="row q-col-gutter-md">
             <div class="col-12 col-md-4 q-mb-sm">
-                <h1 class="text-primary serif" style="margin-top: 0; margin-bottom: 16px;">NFT as TV</h1>
+                <div>
+                    <h1 class="text-primary serif" style="margin-top: 0; margin-bottom: 16px;">NFT as TV</h1>
 
-                <h5 class="text-primary">an experiment on the Solana blockchain</h5>
+                    <h5 class="text-primary">an experiment on the Solana blockchain</h5>
 
-                <p class="text-primary">
-                    Play with our <router-link to="/encode" class="text-primary">browser-based video editor</router-link>, encode your video files and mint them as NFTs to the blockchain. PepperWatch uses a sort of steganography to encode the private part of the video inside the public one. Playable in any media player, it has private media encoded inside.
-                </p>
-                <p class="text-primary">
-                    NFT owners can set any price for an encoded part of NFT, so anybody can purchase a unique key and watch NFT's private media.
-                </p>
-                <p class="text-primary">
-                    <b>What is the economy behind it?</b><br />
+                    <p class="text-primary">
+                        Play with our <router-link to="/encode" class="text-primary">browser-based video editor</router-link>, encode your video files and mint them as NFTs to the blockchain. PepperWatch uses a sort of steganography to encode the private part of the video inside the public one. Playable in any media player, it has private media encoded inside.
+                    </p>
+                    <p class="text-primary">
+                        NFT owners can set any price for an encoded part of NFT, so anybody can purchase a unique key and watch NFT's private media.
+                    </p>
+                    <p class="text-primary">
+                        <b>What is the economy behind it?</b><br />
 
-                    We are still working on it. Currently, it's:<br />
+                        We are still working on it. Currently, it's:<br />
 
-                    <ul class="text-primary">
-                        <li>NFT owner receives 80%</li>
-                        <li>NFT creator receives 10%</li>
-                        <li>PepperWatch receives 10%</li>
-                    </ul>
-                </p>
-                <p class="text-primary">
-                    <b>Ready?</b><br />
+                        <ul class="text-primary">
+                            <li>NFT owner receives 80%</li>
+                            <li>NFT creator receives 10%</li>
+                            <li>PepperWatch receives 10%</li>
+                        </ul>
+                    </p>
+                    <p class="text-primary">
+                        <b>Ready?</b><br />
 
-                    <q-btn unelevated color="primary" size="md" to="/mint">Mint!</q-btn>
-                </p>
-                <p class="text-primary q-gutter-sm">
-                    <b>or follow us:</b><br />
+                        <q-btn unelevated color="primary" size="md" to="/mint">Mint!</q-btn>
+                    </p>
+                    <p class="text-primary q-gutter-sm">
+                        <b>or follow us:</b><br />
 
-                    <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://github.com/PepperWatch/app"><Icon forWhat="github" />&nbsp;github</q-btn>
-                    <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://twitter.com/pepper_watch"><Icon forWhat="twitter" />&nbsp;twitter</q-btn>
-                </p>
+                        <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://github.com/PepperWatch/app"><Icon forWhat="github" />&nbsp;github</q-btn>
+                        <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://twitter.com/pepper_watch"><Icon forWhat="twitter" />&nbsp;twitter</q-btn>
+                    </p>
+                </div>
             </div>
             <div class="col-12 col-md-8 relative-position video-panes">
 
