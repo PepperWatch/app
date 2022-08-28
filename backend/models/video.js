@@ -59,6 +59,9 @@ module.exports = function(mongoose, connection, db) {
             found = await db.Video.findOne({mintedAddress: hash});
         }
         if (!found) {
+            found = await db.Video.findOne({originalHash: hash, isMinted: true});
+        }
+        if (!found) {
             found = await db.Video.findOne({originalHash: hash});
         }
 

@@ -2,10 +2,11 @@
 
 	<div>
 
-		<div class="fixed-bottom-right q-ma-lg row q-gutter-xs" style="z-index: 2;">
+		<div class="fixed-bottom-right q-ma-lg row q-gutter-xs" style="z-index: 2;" v-if="!nothingIsFound">
 			<q-btn color="primary" square flat text-color="primary" :label="currentStatus" class="gt-sm" />
 			<q-btn :color="invalidChainType ? 'negative' : 'primary'" square text-color="white" label="" icon="help_outline" :loading="!videoInfoLoaded" @click="showInfoDialog = true" />
 			<q-btn-group push square>
+				<q-btn color="primary" text-color="white" label="" icon="key" @click="showDecodeByKeyDialog = true" :loading="decoding" v-if="!purchased" :disabled="!byKeyEnabled" />
 				<q-btn color="white" text-color="primary" :label="priceLabel" />
 				<q-btn color="primary" text-color="white" label="Purchase" icon-right="add" :disabled="!purchaseEnabled" @click="purchase" :loading="purchasing" v-if="!purchased" />
 				<q-btn color="primary" text-color="white"
@@ -13,6 +14,14 @@
 					:icon-right="showingEncrypted ? 'no_encryption' : 'lock_clock'"
 					@click="showEncrypted" :loading="decoding" v-if="purchased" />
 			</q-btn-group>
+
+		</div>
+
+
+		<div class="fixed-bottom-right q-ma-lg row q-gutter-xs" style="z-index: 2;" v-if="nothingIsFound">
+			<q-btn color="primary" square flat text-color="primary" label="Hash is not found on the blockchain" class="gt-sm" />
+			<q-btn color="primary" square text-color="white" label="Upload The File" icon="file_upload" to="/decode" />
+
 		</div>
 
 		<div class="fixed-bottom-left q-ma-lg row q-gutter-xs" style="z-index: 2;">
@@ -114,6 +123,39 @@
 			</q-card>
 		</q-dialog>
 
+
+
+		<q-dialog v-model="showDecodeByKeyDialog" position="right">
+			<q-card style="max-width: 90vw;">
+				<q-linear-progress :value="0.6" color="primary" />
+
+				<q-card-section class="">
+					<div>
+						<div class="text-weight-bold">Have a key?</div>
+					</div>
+				</q-card-section>
+				<q-linear-progress :value="0.6" color="primary" />
+				<q-card-section class="">
+
+					<q-form class="q-gutter-md">
+						<q-input
+							filled
+							v-model="theKey"
+							label="The Key"
+							hint="The Key"
+							lazy-rules
+							style="width: 50vw;"
+						/>
+
+					<q-btn :color="errorInTheKey ? 'negative' : 'primary'" :loading="decoding" square text-color="white" :label="errorInTheKey ? 'Invalid Key' : 'Decode'" icon="key" @click="decodeByKey" />
+
+					</q-form>
+					<q-space />
+				</q-card-section>
+			</q-card>
+		</q-dialog>
+
+
 	</div>
 
 </template>
@@ -137,6 +179,8 @@ export default {
 
 			},
 			purchaseEnabled: false,
+			notFoundMinted: false,
+
 			invalidChainType: false,
 			statusItems: [],
 			currentStatus: '',
@@ -153,6 +197,15 @@ export default {
 			showingEncrypted: false,
 
 			showInfoDialog: false,
+
+
+			byKeyEnabled: false,
+			showDecodeByKeyDialog: false,
+			theKey: '',
+			errorInTheKey: false,
+
+
+			nothingIsFound: false,
 		}
 	},
 	methods: {
@@ -164,6 +217,36 @@ export default {
 			this.__clearLogStringTimeout = setTimeout(()=>{
 				this.currentStatus = '';
 			}, 3000);
+		},
+		async decodeByKey() {
+			this.decoding = true;
+
+			let error = false;
+			try {
+				if (!this.theKey) {
+					throw new Error('no key');
+				}
+
+				this.decodedURL = await this.viewer.getDecodedVideoURL(this.theKey, this.videoInfo.videoURL);
+				if (this.decodedURL) {
+					this.$emit('decoded', this.decodedURL);
+				} else {
+					error = true;
+				}
+			} catch(e) {
+				error = true;
+			}
+
+			if (error) {
+				this.errorInTheKey = true;
+				setTimeout(()=>{
+					this.errorInTheKey = false;
+				}, 2000);
+			} else {
+				this.showDecodeByKeyDialog = false;
+			}
+
+			this.decoding = false;
 		},
 		async showEncrypted() {
 			if (this.showingEncrypted) {
@@ -427,8 +510,20 @@ export default {
 
 				this.$emit('video', this.videoInfo);
 
-				this.purchaseEnabled = true;
+				if (this.videoInfo.price && this.videoInfo.isMinted) {
+					this.purchaseEnabled = true;
+				} else {
+					this.purchaseEnabled = false;
+					this.notFoundMinted = true;
+				}
+
+				if (this.videoInfo.videoURL && this.videoInfo.encodedIpfsHash) {
+					this.byKeyEnabled = true;
+				}
+
 				this.checkChainType();
+			} else {
+				this.nothingIsFound = true;
 			}
 
 			if (resp && resp.userEncryptionEncodedKey) {
@@ -462,6 +557,9 @@ export default {
 		priceLabel() {
 			if (this.videoInfo && this.videoInfo.price) {
 				return ''+this.videoInfo.price+' SOL';
+			}
+			if (this.notFoundMinted && this.videoInfoLoaded) {
+				return 'Not Minted Yet';
 			}
 
 			return null;
