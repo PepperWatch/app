@@ -24,7 +24,7 @@
 
             <p>You are free to mint it as NFT on Blockchain or download and distribute it in traditional ways.</p>
 
-            <Uploader @filePrepared="filePrepared" ref="originalUploader" maxSize="30"/>
+            <Uploader @filePrepared="filePrepared" ref="originalUploader" maxSize="40"/>
             <q-btn color="primary" label="Or Use The Sample Video" @click="useSample" />
 
         </q-step>
