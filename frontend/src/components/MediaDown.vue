@@ -31,14 +31,14 @@
 		</template>
 
 		</q-splitter>
-<!--
+
 		<q-item>
 			<q-item-section avatar>
 			</q-item-section>
 			<q-item-section>
-				<q-checkbox v-model="appendIntro" label="Append Intro" />
+				<q-checkbox v-model="appendOuttro" label="Append QR code at the end of the video, easier for end-user to find the purchase page" />
 			</q-item-section>
-		</q-item> -->
+		</q-item>
 
 		<q-item>
 		<q-item-section avatar>
@@ -115,7 +115,7 @@ export default {
     emits: ['blob', 'screenshotBlob'],
 	data() {
 		return {
-			appendIntro: false,
+			appendOuttro: true,
 			quality: 600,
 			blur: 0.01,
 			maxBlur: 20,
@@ -198,7 +198,7 @@ export default {
 				const screenshotBlob = await this.videoProcessor.getSrcreenShotBlob((this.selection.min + this.selection.max) / 2);
 				this.$emit('screenshotBlob', screenshotBlob);
 
-				const blob = await this.videoProcessor.makePreview(this.selection.min, this.selection.max, this.appendIntro);
+				const blob = await this.videoProcessor.makePreview(this.selection.min, this.selection.max, this.appendOuttro);
 				this.$emit('blob', blob);
 			} catch(e) {
 				console.error(e);

@@ -62,36 +62,39 @@ export default class VideoProcessor {
 		// return await trimmed.asBlob();
 	}
 
-	async makePreview(fromSeconds, toSeconds, appendIntro = true) {
+	async makePreview(fromSeconds, toSeconds, appendOuttro = true) {
 		this.expectedStages(5);
 
 		this.nextStage('Preparing');
 		await this.prepare();
-		const expectedLength = toSeconds - fromSeconds;
-		const expectedFrames = Math.ceil(expectedLength * 25);
+		// const expectedLength = toSeconds - fromSeconds;
+		// const expectedFrames = Math.ceil(expectedLength * 25);
 
 		// this.nextStage('Cutting the video', expectedFrames);
 		let trimmed = await this.downsampleVideo(fromSeconds, toSeconds);
 
-		if (!appendIntro) {
+		if (!appendOuttro) {
 			return await trimmed.asBlob();
 		}
 
 		const outtro = await this.getFinalPart();
+		await trimmed.executeOver('merge', {withVideo: outtro});
 
-		const introFile = new UserFile({url: '/intro.mp4'});
+		return await trimmed.asBlob();
 
-		this.nextStage('Loading the intro');
-		await introFile.prepare();
+		// const introFile = new UserFile({url: '/intro.mp4'});
 
-		this.nextStage('Scaling the intro', this._introLengthInFrames);
-		let intro = await VideoTask.execute('scale', {blob: introFile, toWidth: this.sampleWidth, toHeight: this.sampleHeight});
+		// this.nextStage('Loading the intro');
+		// await introFile.prepare();
 
-		this.nextStage('Final rendering', this._introLengthInFrames + expectedFrames);
-		await intro.executeOver('merge', {withVideo: trimmed, withVideo2: outtro});
+		// this.nextStage('Scaling the intro', this._introLengthInFrames);
+		// let intro = await VideoTask.execute('scale', {blob: introFile, toWidth: this.sampleWidth, toHeight: this.sampleHeight});
 
-		this.nextStage('Getting results');
-		return await intro.asBlob();
+		// this.nextStage('Final rendering', this._introLengthInFrames + expectedFrames);
+		// await intro.executeOver('merge', {withVideo: trimmed, withVideo2: outtro});
+
+		// this.nextStage('Getting results');
+		// return await intro.asBlob();
 		// await intro.download();
 	}
 
