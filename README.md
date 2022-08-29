@@ -8,7 +8,7 @@ Platform/service to create, manage and distribute pay-per-view video NFTs
 
 ### Features
 - browser-based video editor to create a public/free downsampled version of the video.
-- unique encryption to encode private media and free versions in the same video file(remember, there're containers in MP4 format).
+- unique encryption to encode private media and free versions in the same video file. [More info about how it works](https://pepperwatch.com/howitworks)
 - the ability to distribute media over ipfs/arweave or via classic social media, still letting creator and NFT owner get profit from it (yep, now it's ok if somebody downloads your NFT).
 - flexible platform, tens of ways to extend and implement the business model.
 - working MVP, ready to let you mint your video and earn some SOL.

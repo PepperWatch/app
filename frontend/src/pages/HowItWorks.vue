@@ -37,6 +37,8 @@
                 </q-dialog>
 
                 <div class="q-gutter-sm">
+                    <h6  class="text-primary">Check out the tech off-chain</h6>
+
                     <q-stepper
                     v-model="step"
                     vertical
@@ -51,6 +53,8 @@
                         icon="settings"
                         :done="false"
                         >
+
+
                             <q-btn label="Download" :percentage="downloadingProgress" @click="download" color="primary" eneleveted :loading="isDownloading" />
                         </q-step>
                     </q-stepper>
