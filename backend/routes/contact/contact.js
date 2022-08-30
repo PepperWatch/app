@@ -15,6 +15,18 @@ class Handler extends BaseExtraRoute {
             return reply.send({success: false});
         }
 
+        const captcha = req.body.captcha;
+
+        let captchaIsGood = false;
+        const reCaptcha = this._db.Setting.getReCaptcha(); // cached by Settings
+        captchaIsGood = await reCaptcha.check(captcha);
+
+
+        if (!captchaIsGood) {
+            reply.status(422);
+            return reply.send({success: false});
+        }
+
         await new Promise((res)=>{ setTimeout(res, 1000); });
 
         const mailer = await this._db.NotificationTemplate.getMailer();

@@ -38,6 +38,8 @@
                         :rules="[ val => val && val.length > 0 || 'Please type something']"
                     />
 
+                    <ReCaptcha ref="captcha" />
+
                     <q-btn type="submit" label="Send" color="primary" unelevated  :loading="isSending"  />
                 </q-form>
 
@@ -51,6 +53,7 @@
 </template>
 
 <script>
+import ReCaptcha from 'shared/components/Services/ReCaptcha';
 
 export default {
 	name: 'Contact Us',
@@ -58,6 +61,7 @@ export default {
 	props: {
 	},
     components: {
+        ReCaptcha,
     },
 	data() {
 		return {
@@ -75,14 +79,24 @@ export default {
         async send() {
             this.isSending = true;
 
+            const captchaToken = await this.$refs.captcha.token('contact');
 
-            const resp = await this.$store.api.post({
-                path: 'api/contact/contact',
-                data: {
-                    email: this.email,
-                    name: this.name,
-                    body: this.body,
-                }});
+            let resp = null;
+
+            try {
+
+                resp = await this.$store.api.post({
+                    path: 'api/contact/contact',
+                    data: {
+                        email: this.email,
+                        name: this.name,
+                        body: this.body,
+                        captcha: captchaToken,
+                    }});
+
+            } catch(e) {
+                console.error(e);
+            }
 
             if (resp && resp.success) {
                 this.isSent = true;

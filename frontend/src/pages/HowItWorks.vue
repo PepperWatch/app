@@ -18,6 +18,7 @@
 
                     <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://github.com/PepperWatch/app"><Icon forWhat="github" />&nbsp;github</q-btn>
                     <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://twitter.com/pepper_watch"><Icon forWhat="twitter" />&nbsp;twitter</q-btn>
+                    <q-btn unelevated outline color="white" text-color="primary" size="sm" to="/contact">contact us</q-btn>
                 </p>
 
             </div>
