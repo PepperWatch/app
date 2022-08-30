@@ -25,9 +25,9 @@ class Mailer {
         }
 
         // load settings
-        const needed             = ['smtpHost', 'smtpPort', 'smtpUsername', 'smtpPassword', 'smtpDefaultFrom', 'smtpSecure', 'mailDefaultTemplate'];
-        const neededLevelToRead  = ['superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin'];
-        const neededLevelToWrite = ['superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin'];
+        const needed             = ['contactEmail', 'smtpHost', 'smtpPort', 'smtpUsername', 'smtpPassword', 'smtpDefaultFrom', 'smtpSecure', 'mailDefaultTemplate'];
+        const neededLevelToRead  = ['superadmin',   'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin'];
+        const neededLevelToWrite = ['superadmin',   'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin', 'superadmin'];
 
         const loadedSettings = await this.db.Setting.find({name: {$in: needed}});
 

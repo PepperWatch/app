@@ -56,6 +56,15 @@
 						:rules="[ val => val && val.length > 0 || 'Please type something']"
 					/>
 
+					<q-input
+						filled
+						v-model="settings.contactEmail"
+						label="Contact Us Email"
+						hint="Contact Us Email"
+						lazy-rules
+						:rules="[ val => val && val.length > 0 || 'Please type something']"
+					/>
+
 					<Textarea
 						v-model="settings.mailDefaultTemplate"
 						label="Common Email Template"
@@ -150,6 +159,7 @@ export default {
 				smtpUsername: '',
 				smtpPassword: '',
 				smtpDefaultFrom: '',
+				contactEmail: '',
 				mailDefaultTemplate: '',
 			},
 			hasUnsaved: false,

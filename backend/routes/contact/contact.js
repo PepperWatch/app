@@ -18,7 +18,11 @@ class Handler extends BaseExtraRoute {
         await new Promise((res)=>{ setTimeout(res, 1000); });
 
         const mailer = await this._db.NotificationTemplate.getMailer();
-        const to = await this.db.Setting.get('smtpDefaultFrom');
+        const to = await this.db.Setting.get('contactEmail');
+
+        if (!to) {
+            return reply.send({success: false});
+        }
 
         let res = null;
         try {
