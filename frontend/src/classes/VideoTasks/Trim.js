@@ -35,7 +35,9 @@ export default class Trim extends Base {
 			.concat(['-crf', '20'])
 			// .concat(['-vcodec', 'copy'])
 			.concat(['-acodec', 'copy'])
+			.concat(['-r', '24'])
 			.concat(['output.mp4']);
+
 
 		await this.executeOnWorker(this.inputFiles, args); // this.inputFiles set in Base.prepareInputs
 		return this;

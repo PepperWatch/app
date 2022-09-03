@@ -6,7 +6,7 @@
 			<q-btn color="primary" square flat text-color="primary" :label="currentStatus" class="gt-sm" />
 			<q-btn :color="invalidChainType ? 'negative' : 'primary'" square text-color="white" label="" icon="help_outline" :loading="!videoInfoLoaded" @click="showInfoDialog = true" />
 			<q-btn-group push square>
-				<q-btn color="primary" text-color="white" label="" icon="key" @click="showDecodeByKeyDialog = true" :loading="decoding" v-if="!purchased" :disabled="!byKeyEnabled" />
+				<q-btn color="primary" class="gt-sm" text-color="white" label="" icon="key" @click="showDecodeByKeyDialog = true" :loading="decoding" v-if="!purchased" :disabled="!byKeyEnabled" />
 				<q-btn color="white" text-color="primary" :label="priceLabel" />
 				<q-btn color="primary" text-color="white" label="Purchase" icon-right="add" :disabled="!purchaseEnabled" @click="purchase" :loading="purchasing" v-if="!purchased" />
 				<q-btn color="primary" text-color="white"
