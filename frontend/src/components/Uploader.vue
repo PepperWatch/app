@@ -24,7 +24,7 @@ export default {
 	props: {
 		accept: {
 			type: String,
-			default: '.mp4,.mov',
+			default: '.mp4',
 		},
 		maxSize: { // in MB
 			type: Number,
