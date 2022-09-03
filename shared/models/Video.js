@@ -7,6 +7,14 @@ module.exports = class User extends AbstractModel {
 
 	async setIsVisibleOnHomepage(isVisible) {
 		this.isVisibleOnHomepage = isVisible;
+		if (!isVisible) {
+			this.isPriorityOnHomepage = false;
+		}
+		await this.save();
+	}
+
+	async setIsPriorityOnHomepage(isPrioritized) {
+		this.isPriorityOnHomepage = isPrioritized;
 		await this.save();
 	}
 

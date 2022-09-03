@@ -8,6 +8,7 @@
 import DateHuman from 'shared/components/Helpers/DateHuman';
 import VideoPreview from './cells/VideoPreview';
 import VideoIsVisibleOnHomepage from './cells/VideoIsVisibleOnHomepage';
+import VideoIsPriorityOnHomepage from './cells/VideoIsPriorityOnHomepage';
 import VideoCollectionVerified from './cells/VideoCollectionVerified';
 import VideoAddress from './cells/VideoAddress';
 
@@ -87,6 +88,14 @@ export default {
 					align: 'left',
 					label: 'Show On Homepage',
 					field: 'isVisibleOnHomepage',
+					sortable: true
+				},
+				{
+					name: 'Prioritize',
+					component: shallowRef(VideoIsPriorityOnHomepage),
+					align: 'left',
+					label: 'Prioritize',
+					field: 'isPriorityOnHomepage',
 					sortable: true
 				},
 

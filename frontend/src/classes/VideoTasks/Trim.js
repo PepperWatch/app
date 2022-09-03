@@ -35,7 +35,7 @@ export default class Trim extends Base {
 			.concat(['-crf', '20'])
 			// .concat(['-vcodec', 'copy'])
 			.concat(['-acodec', 'copy'])
-			.concat(['-r', '24'])
+			.concat(['-r', '30'])
 			.concat(['output.mp4']);
 
 
