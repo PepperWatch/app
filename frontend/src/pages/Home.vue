@@ -110,6 +110,7 @@ export default {
             itemsCount: 0,
             loadedCount: 0,
             itemsToAdd: [],
+            itemsToAddPriority: [],
             isLoading: false,
 		}
 	},
@@ -134,7 +135,7 @@ export default {
             }, 50);
         },
         addWaitingItem() {
-            if (!this.itemsToAdd.length) {
+            if (!this.itemsToAdd.length && !this.itemsToAddPriority.length) {
                 return;
             }
 
@@ -151,7 +152,14 @@ export default {
 
             console.log('lowestHeight', lowestHeightIsOnId, lowestHeight);
 
-            const waitingItem = this.itemsToAdd.shift();
+            let waitingItem = null;
+            if (this.itemsToAddPriority.length && Math.random() > 0.2) {
+                waitingItem = this.itemsToAddPriority.shift();
+            } else if (this.itemsToAdd.length) {
+                waitingItem = this.itemsToAdd.shift();
+            } else {
+                waitingItem = this.itemsToAddPriority.shift();
+            }
 
             this.itemsCount++;
 
@@ -175,9 +183,11 @@ export default {
 
             // random order
             const array = resp.items;
-            array.sort((a,b) => Math.random() - 0.5 + ((a.isPriorityOnHomepage && !b.isPriorityOnHomepage) ? -0.3 : 0)); // prioritize a little
+            array.sort((a,b) => Math.random() - 0.5);
 
-            this.itemsToAdd = array;
+
+            this.itemsToAdd = array.filter((item)=>{ return !item.isPriorityOnHomepage; });
+            this.itemsToAddPriority = array.filter((item)=>{ return item.isPriorityOnHomepage; });
 
             // let i = 1;
             // for (let item of resp.items) {
