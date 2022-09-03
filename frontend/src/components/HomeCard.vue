@@ -2,7 +2,7 @@
 
 	<q-card class="home-card" v-if="video" @mouseenter="onMouseenter" @mouseleave="onMouseleave" @click="onClick" ref="card">
 		<q-img :src="thumbURL" @load="imageLoaded" ref="image">
-		<div class="absolute-bottom text-subtitle2 text-center">
+		<div class="absolute-bottom text-subtitle2 text-center gt-sm">
 			{{video.title}}
 		</div>
 		</q-img>
