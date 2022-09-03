@@ -153,7 +153,7 @@ export default {
             console.log('lowestHeight', lowestHeightIsOnId, lowestHeight);
 
             let waitingItem = null;
-            if (this.itemsToAddPriority.length && Math.random() > 0.2) {
+            if (this.itemsToAddPriority.length && Math.random() > 0.5) {
                 waitingItem = this.itemsToAddPriority.shift();
             } else if (this.itemsToAdd.length) {
                 waitingItem = this.itemsToAdd.shift();
