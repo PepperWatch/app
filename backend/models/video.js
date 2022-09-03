@@ -23,6 +23,7 @@ module.exports = function(mongoose, connection, db) {
 
         isMinted: {type: Boolean, default: false},
         isVisibleOnHomepage: {type: Boolean, default: false},
+        isPriorityOnHomepage: {type: Boolean, default: false},
 
         priceChangeRandomHash: {type: String, default: null},
         priceChangeValue: {type: Number, default: null},

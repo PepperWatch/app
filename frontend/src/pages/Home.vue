@@ -175,7 +175,7 @@ export default {
 
             // random order
             const array = resp.items;
-            array.sort(() => Math.random() - 0.5);
+            array.sort((a,b) => Math.random() - 0.5 + ((a.isPriorityOnHomepage && !b.isPriorityOnHomepage) ? -0.3 : 0)); // prioritize a little
 
             this.itemsToAdd = array;
 
