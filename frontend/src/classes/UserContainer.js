@@ -63,9 +63,19 @@ export default class UserContainer {
 	}
 
 	async getMintJSON(contractAddress) {
+		let desc = '';
+		if (this._description) {
+			desc += this._description;
+			desc += ' ';
+		}
+
+		desc += "[Watch Video](https://pepperwatch.com/v/"+this.id+")";
+
+
+
 		const object = {
 			"name": (''+this._title),
-			"description": (''+this._description),
+			"description": desc,
 			"external_url": "https://pepperwatch.com/v/"+this.id,
 			"image": (""+this.getPublicThumbIPFSHashURL()),
 			"animation_url": (""+this.getIPFSHashURL()),
