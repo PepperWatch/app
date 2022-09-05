@@ -35,12 +35,17 @@
 
 				<q-card-section class="">
 					<div>
-						<div class="text-weight-bold">{{videoInfo.name}}</div>
+						<div class="text-weight-bold">
+							{{videoInfo.name}}
+						</div>
 						<div class="text-grey">{{videoInfo.descrition}}</div>
 					</div>
 				</q-card-section>
 				<q-linear-progress :value="0.6" color="primary" />
-				<q-card-section class="">
+				<q-card-section>
+					<div class="q-pb-md">
+						<NFTLink forWhat="magiceden" :address="videoInfo.mintedAddress" :chainType="videoInfo.chainType" />
+					</div>
 					<div>
 						<div class="text-weight-bold non-selectable">JSON IPFS Hash</div>
 						<div class="text-grey q-pb-xs cut-text">
@@ -164,6 +169,8 @@
 import Viewer from '../classes/Viewer';
 import Crypt from '../classes/Crypt';
 
+import NFTLink from 'shared/components/NFTLink';
+
 export default {
 	name: 'DecodeKeyPurchaser',
 	props: {
@@ -171,6 +178,9 @@ export default {
 			type: String, // hash is either NFT address or Mint JSON address hash or unique video key
 			default: '',
 		}
+	},
+	components: {
+		NFTLink,
 	},
 	data() {
 		return {
