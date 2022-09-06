@@ -199,6 +199,7 @@ export default {
             //     }
             // }
             this.addWaitingItem();
+            this.addWaitingItem();
 
             this.isLoading = false;
 
