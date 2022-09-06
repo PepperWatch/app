@@ -132,6 +132,10 @@ export default {
 
             setTimeout(()=>{
                 this.addWaitingItem();
+
+                if (this.loadedCount == 3) {
+                    this.addWaitingItem();
+                }
             }, 50);
         },
         addWaitingItem() {
@@ -198,7 +202,6 @@ export default {
             //         i = 1;
             //     }
             // }
-            this.addWaitingItem();
             this.addWaitingItem();
 
             this.isLoading = false;
