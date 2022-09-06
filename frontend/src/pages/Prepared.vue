@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <h6 class="text-primary">Prepared Mints <q-btn to="/encode" color="primary">Encode New</q-btn> </h6>
+        <h6 class="text-primary">Prepared Mints <q-btn to="/mint" color="primary">Encode New</q-btn> </h6>
 
         <div class="rounded-borders q-pa-md q-my-md bg-primary q-card--bordered text-white" v-if="!isBrowserOptimizedFor && !initializing">
             The minting process is optimized for desktop Google Chrome browser with Phantom wallet extension
@@ -17,7 +17,7 @@
         </div>
 
         <div v-if="!records.length && !initializing" class="rounded-borders q-pa-md q-my-md bg-negative q-card--bordered text-white">
-            You have no prepared mints. Ready to <router-link to="/encode" class="text-white">create one</router-link>?
+            You have no prepared mints. Ready to <router-link to="/mint" class="text-white">create one</router-link>?
         </div>
 
         <div v-for="record in records" v-bind:key="record.id">
