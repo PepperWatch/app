@@ -7,7 +7,7 @@
 
 				<div :class="{ videohere: true, videovisible: !initializing, }">
 					<div class="videoherein absolute-center">
-						<video v-if="urlDebounced" :src="urlDebounced" @play="onCanPlay" @error="onError" ref="video" muted autoplay loop controls />
+						<video v-if="urlDebounced" :src="urlDebounced" @play="onCanPlay" @error="onError" @click="onClick" ref="video" muted autoplay loop controls />
 					</div>
 				</div>
 
@@ -40,6 +40,18 @@ export default {
 		}
 	},
 	methods: {
+		onClick(ev) {
+			if (this.$refs.video.muted && !this.__unmutedByClick) {
+				this.__unmutedByClick = true;
+				this.$refs.video.muted = false;
+
+				if (this.$refs.video.volume > 0.5) {
+					this.$refs.video.volume = 0.5;
+				}
+
+				ev.preventDefault();
+			}
+		},
 		onError() {
 			this.urlDebounced = null;
 			this.__onErrorRetryTimeout = setTimeout(()=>{

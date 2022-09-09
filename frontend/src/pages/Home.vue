@@ -187,7 +187,7 @@ export default {
 
             // random order
             const array = resp.items;
-            array.sort((a,b) => Math.random() - 0.5);
+            array.sort(() => Math.random() - 0.5);
 
 
             this.itemsToAdd = array.filter((item)=>{ return !item.isPriorityOnHomepage; });
