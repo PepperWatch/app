@@ -70,7 +70,7 @@ export default {
 	computed: {
 		frontEndPath: function() {
 			if (process.env.API_URL) {
-				return 'http://localhost:8090';
+				return ''+process.env.API_URL;
 			}
 			return 'https://pepperwatch.com';
 		},
