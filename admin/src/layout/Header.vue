@@ -9,7 +9,7 @@
 			<q-space />
 
 			<Notifications />
-			<q-btn stretch flat :href="frontEndPath" label="Home" icon="arrow_back" />
+			<q-btn stretch flat :href="frontEndPath" label="Home" icon="arrow_back_ios" />
 			<DarkChanger />
 
 			<Solana />
@@ -69,7 +69,7 @@ export default {
 	},
 	computed: {
 		frontEndPath: function() {
-			if (process.env.API_URL && process.env.API_URL != 'https://pepperwatch.com/' && process.env.API_URL != 'https://pepperwatch.com') {
+			if (!process.env.BUILD_PREFIXED) {
 				return 'http://localhost:8090';
 			}
 			return 'https://pepperwatch.com';
