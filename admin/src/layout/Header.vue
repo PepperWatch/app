@@ -9,6 +9,7 @@
 			<q-space />
 
 			<Notifications />
+			<q-btn stretch flat :href="frontEndPath" label="Home" icon="arrow_back" />
 			<DarkChanger />
 
 			<Solana />
@@ -67,6 +68,12 @@ export default {
 		}
 	},
 	computed: {
+		frontEndPath: function() {
+			if (process.env.API_URL) {
+				return 'http://localhost:8090';
+			}
+			return 'https://pepperwatch.com';
+		},
 		registrationDisabled: function() {
 			return this.$q.config.registrationDisabled;
 		},
