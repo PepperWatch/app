@@ -58,6 +58,11 @@ const items = [
 					title: 'Storage',
 					path: '/settings_storage',
 					icon: 'save'
+				},
+				{
+					title: 'Telegram',
+					path: '/settings_telegram',
+					icon: 'save'
 				}
 		]
 	},

@@ -32,6 +32,7 @@
     "mp4steg": "PepperWatch/mp4steg",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.5",
+    "telegram": "^2.12.8",
     "winston": "^2.3.1"
   },
   "devDependencies": {
