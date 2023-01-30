@@ -9,7 +9,7 @@
 </style>
 
 <script>
-import Telegram from '../../classes/Telegram.js';
+import TelegramThoughWorker from '../../classes/drive/telegram/TelegramThoughWorker.js';
 
 export default {
 	name: 'TelegramSync',
@@ -23,7 +23,7 @@ export default {
 	methods: {
 	},
 	mounted: function() {
-		this.telegram = Telegram.getSingleton();
+		this.telegram = TelegramThoughWorker.getSingleton();
 
 		this.telegram.addEventListener('wait', (e) => {
 			this.$emit('wait', e.detail.what);

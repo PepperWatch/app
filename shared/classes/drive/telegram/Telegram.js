@@ -1,5 +1,5 @@
-import { Api, TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions";
+import { Api, TelegramClient } from "./telegram.js";
+// import { StringSession } from "telegram/sessions";
 
 import LocalCachedMethods from './abstract/LocalCachedMethods.js';
 
@@ -52,6 +52,10 @@ export default class Telegram extends LocalCachedMethods {
 
 	get Api() {
 		return Api;
+	}
+
+	get client() {
+		return this._client;
 	}
 
 	/**
@@ -126,7 +130,7 @@ export default class Telegram extends LocalCachedMethods {
 	}
 
 	/**
-	 * Decode stri
+	 * Decode stripped photo
 	 * @param  {Uint8Array} bytes data returned from TG api
 	 * @return {Uint8Array}       image data
 	 */

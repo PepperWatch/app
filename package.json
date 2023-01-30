@@ -21,6 +21,7 @@
     "@peculiar/webcrypto": "^1.4.0",
     "@slack/web-api": "^6.7.2",
     "axios": "^0.23.0",
+    "big-integer": "^1.6.48",
     "crypto-js": "^4.1.1",
     "ethereumjs-util": "^7.1.5",
     "fastify": "^4.2.0",
@@ -32,7 +33,7 @@
     "mp4steg": "PepperWatch/mp4steg",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.5",
-    "telegram": "^2.12.8",
+    "telegram": "github:PepperWatch/telegram",
     "winston": "^2.3.1"
   },
   "devDependencies": {
@@ -62,7 +63,10 @@
     "vue-recaptcha-v3": "^2.0.1",
     "vue-router": "^4.0.11",
     "vue3-apexcharts": "^1.4.1",
-    "vuedraggable": "^4.1.0"
+    "vuedraggable": "^4.1.0",
+    "babel-loader": "^8.2.2",
+    "ts-loader": "^8.0.16",
+    "worker-loader": "^3.0.8"
   },
   "eslintConfig": {
     "root": true,

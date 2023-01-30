@@ -89,14 +89,18 @@ export default {
 				this._telegram.cancelInitialization();
 			}
 		},
-		async onConnected(telegram) {
-			this._telegram = telegram;
+		async onConnected() {
+			// this._telegram = telegram;
 			this.isConnected = true;
 			this.photo = await this._telegram.getMePhoto();
+
+			this.$store.telegram.setProvider(this._telegram);
 		},
 		async onDisconnected() {
 			this.isConnected = false;
 			this.photo = null;
+
+			this.$store.telegram.setProvider(null);
 		},
 		async telegramLoaded(telegram) {
 			this._telegram = telegram;
@@ -107,7 +111,6 @@ export default {
 						.then((apiId)=>{
 							this._telegram.setApiId(apiId);
 						});
-					// alert(apiId);
 				} else if (what == 'apiHash') {
 					this.$store.settings.get('telegramApiHash')
 						.then((apiHash)=>{
@@ -125,6 +128,10 @@ export default {
 			if (connected) {
 				this.isConnected = true;
 				this.photo = await this._telegram.getMePhoto();
+
+				this.$store.telegram.setProvider(this._telegram);
+			} else {
+				this.$store.telegram.setProvider(null);
 			}
 			this.isConnecting = false;
 		},
@@ -150,6 +157,8 @@ export default {
 
 			if (success) {
 				this.photo = await this._telegram.getMePhoto();
+
+				this.$store.telegram.setProvider(this._telegram);
 			}
 		},
 		async disconnect() {
@@ -157,6 +166,8 @@ export default {
 			const success = await this._telegram.disconnect();
 			if (success) {
 				this.isConnected = false;
+
+				this.$store.telegram.setProvider(null);
 			}
 			this.isDisconnecting = false;
 		},
