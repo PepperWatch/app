@@ -9,6 +9,9 @@
     "start": "node app.js run",
     "heroku-postbuild": "node app.js build"
   },
+  "engines": {
+    "node": "16.13.0"
+  },
   "dependencies": {
     "@fastify/cookie": "^7.0.0",
     "@fastify/cors": "^8.0.0",
