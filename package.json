@@ -33,6 +33,7 @@
     "mp4steg": "PepperWatch/mp4steg",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.5",
+    "secp256k1": "^5.0.0",
     "telegram": "github:PepperWatch/telegram",
     "winston": "^2.3.1"
   },
@@ -47,6 +48,7 @@
     "apexcharts": "^3.35.3",
     "awesome-qr": "^2.1.5-rc.0",
     "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.2",
     "compression-webpack-plugin": "6.0.5",
     "core-js": "^3.6.5",
     "eslint": "^6.7.2",
@@ -57,6 +59,7 @@
     "quasar": "^2.6.6",
     "replace-in-file-webpack-plugin": "^1.0.6",
     "solana-wallets-vue": "0.4.3",
+    "ts-loader": "^8.0.16",
     "val-loader": "^2.1.2",
     "vue": "^3.0.0",
     "vue-cli-plugin-quasar": "~4.0.2",
@@ -64,8 +67,6 @@
     "vue-router": "^4.0.11",
     "vue3-apexcharts": "^1.4.1",
     "vuedraggable": "^4.1.0",
-    "babel-loader": "^8.2.2",
-    "ts-loader": "^8.0.16",
     "worker-loader": "^3.0.8"
   },
   "eslintConfig": {
