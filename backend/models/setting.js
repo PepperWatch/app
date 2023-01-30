@@ -5,6 +5,7 @@ const SignInWithGoogle = require('../includes/SignInWithGoogle.js');
 const Storage = require('../includes/Storage.js');
 const DeployChecker = require('../includes/DeployChecker.js');
 const Solana = require('../includes/Solana.js');
+const Telegram = require('../includes/Telegram.js');
 
 module.exports = function(mongoose, connection, db) {
     var modelName = 'Setting';
@@ -56,7 +57,7 @@ module.exports = function(mongoose, connection, db) {
      * @return {[type]} [description]
      */
     schema.statics.initialize = async function() {
-        const methods = ['getStorage', 'getSlack', 'getMailer', 'getReCaptcha', 'getSignInWithGoogle', 'getDeployChecker'];
+        const methods = ['getStorage', 'getSlack', 'getMailer', 'getReCaptcha', 'getSignInWithGoogle', 'getDeployChecker', 'getTelegram'];
         for (let method of methods) {
             const instance = await this[method]();
             if (instance.initialize) {
@@ -157,6 +158,18 @@ module.exports = function(mongoose, connection, db) {
         return this.__signInWithGoogle;
     };
 
+    schema.statics.getTelegram = function() {
+        if (this.__telegram) {
+            return this.__telegram;
+        }
+
+        this.__telegram = new Telegram({
+            db: db,
+        });
+
+        return this.__telegram;
+    };
+
     schema.statics.getMessageCommonTags = async function() {
         if (this.__messageCommonTags) {
             return this.__messageCommonTags;
@@ -197,6 +210,7 @@ module.exports = function(mongoose, connection, db) {
         this.__deployChecker = null;
         this.__settings = null;
         this.__solana = null;
+        this.__telegram = null;
     }
 
     var model = connection.model(modelName, schema);
