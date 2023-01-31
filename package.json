@@ -17,7 +17,7 @@
     "@fastify/cors": "^8.0.0",
     "@fastify/formbody": "^7.0.1",
     "@fastify/http-proxy": "^8.1.0",
-    "@fastify/static": "^6.4.0",
+    "@fastify/static": "6.4.0",
     "@metamask/eth-sig-util": "^4.0.1",
     "@metaplex-foundation/js": "0.15.0",
     "@metaplex-foundation/mpl-candy-machine": "4.3.0",
