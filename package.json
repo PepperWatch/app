@@ -51,7 +51,6 @@
     "apexcharts": "^3.35.3",
     "awesome-qr": "^2.1.5-rc.0",
     "babel-eslint": "^10.1.0",
-    "babel-loader": "^8.2.2",
     "compression-webpack-plugin": "6.0.5",
     "core-js": "^3.6.5",
     "eslint": "^6.7.2",

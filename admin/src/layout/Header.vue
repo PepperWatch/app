@@ -12,7 +12,7 @@
 			<q-btn stretch flat :href="frontEndPath" label="Home" icon="arrow_back_ios" />
 			<DarkChanger />
 
-			<Solana />
+			<!-- <Solana /> -->
 
 			<q-btn flat to="/profile" v-if="authenticated">
 				<q-icon name="person" size="sm" title="Profile Settings" />
@@ -30,7 +30,7 @@
 
 </template>
 <script>
-import Solana from 'shared/components/Auth/Solana.vue';
+// import Solana from 'shared/components/Auth/Solana.vue';
 import Logo from './Logo';
 import Auth from 'shared/components/Auth';
 import DarkChanger from 'shared/components/LayoutElements/DarkChanger.vue';
@@ -41,7 +41,7 @@ export default {
 	components: {
 		Logo,
 		Auth,
-		Solana,
+		// Solana,
 		// MaintenanceSwitcher,
 		DarkChanger,
 		Notifications,

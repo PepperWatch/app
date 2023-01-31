@@ -16,7 +16,7 @@
 			<Notifications />
 			<DarkChanger />
 
-			<Solana />
+			<!-- <Solana /> -->
 
 		</q-toolbar>
 
@@ -25,7 +25,7 @@
 
 </template>
 <script>
-import Solana from 'shared/components/Auth/Solana.vue';
+// import Solana from 'shared/components/Auth/Solana.vue';
 import Logo from './Logo';
 // import Auth from 'shared/components/Auth';
 import DarkChanger from 'shared/components/LayoutElements/DarkChanger.vue';
@@ -35,7 +35,7 @@ export default {
 	name: 'Header',
 	components: {
 		Logo,
-		Solana,
+		// Solana,
 		// Auth,
 		// MaintenanceSwitcher,
 		DarkChanger,
