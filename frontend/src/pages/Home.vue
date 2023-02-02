@@ -6,34 +6,23 @@
         <div class="row q-col-gutter-md">
             <div class="col-12 col-md-4 q-mb-sm">
                 <div>
-                    <h1 class="text-primary serif" style="margin-top: 0; margin-bottom: 16px;">NFT as TV</h1>
+                    <!-- <h1 class="text-primary serif" style="margin-top: 0; margin-bottom: 16px;">Another level of security for your media files</h1> -->
 
-                    <h5 class="text-primary">an experiment on the Solana blockchain</h5>
+                    <h5 class="text-primary">Another level of security for your media files</h5>
 
                     <p class="text-primary">
-                        Play with our <router-link to="/encode" class="text-primary">browser-based video editor</router-link>, encode your video files and mint them as NFTs to the blockchain. PepperWatch uses a sort of steganography to encode the private part of the video inside the public one. Playable in any media player, it has private media encoded inside.
+                        Hiding your private media files can help to prevent them from being shared or viewed by unauthorized individuals.
                     </p>
-                    <p class="text-primary">
+                    <!-- <p class="text-primary">
                         <router-link to="/howitworks" class="text-primary">How It Works?</router-link>
-                    </p>
+                    </p> -->
                     <p class="text-primary">
-                        NFT owners can set any price for an encoded part of NFT, so anybody can purchase a unique key and watch NFT's private media.
-                    </p>
-                    <p class="text-primary">
-                        <b>What is the economy behind it?</b><br />
-
-                        We are still working on it. Currently, it's:<br />
-
-                        <ul class="text-primary">
-                            <li>NFT owner receives 80%</li>
-                            <li>NFT creator receives 10%</li>
-                            <li>PepperWatch receives 10%</li>
-                        </ul>
+                        Steganography is a form of encryption that involves hiding sensitive data within media files such as images, audio, or video. PepperWatch's algorithm encodes your media files within the file in such a way that it can only be decoded with a password, or key. The files are invisible to the viewer without password/key due to use of encryption algorithms, meaning that contents remain secure. Additionally, the data are encrypted to ensure the security of the hidden information.
                     </p>
                     <p class="text-primary">
                         <b>Ready?</b><br />
 
-                        <q-btn unelevated color="primary" size="md" to="/mint">Mint!</q-btn>
+                        <q-btn unelevated color="primary" size="md" to="/telegram">Browse your Telegram storage</q-btn>
                     </p>
                     <p class="text-primary q-gutter-sm">
                         <b>or follow us:</b><br />
@@ -170,41 +159,43 @@ export default {
             this.items['c'+lowestHeightIsOnId].push(waitingItem);
         },
         async loadItems() {
-            this.isLoading = true;
+            return;
 
-            this.items = {
-                c1: [],
-                c2: [],
-                c3: [],
-            };
+            // this.isLoading = true;
 
-            const chainType = this.$store.solana.selectedChainType;
-            const resp = await this.$store.api.post({
-                path: 'api/home',
-                data: {
-                    chainType: chainType,
-                }});
+            // this.items = {
+            //     c1: [],
+            //     c2: [],
+            //     c3: [],
+            // };
 
-            // random order
-            const array = resp.items;
-            array.sort(() => Math.random() - 0.5);
+            // const chainType = this.$store.solana.selectedChainType;
+            // const resp = await this.$store.api.post({
+            //     path: 'api/home',
+            //     data: {
+            //         chainType: chainType,
+            //     }});
+
+            // // random order
+            // const array = resp.items;
+            // array.sort(() => Math.random() - 0.5);
 
 
-            this.itemsToAdd = array.filter((item)=>{ return !item.isPriorityOnHomepage; });
-            this.itemsToAddPriority = array.filter((item)=>{ return item.isPriorityOnHomepage; });
+            // this.itemsToAdd = array.filter((item)=>{ return !item.isPriorityOnHomepage; });
+            // this.itemsToAddPriority = array.filter((item)=>{ return item.isPriorityOnHomepage; });
 
-            // let i = 1;
-            // for (let item of resp.items) {
-            //     this.items['c'+i].push(item);
+            // // let i = 1;
+            // // for (let item of resp.items) {
+            // //     this.items['c'+i].push(item);
 
-            //     i++;
-            //     if (!this.items['c'+i]) {
-            //         i = 1;
-            //     }
-            // }
-            this.addWaitingItem();
+            // //     i++;
+            // //     if (!this.items['c'+i]) {
+            // //         i = 1;
+            // //     }
+            // // }
+            // this.addWaitingItem();
 
-            this.isLoading = false;
+            // this.isLoading = false;
 
             // this.items = resp.items;
             // const resp = await this.collection.list();
@@ -213,7 +204,7 @@ export default {
 	},
     computed: {
         chainType: function() {
-            return this.$store.solana.selectedChainType;
+            return false;
         },
     },
     mounted() {

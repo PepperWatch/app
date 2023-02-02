@@ -34,6 +34,7 @@
     .drive-folder-file {
         width: 100%;
         max-width: 100% !important;
+        cursor: pointer;
     }
     .rowItem img {
         height: 200px;

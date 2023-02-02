@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <h6  class="text-primary">Telegram Test</h6>
+        <h6  class="text-primary">Your Telegram Storage</h6>
 
         <Telegram />
 
@@ -24,8 +24,8 @@ import Drive from 'shared/components/Services/Telegram/Drive';
 // import Drive from 'shared/classes/drive/telegram/Drive.js';
 
 export default {
-	name: 'Telegram Test',
-    path: '/telegramtest',
+	name: 'Your Telegram Storage',
+    path: '/telegram',
 	props: {
 	},
     components: {

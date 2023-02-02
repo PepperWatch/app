@@ -322,10 +322,48 @@ export default class TelegramThoughWorker extends CommonTelegramMethods {
 		this._isConnected = await this.callWorker('initialize');
 
 		this._isInitializing = false;
-		this.__initializationPromiseResolver(this.isConnected);
+		this.__initializationPromiseResolver(this._isConnected);
 		this._initialized = true;
 
-		return this.isConnected;
+		return this._isConnected;
+	}
+
+	async disconnect() {
+		const disconnected = await this.callWorker('disconnect');
+		this.log('disconnected', disconnected);
+		if (disconnected) {
+			this.clearCache('telegram_session_me');
+			this.clearCache('telegram_session_photo');
+			this.clearCache('telegram_session');
+
+			this._me = null;
+
+			this.dispatchEvent(new CustomEvent('disconnected'));
+
+			return true;
+		}
+	}
+
+	async cancelInitialization() {
+		if (this._isConnected) {
+			return false;
+		}
+
+		this.__initializationPromiseResolver = null;
+		this.__initializationPromise = null;
+
+		this.__waitForPromiseResolver = null;
+		this.__waitForPromise = null;
+
+		this.waitingFor = {};
+
+		this._isConnecting = false;
+		this._isConnected = false;
+
+		this._worker = null;
+		this._me = null;
+
+		return true;
 	}
 
 	static getSingleton() {

@@ -103,6 +103,13 @@ export default {
             if (this.authenticated && !this.initialized) {
                 this.initialize();
                 // this.load();
+            } else if (!this.authenticated) {
+                this.folders = [];
+                this.drive = null;
+                this.browsing = false;
+                this.browsingReady = false;
+                this.browsingFolder = null;
+                this.initialized = false;
             }
         }
     },

@@ -10,7 +10,7 @@
 
 			<q-space />
 
-			<q-btn flat to="/prepared">Mint Yours</q-btn>
+			<!-- <q-btn flat to="/prepared">Mint Yours</q-btn> -->
 
 
 			<Notifications />

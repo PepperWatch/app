@@ -601,6 +601,12 @@ class TelegramWorker extends CommonTelegramMethods {
 
         return this.isConnected;
     }
+
+
+    async disconnect() {
+        const resp = await this.invoke(new this.Api.auth.LogOut({}));
+        return resp;
+    }
 }
 
 const telegramWorker = new TelegramWorker();
