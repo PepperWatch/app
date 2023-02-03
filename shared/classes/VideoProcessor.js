@@ -139,6 +139,9 @@ export default class VideoProcessor {
 			}
 		}
 
+		imageWidth = Math.floor(imageWidth / 2) * 2;
+		imageHeight = Math.floor(imageHeight / 2) * 2;
+
 		let canvas = null;
 		this.log('creating the canvas to convert image to png...');
 

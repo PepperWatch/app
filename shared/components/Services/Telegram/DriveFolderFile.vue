@@ -26,7 +26,6 @@
     .q-img__content img {
         opacity: 1;
         transition: opacity ease-in 500ms;
-        cursor: pointer;
     }
 
     .isToBeUploaded img {
