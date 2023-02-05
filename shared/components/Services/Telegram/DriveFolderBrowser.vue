@@ -1,6 +1,6 @@
 <template>
 
-    <div class="col-12 driveFolderBrowser" @dragenter="dragenter" @dragover="dragover" @dragleave="dragleave" @drop="drop" :class="{ dragOver: isDragging }">
+    <div class="col-12 driveFolderBrowser">
         <q-list>
             <q-infinite-scroll @load="loadMore" :offset="600" scroll-target="#drive-scroll">
                 <DriveFolderRow v-for="(item, index) in rows" :row="item" :key="index" ref="rows" @back="onBack" @click="onFileClick" />
@@ -147,58 +147,58 @@ export default {
 
             // await file.upload();
         },
-        drop: function(ev) {
-            // Prevent default behavior (Prevent file from being opened)
-            ev.preventDefault();
+        // drop: function(ev) {
+        //     // Prevent default behavior (Prevent file from being opened)
+        //     ev.preventDefault();
 
-            this.isDragging = false;
+        //     this.isDragging = false;
 
-            if (ev.dataTransfer.items) {
-                // Use DataTransferItemList interface to access the file(s)
-                for (let i = 0; i < ev.dataTransfer.items.length; i++) {
-                    // If dropped items aren't files, reject them
-                    if (ev.dataTransfer.items[i].kind === 'file') {
-                        const file = ev.dataTransfer.items[i].getAsFile();
-                        this.uploadUserFile(file);
-                    }
-                }
-            } else {
-                // Use DataTransfer interface to access the file(s)
-                for (let i = 0; i < ev.dataTransfer.files.length; i++) {
-                    // console.log('... 2 file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
-                    this.uploadUserFile(ev.dataTransfer.files[i]);
-                }
-            }
-            // this.$emit('files', this.fileListFileSet);
-        },
-        dragenter: function(ev) {
-            if (!ev.dataTransfer) {
-                return;
-            }
-            this.isDragging = true;
-            ev.stopPropagation();
-            ev.preventDefault();
-            this.dragCounter++;
-            ev.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-        },
-        dragover: function(ev) {
-            if (!ev.dataTransfer) {
-                return;
-            }
-            this.isDragging = true;
-            ev.stopPropagation();
-            ev.preventDefault();
-            ev.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-        },
-        dragleave: function(ev) {
-            if (!ev.dataTransfer) {
-                return;
-            }
-            this.dragCounter--;
-            if (this.dragCounter === 0) {
-                this.isDragging = false;
-            }
-        },
+        //     if (ev.dataTransfer.items) {
+        //         // Use DataTransferItemList interface to access the file(s)
+        //         for (let i = 0; i < ev.dataTransfer.items.length; i++) {
+        //             // If dropped items aren't files, reject them
+        //             if (ev.dataTransfer.items[i].kind === 'file') {
+        //                 const file = ev.dataTransfer.items[i].getAsFile();
+        //                 this.uploadUserFile(file);
+        //             }
+        //         }
+        //     } else {
+        //         // Use DataTransfer interface to access the file(s)
+        //         for (let i = 0; i < ev.dataTransfer.files.length; i++) {
+        //             // console.log('... 2 file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+        //             this.uploadUserFile(ev.dataTransfer.files[i]);
+        //         }
+        //     }
+        //     // this.$emit('files', this.fileListFileSet);
+        // },
+        // dragenter: function(ev) {
+        //     if (!ev.dataTransfer) {
+        //         return;
+        //     }
+        //     this.isDragging = true;
+        //     ev.stopPropagation();
+        //     ev.preventDefault();
+        //     this.dragCounter++;
+        //     ev.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+        // },
+        // dragover: function(ev) {
+        //     if (!ev.dataTransfer) {
+        //         return;
+        //     }
+        //     this.isDragging = true;
+        //     ev.stopPropagation();
+        //     ev.preventDefault();
+        //     ev.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+        // },
+        // dragleave: function(ev) {
+        //     if (!ev.dataTransfer) {
+        //         return;
+        //     }
+        //     this.dragCounter--;
+        //     if (this.dragCounter === 0) {
+        //         this.isDragging = false;
+        //     }
+        // },
         async loadMore(index, done) {
             if (this.browsing) {
 

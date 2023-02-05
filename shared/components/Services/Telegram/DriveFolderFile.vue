@@ -18,8 +18,8 @@
     </q-card>
 
 </template>
-<style type="text/css">
-    .q-img__content > div {
+<style type="text/css" scoped>
+    .q-img__content > .absolute-center {
         background-color: transparent !important;
     }
 

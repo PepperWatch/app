@@ -1,10 +1,6 @@
 <template>
 
     <div>
-        <h6  class="text-primary">Your Telegram Storage</h6>
-
-        <Telegram />
-
         <Drive />
 <!--
         <div>
@@ -19,7 +15,7 @@
 </template>
 
 <script>
-import Telegram from 'shared/components/Auth/Telegram';
+// import Telegram from 'shared/components/Auth/Telegram';
 import Drive from 'shared/components/Services/Telegram/Drive';
 // import Drive from 'shared/classes/drive/telegram/Drive.js';
 
@@ -29,7 +25,7 @@ export default {
 	props: {
 	},
     components: {
-        Telegram,
+        // Telegram,
         Drive,
     },
 	data() {

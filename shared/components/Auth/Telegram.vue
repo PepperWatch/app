@@ -1,6 +1,6 @@
 <template>
 
-	<q-btn color="primary" @click="showDialog = true;" :loading="isConnecting || isDisconnecting">
+	<q-btn color="white" text-color="primary" unelevated @click="showDialog = true;" :loading="isConnecting || isDisconnecting">
 		<div v-if="isConnected"><img v-if="photo" :src="photo" class="dialog_profile_photo"/> Disconnect</div>
 		<div v-if="!isConnected">Connect</div>
 	</q-btn>

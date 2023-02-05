@@ -1,27 +1,58 @@
 <template>
 
-    <div style="position: relative; height: 70vh; overflow-x: hidden; scroll-behavior: smooth;" ref="scrollDiv" id="drive-scroll">
-        <div class="foldersTab" ref="foldersTab">
-            <q-list bordered class="q-pa-md">
-                <q-infinite-scroll @load="loadMore" :offset="600" :debounce="50" scroll-target="#drive-scroll" >
-                    <DriveFolder v-for="folder in filteredFolders" v-bind:key="folder.name" :folder="folder" @browsing="onBrowsing" :hidden="browsing" />
-                    <div style="clear: both"></div>
-                    <template v-slot:loading>
-                        <div class="row justify-center q-my-md">
-                            <q-spinner-dots color="primary" size="40px" />
-                        </div>
-                    </template>
-                </q-infinite-scroll>
-            </q-list>
+    <div>
+        <q-toolbar class="bg-primary text-white">
+<!--         <q-btn flat round dense icon="assignment_ind">
+        <q-badge floating color="red">2</q-badge>
+        </q-btn> -->
+            <q-toolbar-title>
+                Your Telegram Files
+            </q-toolbar-title>
+
+            <q-btn color="white" text-color="primary" unelevated class="q-mr-xs"
+                icon="upload"
+                @click="onUploadClick"
+                :disable="uploadDisabled"
+                >
+                Upload
+            </q-btn>
+            <input type="file" @change="fileToUploadSelected" class="fileInput" ref="fileInput">
+            <AllBodyDropFileZone @file="fileToUploadSelected" />
+
+            <Telegram />
+
+<!--         <q-btn flat round dense icon="sim_card" class="q-mr-xs" />
+        <q-btn flat round dense icon="gamepad" /> -->
+        </q-toolbar>
+
+        <div style="position: relative; height: calc(100vh - 150px); overflow-x: hidden; scroll-behavior: smooth;" ref="scrollDiv" id="drive-scroll">
+            <div class="foldersTab" ref="foldersTab">
+                <q-list>
+                    <q-infinite-scroll @load="loadMore" :offset="600" :debounce="50" scroll-target="#drive-scroll" >
+                        <DriveFolder v-for="folder in filteredFolders" v-bind:key="folder.name" :folder="folder" @browsing="onBrowsing" :hidden="browsing" />
+                        <div style="clear: both"></div>
+                        <template v-slot:loading>
+                            <div class="row justify-center q-my-md">
+                                <q-spinner-dots color="primary" size="40px" />
+                            </div>
+                        </template>
+                    </q-infinite-scroll>
+                </q-list>
+            </div>
+            <div class="browsingTab" ref="browsingTab" :class="{ active: browsingReady }">
+                <DriveFolderBrowser ref="driveFolderBrowser" v-if="browsing" :folder="browsingFolder" @back="onBack" @ready="onBrowsingReady" />
+            </div>
         </div>
-        <div class="browsingTab" ref="browsingTab" :class="{ active: browsingReady }">
-            <DriveFolderBrowser v-if="browsing" :folder="browsingFolder" @back="onBack" @ready="onBrowsingReady" />
-        </div>
+        <MP4StegAsync />
     </div>
-    <MP4StegAsync />
 
 </template>
 <style>
+
+    .fileInput {
+        display: none;
+    }
+
     .foldersTab {
         position: absolute;
         right: 0;
@@ -60,11 +91,11 @@
         width: 20%;
         cursor: pointer;
         opacity: 1;
-        transition: opacity 2s ease-in-out;
+        transition: opacity 0.5s ease-in-out;
     }
 
     .drive-folder:hover {
-        opacity: 0.7;
+        opacity: 0.5;
     }
 
     .drive-folder-inner {
@@ -74,6 +105,11 @@
     .drive-folder-file {
         width: 100%;
         max-width: 250px;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    .drive-folder-file:hover {
+        opacity: 0.5;
     }
 
 </style>
@@ -83,6 +119,8 @@ import DriveFolder from './DriveFolder.vue';
 import DriveFolderBrowser from './DriveFolderBrowser.vue';
 import MP4StegAsync from 'shared/components/AsyncComponents/MP4StegAsync.js';
 
+import Telegram from 'shared/components/Auth/Telegram';
+import AllBodyDropFileZone from 'shared/components/Helpers/AllBodyDropFileZone';
 
 //
 export default {
@@ -93,6 +131,8 @@ export default {
         DriveFolder,
         DriveFolderBrowser,
         MP4StegAsync,
+        Telegram,
+        AllBodyDropFileZone,
     },
     data() {
         return {
@@ -101,6 +141,8 @@ export default {
             browsingFolder: null,
             browsingReady: false,
             folders: [],
+
+            uploadDisabled: true,
         }
     },
     watch: {
@@ -115,10 +157,46 @@ export default {
                 this.browsingReady = false;
                 this.browsingFolder = null;
                 this.initialized = false;
+
+                this.uploadDisabled = true;
             }
         }
     },
     methods: {
+        onUploadClick() {
+            this.$refs.fileInput.click();
+        },
+        async fileToUploadSelected(ev) {
+            let files = [];
+            if (ev.target && ev.target.files) {
+                files = ev.target.files;
+            } else {
+                files.push(ev);
+            }
+
+            if (!files[0]) {
+                return;
+            }
+            if (this.$refs.driveFolderBrowser && this.browsingFolder) {
+                // upload to currently selected folder
+                this.$refs.driveFolderBrowser.uploadUserFile(files[0]);
+            } else {
+                // select 'Saved' first and upload to it
+                if (this.$store.telegram && this.$store.telegram.provider && this.$store.telegram.provider.me) {
+                    let meId = this.$store.telegram.provider.me.id;
+                    if (meId.value) {
+                        meId = meId.value;
+                    }
+                    const savedFolderId = ''+meId;
+                    if (this.drive.getFolderById(savedFolderId)) {
+                        await this.onBrowsing(this.drive.getFolderById(savedFolderId));
+                        if (this.$refs.driveFolderBrowser && this.browsingFolder && this.browsingReady) {
+                            this.$refs.driveFolderBrowser.uploadUserFile(files[0]);
+                        }
+                    }
+                }
+            }
+        },
         async loadMore(index, done) {
             if (!this.browsing && this.drive) {
                 const loaded = await this.drive.fetchMoreFolders();
@@ -129,23 +207,33 @@ export default {
 
             done();
         },
-        onBrowsing(folder) {
+        async onBrowsing(folder) {
             if (folder) {
-                this.browsing = true;
-                this.browsingFolder = folder;
+                if (!this.browsingFolder || this.browsingFolder.id != folder.id) {
+                    this.browsing = true;
+                    this.browsingFolder = folder;
 
-                this.$q.localStorage.set('tg_browsing_folder', folder.id);
+                    this.$q.localStorage.set('tg_browsing_folder', folder.id);
+
+                    if (this.__broswingReadyPromiseResolver) {
+                        this.__broswingReadyPromiseResolver();
+                    }
+
+                    this.__broswingReadyPromiseResolver = null;
+                    this.__browsingReadyPromise = new Promise((res)=>{
+                        this.__broswingReadyPromiseResolver = res;
+                    });
+
+                    await this.__browsingReadyPromise; // wait for onBrowsingReady
+                    this.__broswingReadyPromiseResolver = null;
+                    this.__browsingReadyPromise = null;
+                }
             } else {
                 this.browsing = false;
                 this.browsingFolder = null;
 
-
                 this.$q.localStorage.set('tg_browsing_folder', null);
             }
-
-
-            // this.showUploadDialog();
-            //
         },
         onBrowsingReady() {
             this.browsingReady = true;
@@ -157,6 +245,12 @@ export default {
             if (foldersTabHeight) {
                 this.$refs.browsingTab.style.minHeight = ''+Math.ceil(foldersTabHeight)+'px';
             }
+
+            if (this.__broswingReadyPromiseResolver) {
+                this.__broswingReadyPromiseResolver();
+            }
+
+            this.uploadDisabled = false;
         },
         onBack() {
             // this.browsing = false;
@@ -165,6 +259,7 @@ export default {
             setTimeout(()=>{
                 this.browsing = false;
                 this.browsingFolder = null;
+                this.$q.localStorage.set('tg_browsing_folder', null);
             }, 300);
         },
         async initialize() {
@@ -173,6 +268,15 @@ export default {
             }
 
             const initialBrowsingFolderId = this.$q.localStorage.getItem('tg_browsing_folder');
+
+            let savedFolderId = null;
+            if (this.$store.telegram && this.$store.telegram.provider && this.$store.telegram.provider.me) {
+                let meId = this.$store.telegram.provider.me.id;
+                if (meId.value) {
+                    meId = meId.value;
+                }
+                savedFolderId = ''+meId;
+            }
 
             this.drive = new Drive();
             this.drive.setProvider(this.$store.telegram.provider);
@@ -186,6 +290,10 @@ export default {
                     setTimeout(()=>{
                         this.onBrowsing(e.detail.folder);
                     }, 100);
+                }
+
+                if (e.detail.folder.id == savedFolderId) {
+                    this.uploadDisabled = false;
                 }
             }
             this.drive.addEventListener('folder', this.__driveFolderListener);

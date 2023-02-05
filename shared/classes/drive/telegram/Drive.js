@@ -57,6 +57,14 @@ export default class Drive extends CommonTelegramMethods {
 		return null;
 	}
 
+	getFolderById(id) {
+		if (this._foldersIds[''+id]) {
+			return this._foldersIds[''+id];
+		}
+
+		return null;
+	}
+
 	get folders() {
 		return this._folders;
 	}
