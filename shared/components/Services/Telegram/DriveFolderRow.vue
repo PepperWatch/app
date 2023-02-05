@@ -43,7 +43,8 @@
         height: 200px;
     }
     .rowItem .q-card {
-        padding: 4px;
+        padding: 2px;
+        box-shadow: none;
     }
 
     @media screen and (max-width: 900px) {

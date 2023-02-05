@@ -40,7 +40,7 @@ export default {
 	}
 }
 </script>
-<style>
+<style scoped="scoped">
 	video {
 		max-width: 100%;
 		max-height: 300px;

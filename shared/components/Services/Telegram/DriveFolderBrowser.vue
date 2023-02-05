@@ -1,6 +1,6 @@
 <template>
 
-    <div class="col-12" @dragenter="dragenter" @dragover="dragover" @dragleave="dragleave" @drop="drop" :class="{ dragOver: isDragging }">
+    <div class="col-12 driveFolderBrowser" @dragenter="dragenter" @dragover="dragover" @dragleave="dragleave" @drop="drop" :class="{ dragOver: isDragging }">
         <q-list>
             <q-infinite-scroll @load="loadMore" :offset="600" scroll-target="#drive-scroll">
                 <DriveFolderRow v-for="(item, index) in rows" :row="item" :key="index" ref="rows" @back="onBack" @click="onFileClick" />
@@ -18,7 +18,12 @@
     </div>
 
 </template>
+<style type="text/css" scoped>
+    .driveFolderBrowser {
+        padding: 0px;
+    }
 
+</style>
 <script>
 // import DriveFolderFile from './DriveFolderFile.vue';
 import DriveFolderRow from './DriveFolderRow.vue';
@@ -209,7 +214,7 @@ export default {
             this.browsing = true;
             this.$emit('browsing', this.folder);
 
-            let clicked = false;
+            // let clicked = false;
             this.__folderFileListener = (e) => {
                 if (!e.detail.file.ratio) {
                     return;
@@ -217,10 +222,10 @@ export default {
                 this.rowBuilder.push(e.detail.file);
                 this.files.push(e.detail.file);
 
-                if (!clicked) {
-                    clicked = true;
-                    this.onFileClick(e.detail.file);
-                }
+                // if (!clicked) {
+                //     clicked = true;
+                //     this.onFileClick(e.detail.file);
+                // }
             };
             this.__folderEndListener = () => {
                 this.rowBuilder.end();

@@ -1,10 +1,10 @@
 <template>
 
 	<q-dialog v-model="showing" position="bottom" @hide="onHide">
-		<q-card style="width: 600px">
+		<q-card style="min-width: 50vw; max-width: 80vw;">
 			<q-linear-progress :value="0.6" color="primary" />
-			<q-card-section class="text-center	">
-				<q-img :src="imageSrc" v-if="showingType == 'photo' && imageSrc"  />
+			<q-card-section class="mediaBrowserDisplay">
+				<img :src="imageSrc" v-if="showingType == 'photo' && imageSrc"  />
 				<video :src="videoSrc" v-if="showingType == 'video' && videoSrc" controls  download="video.mp4" />
 			</q-card-section>
 
@@ -20,6 +20,20 @@
 
 </template>
 <style type="text/css">
+	.mediaBrowserDisplay {
+		text-align: center;
+	}
+
+	.mediaBrowserDisplay img {
+		max-height: 70vh;
+		max-width: 100%;
+	}
+
+	.mediaBrowserDisplay video {
+		max-height: 70vh;
+		max-width: 100%;
+	}
+
 </style>
 <script>
 import MediaBrowserUnlock from './MediaBrowserUnlock.vue';

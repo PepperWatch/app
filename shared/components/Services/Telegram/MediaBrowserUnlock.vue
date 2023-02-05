@@ -11,6 +11,8 @@
 							v-model="decodingPassword"
 							:disable="decoding"
 							:errorMessage="decodingPasswordError"
+							@enter="onClickDecodeWithPassword"
+							autofocus
 							/>
 					</div>
 

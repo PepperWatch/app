@@ -34,16 +34,21 @@
         right: 0;
         left: 0;
         top: 0;
-        background-color: black;
+        background-color: #ffffff;
         transform: translateX(100%);
         transition: transform 0.3s ease-in-out;
+    }
+
+    .body--dark .browsingTab {
+        background-color: var(--q-dark);
     }
 
     .browsingTab.active {
         transform: translateX(0%);
     }
 
-    .q-card {
+    .foldersTab .q-card {
+        box-shadow: none;
         /*background-color: transparent !important;*/
     }
     .q-item {

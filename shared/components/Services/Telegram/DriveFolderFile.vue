@@ -2,9 +2,9 @@
 
     <q-card class="drive-folder-file" :class="{ isToBeUploaded: isToBeUploaded }" @click="onClick">
         <q-img :src="previewImage" :placeholder-src="placeholderPreviewImage" no-spinner no-transition fit="cover">
-            <div class="absolute-bottom text-subtitle2 text-center">
+ <!--            <div class="absolute-bottom text-subtitle2 text-center">
                 {{name}}
-            </div>
+            </div> -->
             <div class="absolute-center">
                 <q-circular-progress
                     :value="(progress !== null && progress < 100) ? (progress * 100) : null"
@@ -58,8 +58,8 @@ export default {
         async onClick() {
             this.$emit('click', this.file);
 
-            const type = await this.file.getType();
-            this.name = type;
+            // const type = await this.file.getType();
+            // this.name = type;
 
             // await this.file.download();
 
@@ -85,7 +85,7 @@ export default {
         }
     },
     mounted() {
-        this.name = '' + this.file.width + 'x' + this.file.height + ' ( '+this.file.ratio;
+        // this.name = '' + this.file.width + 'x' + this.file.height + ' ( '+this.file.ratio;
         this.__filePreviewListener = (e)=>{
             this.previewImage = e.detail.preview;
         };
