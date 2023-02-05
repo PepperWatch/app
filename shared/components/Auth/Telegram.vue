@@ -5,30 +5,58 @@
 		<div v-if="!isConnected">Connect</div>
 	</q-btn>
 
-	<q-dialog v-model="showDialog" @hide="onHideDialog">
-		<q-card style="width: 700px; max-width: 80vw;">
-			<q-card-section class="">
+	<q-dialog v-model="showDialog" ref="telegramDialog" @hide="onHideDialog">
+		<q-card style="min-width: 50vw; max-width: 80vw;">
 
-				<div style="height: 60px;" class="relative-position">
+			<div style="min-height: 70px;" class="relative-position">
+				<q-list style="height: 70px; overflow: hidden;">
+					<DialogInput
+						v-model="phoneNumber"
+						label="Phone Number"
+						v-if="waitingFor.phoneNumber"
+						@enter="next"
+						mask="+######################"
+						autofocus
+						/>
+					<DialogInput
+						v-model="code"
+						label="Code"
+						v-if="waitingFor.code"
+						@enter="next"
+						autofocus
+						/>
+					<DialogPasswordInput
+						v-model="password"
+						v-if="waitingFor.password"
+						label="Password"
+						@enter="next"
+						autofocus
+						/>
+				</q-list>
 
-					<q-input v-model="phoneNumber" label="Phone Number" stack-label v-if="waitingFor.phoneNumber"/>
-					<q-input v-model="password" label="Password" stack-label v-if="waitingFor.password"/>
-					<q-input v-model="code" label="Code" stack-label v-if="waitingFor.code"/>
-
-					<q-inner-loading :showing="(isConnecting && !isWaiting) || isDisconnecting">
-						<q-spinner-rings size="35px" color="primary" />
-					</q-inner-loading>
-
-					<div v-if="isConnected" class="absolute-center non-selectable">
-						Connected as <img v-if="photo" :src="photo" class="dialog_profile_photo"/> {{username}}
-					</div>
-					<div v-if="!isConnected && !isConnecting" class="absolute-center non-selectable	">
-						Connect your Telegram account
-					</div>
+				<div v-if="isConnecting && qr" style="text-align: center;">
+					<img :src="qr" height="256" />
 				</div>
-			</q-card-section>
+
+				<q-inner-loading :showing="(isConnecting && !isWaiting && !qr) || isDisconnecting">
+					<q-spinner-rings size="45px" color="primary" />
+				</q-inner-loading>
+
+				<div v-if="isConnected" class="absolute-center non-selectable">
+					Connected as <img v-if="photo" :src="photo" class="dialog_profile_photo"/> {{username}}
+				</div>
+				<div v-if="!isConnected && !isConnecting" class="absolute-center non-selectable	">
+					Connect&nbsp;your&nbsp;Telegram&nbsp;account
+				</div>
+			</div>
+
+
+
 			<q-card-section style="max-height: 50vh">
-				<q-btn label="Connect" type="submit" color="primary" @click="connect" ripple no-caps unelevated v-if="!isConnecting && !isConnected" style="width: 100%"/>
+				<q-btn label="Connect With Code" type="submit" color="primary" @click="connect(false)" ripple no-caps unelevated v-if="!isConnecting && !isConnected" style="width: 100%"/>
+
+				<q-btn label="Connect With QR" type="submit" color="primary" @click="connect(true)" ripple no-caps unelevated v-if="!isConnecting && !isConnected" style="width: 100%; margin-top: 8px;"/>
+
 				<q-btn label="Next" type="submit" color="primary" @click="next" ripple no-caps unelevated :disable="!isWaiting" v-if="isConnecting" style="width: 100%"/>
 				<q-btn label="Disconnect" type="submit" color="primary" @click="disconnect" ripple no-caps unelevated v-if="isConnected" style="width: 100%" :loading="isDisconnecting"/>
 
@@ -36,12 +64,15 @@
 		</q-card>
 	</q-dialog>
 
-	<TelegramAsync @loaded="telegramLoaded" @connected="onConnected" @disconnected="onDisconnected"/>
+	<TelegramAsync @loaded="telegramLoaded" @connected="onConnected" @disconnected="onDisconnected" @qr="onQRCode" />
 
 </template>
 <script>
 
 import TelegramAsync from 'shared/components/AsyncComponents/TelegramAsync.js';
+import DialogPasswordInput from 'shared/components/Helpers/DialogMenu/DialogPasswordInput.vue';
+import DialogInput from 'shared/components/Helpers/DialogMenu/DialogInput.vue';
+const { AwesomeQR } = require("awesome-qr");
 
 export default {
 	name: 'Telegram',
@@ -53,6 +84,8 @@ export default {
 	},
 	components: {
 		TelegramAsync,
+		DialogPasswordInput,
+		DialogInput,
 	},
 	data() {
 		return {
@@ -70,6 +103,8 @@ export default {
 			waitingFor: {
 
 			},
+			qr: null,
+
 			photo: null,
 		}
 	},
@@ -85,6 +120,11 @@ export default {
 			this.waitingFor = {};
 			this.isDisconnecting = false;
 
+			this.phoneNumber = '';
+			this.password = '';
+			this.code = '';
+			this.qr = null;
+
 			if (this._telegram) {
 				this._telegram.cancelInitialization();
 			}
@@ -95,12 +135,16 @@ export default {
 			this.photo = await this._telegram.getMePhoto();
 
 			this.$store.telegram.setProvider(this._telegram);
+
+			this.$refs.telegramDialog.hide();
 		},
 		async onDisconnected() {
 			this.isConnected = false;
 			this.photo = null;
 
 			this.$store.telegram.setProvider(null);
+
+			this.$refs.telegramDialog.hide();
 		},
 		async telegramLoaded(telegram) {
 			this._telegram = telegram;
@@ -120,6 +164,8 @@ export default {
 					this.isWaiting = true;
 					// return;
 					this.waitingFor[e.detail.what] = true;
+
+					this.qr = null; // probably asked for a password after qr sigin
 				}
 			});
 
@@ -130,6 +176,8 @@ export default {
 				this.photo = await this._telegram.getMePhoto();
 
 				this.$store.telegram.setProvider(this._telegram);
+
+				this.$refs.telegramDialog.hide();
 			} else {
 				this.$store.telegram.setProvider(null);
 			}
@@ -148,9 +196,18 @@ export default {
 			this.waitingFor = {};
 			this.isWaiting = false;
 		},
-		async connect() {
+		async onQRCode(url) {
+			const qr = new AwesomeQR({
+					text: url,
+					size: 512,
+				});
+
+			const dataURL = await qr.draw();
+			this.qr = dataURL;
+		},
+		async connect(withQR = false) {
 			this.isConnecting = true;
-			const success = await this._telegram.initialize();
+			const success = await this._telegram.initialize({qr: withQR});
 
 			this.isConnecting = false;
 			this.isConnected = success;

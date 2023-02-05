@@ -2,15 +2,7 @@
 
     <q-item :active="true">
         <q-item-section class="q-pa-md">
-			<q-input v-model="value" :label="label" :disable="!!disable" filled :type="isPwd ? 'password' : 'text'" :error="!!errorMessage" :error-message="errorMessage" @keyup="onKeyUp" :autofocus="autofocus">
-				<template v-slot:append>
-				<q-icon
-				:name="isPwd ? 'visibility_off' : 'visibility'"
-				class="cursor-pointer"
-				@click="isPwd = !isPwd"
-				/>
-				</template>
-			</q-input>
+			<q-input :label="label" v-model="value" :disable="!!disable" filled type="text" :error="!!errorMessage" :error-message="errorMessage" @keyup="onKeyUp" :mask="mask" :autofocus="autofocus" />
 		</q-item-section>
 	</q-item>
 
@@ -20,12 +12,11 @@
 <script>
 
 export default {
-	name: 'DialogPasswordInput',
-	props: ['modelValue', 'errorMessage', 'disable', 'label', 'autofocus'],
+	name: 'DialogInput',
+	props: ['modelValue', 'errorMessage', 'disable', 'label', 'mask', 'autofocus'],
 	emits: ['update:modelValue', 'enter'],
 	data() {
 		return {
-			isPwd: true,
 			content: '',
 		}
 	},

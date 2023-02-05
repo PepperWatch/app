@@ -7,6 +7,7 @@ export default class TelegramThoughWorker extends CommonTelegramMethods {
 
 		this._isConnecting = false;
 		this._isConnected = false;
+		this._isDisconnected = false;
 
 		this._stringSession = null;
 
@@ -109,8 +110,8 @@ export default class TelegramThoughWorker extends CommonTelegramMethods {
 		this.callWorker('setCode', code);
 	}
 
-	async initialize() {
-		return await this.initializeWorker();
+	async initialize(options = {}) {
+		return await this.initializeWorker(options);
 	}
 
 	async onWorkerEvent(eventName, data) {
@@ -118,11 +119,14 @@ export default class TelegramThoughWorker extends CommonTelegramMethods {
 
 		if (eventName == 'wait') {
 			if (data.detail && data.detail.what && data.detail.what == 'session') {
+				this.log('Setting session on Telegram Worker');
 				this.callWorker('setSession', this._stringSession);
+				return; // no need to dispatch event in this case
 			}
 		} else if (eventName == 'me') {
 			this._me = data.detail;
 		} else if (eventName == 'session') {
+			this.log('Persisting Telegram session');
 			this.setCache('telegram_session', data.detail.session);
 		}
 
@@ -217,7 +221,7 @@ export default class TelegramThoughWorker extends CommonTelegramMethods {
 			return this._mePhoto;
 		}
 
-		await this.initialize();
+		await this.initializeWorker();
 		const me  = this.me;
 
 		if (!me || !me.photo || !me.photo.strippedThumb) {
@@ -286,13 +290,13 @@ export default class TelegramThoughWorker extends CommonTelegramMethods {
 		}
 
 		if (thereToRestore) {
-			return await this.initialize();
+			return await this.initializeWorker();
 		}
 
 		return false;
 	}
 
-	async initializeWorker() {
+	async initializeWorker(options = {}) {
 		if (this._initialized) {
 			return true;
 		}
@@ -306,20 +310,23 @@ export default class TelegramThoughWorker extends CommonTelegramMethods {
 			this.__initializationPromiseResolver = res;
 		});
 
-		this._worker = new TelegramWorker();
-		this._worker.onmessage = (event)=>{
-			if (event.data && event.data.id) {
-				if (this._workerPromisesResolvers[event.data.id]) {
-					this._workerPromisesResolvers[event.data.id](event.data);
-					delete this._workerPromisesResolvers[event.data.id];
-					delete this._workerPromises[event.data.id];
-				} else if (event.data.id == 'event') {
-					this.onWorkerEvent(event.data.data.event, event.data.data);
+		if (!this._worker) {
+			this.log('Adding Telegram Worker');
+			this._worker = new TelegramWorker();
+			this._worker.onmessage = (event)=>{
+				if (event.data && event.data.id) {
+					if (this._workerPromisesResolvers[event.data.id]) {
+						this._workerPromisesResolvers[event.data.id](event.data);
+						delete this._workerPromisesResolvers[event.data.id];
+						delete this._workerPromises[event.data.id];
+					} else if (event.data.id == 'event') {
+						this.onWorkerEvent(event.data.data.event, event.data.data);
+					}
 				}
-			}
-		};
+			};
+		}
 
-		this._isConnected = await this.callWorker('initialize');
+		this._isConnected = await this.callWorker('initialize', options);
 
 		this._isInitializing = false;
 		this.__initializationPromiseResolver(this._isConnected);
@@ -336,7 +343,8 @@ export default class TelegramThoughWorker extends CommonTelegramMethods {
 			this.clearCache('telegram_session_photo');
 			this.clearCache('telegram_session');
 
-			this._me = null;
+			this._isConnected = false;
+			this.cancelInitialization();
 
 			this.dispatchEvent(new CustomEvent('disconnected'));
 
@@ -359,9 +367,13 @@ export default class TelegramThoughWorker extends CommonTelegramMethods {
 
 		this._isConnecting = false;
 		this._isConnected = false;
+		this._stringSession = null;
 
+		this._isInitializing = false;
+		this._initialized = false;
 		this._worker = null;
 		this._me = null;
+		this._mePhoto = null;
 
 		return true;
 	}

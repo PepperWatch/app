@@ -485,6 +485,10 @@ class TelegramWorker extends CommonTelegramMethods {
         return await this.waitFor('password');
     }
 
+    async waitForQR() {
+        return await this.waitFor('qr');
+    }
+
     resolveWaiter() {
         if (this.__waitForPromise) {
             this.__waitForPromiseResolver();
@@ -522,7 +526,9 @@ class TelegramWorker extends CommonTelegramMethods {
         return this['_'+propertyName];
     }
 
-    async initialize() {
+    async initialize(options = {}) {
+        const qr = options.qr || false;
+
         if (this.__initializationPromise) {
             return await this.__initializationPromise;
         }
@@ -555,12 +561,50 @@ class TelegramWorker extends CommonTelegramMethods {
                     connectionRetries: this._connectionRetries,
                 });
 
-                await this._client.start({
-                    phoneNumber: async()=>{ return await this.waitForPhoneNumber() },
-                    password: async()=>{ return await this.waitForPassword() },
-                    phoneCode: async()=>{ return await this.waitForCode() },
-                    onError: (err) => { console.error(err); this.log(err) },
-                });
+                if (qr) {
+                    await this._client.connect();
+                    await this._client.signInUserWithQrCode({
+                                apiId,
+                                apiHash,
+                            },
+                            {
+                                password: async()=>{ return await this.waitForPassword() },
+                                onError: (err) => { console.error(err); this.log(err) },
+                                qrCode: async(code) => {
+                                    const url = `tg://login?token=${Buffer(code.token).toString('base64').replace(/=+$/g, "").replace(/\+/g, "-").replace(/\//g, "_")}`;
+                                    // src: https://github.com/rmw-lib/buffer.base64url/blob/master/src/index.coffee
+                                    this.dispatchEvent('qr', {url: url});
+                                },
+                            });
+
+     // * const user = await client.signInUserWithQrCode({ apiId, apiHash },
+     // * {
+     // *       onError: async function(p1: Error) {
+     // *           console.log("error", p1);
+     // *           // true = stop the authentication processes
+     // *           return true;
+     // *       },
+     // *       qrCode: async (code) => {
+     // *           console.log("Convert the next string to a QR code and scan it");
+     // *           console.log(
+     // *               `tg://login?token=${code.token.toString("base64url")}`
+     // *           );
+     // *       },
+     // *       password: async (hint) => {
+     // *           // password if needed
+     // *           return "1111";
+     // *       }
+     // *   }
+     // * );
+                } else {
+                    await this._client.start({
+                        phoneNumber: async()=>{ return await this.waitForPhoneNumber() },
+                        password: async()=>{ return await this.waitForPassword() },
+                        phoneCode: async()=>{ return await this.waitForCode() },
+                        onError: (err) => { console.error(err); this.log(err) },
+                    });
+                }
+
 
                 if (await this._client.checkAuthorization()){
                     this.isConnected = true;
@@ -605,6 +649,9 @@ class TelegramWorker extends CommonTelegramMethods {
 
     async disconnect() {
         const resp = await this.invoke(new this.Api.auth.LogOut({}));
+        if (resp) {
+            await this._client.disconnect();
+        }
         return resp;
     }
 }
