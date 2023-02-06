@@ -3,7 +3,7 @@
     <q-card class="drive-folder" @click="onClick">
         <div class="drive-folder-inner">
             <q-img :src="previewImage" :placeholder-src="placeholderPreviewImage">
-                <div class="absolute-bottom text-subtitle2 text-center">
+                <div class="absolute-bottom text-subtitle2 text-center folderTitle">
                     {{name}}
                 </div>
             </q-img>

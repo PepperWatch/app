@@ -1,13 +1,24 @@
 <template>
 
     <div>
-        <q-toolbar class="bg-primary text-white">
+        <q-toolbar class="bg-primary text-white non-selectable">
 <!--         <q-btn flat round dense icon="assignment_ind">
         <q-badge floating color="red">2</q-badge>
         </q-btn> -->
             <q-toolbar-title>
-                Your Telegram Files
+            <q-breadcrumbs active-color="white" style="font-size: 16px">
+                <q-breadcrumbs-el label="Your Telegram Files" @click="onBack" style="cursor: pointer;" />
+                <q-breadcrumbs-el :label="browsingFolder.name" v-if="browsingFolder && browsingReady" icon="folder_open" />
+                <template v-slot:separator>
+                <q-icon
+                    size="0.8em"
+                    name="arrow_forward"
+                    color="white"
+                    />
+                </template>
+            </q-breadcrumbs>
             </q-toolbar-title>
+
 
             <q-btn color="white" text-color="primary" unelevated class="q-mr-xs"
                 icon="upload"
@@ -92,6 +103,15 @@
         cursor: pointer;
         opacity: 1;
         transition: opacity 0.5s ease-in-out;
+        text-overflow: ellipsis;
+    }
+
+    .drive-folder .folderTitle {
+        text-overflow: ellipsis;
+        height: 45px;
+        overflow:hidden;
+        white-space:nowrap;
+        width: 100%;
     }
 
     .drive-folder:hover {
