@@ -37,7 +37,7 @@
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.5",
     "secp256k1": "^5.0.0",
-    "telegram": "github:PepperWatch/telegram",
+    "telegram": "github:PepperWatch/telegram#b53249a255b991e70a528085b4713e623a14bbb1",
     "winston": "^2.3.1"
   },
   "devDependencies": {
