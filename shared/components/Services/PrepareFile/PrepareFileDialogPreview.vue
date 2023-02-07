@@ -31,7 +31,7 @@
         <div class="upload_dialog_blurer_preview">
             <div class="upload_dialog_blurer_preview_image" v-if="preparedType == 'photo'" :style="{'background-image': 'url(' + previewURL + ')', 'filter': 'blur('+blur+'px)'}" />
             <div class="upload_dialog_blurer_preview_video" v-if="preparedType == 'video'"  :style="{'filter': 'blur('+blur+'px)'}">
-                <video :src="previewURL" @loadedmetadata="onVideoLoadedMetadata" ref="originalVideoPlayer" @click="onVideoClick" />
+                <video :src="previewURL" @loadedmetadata="onVideoLoadedMetadata" muted ref="originalVideoPlayer" @click="onVideoClick" />
             </div>
         </div>
 

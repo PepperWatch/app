@@ -71,7 +71,7 @@ export default class VideoCanvas {
 		await this.prepare();
 
 		await this.seekToTime(timeInSeconds);
-		await new Promise((res)=> setTimeout(res, 100)); // @todo: wait for 'seeked'
+		await new Promise((res)=> setTimeout(res, 500)); // @todo: wait for 'seeked'
 
 		return await new Promise((res,rej)=>{
 			try {
@@ -148,6 +148,12 @@ export default class VideoCanvas {
 
 	async generateDownsampledVideo(fromTime, toTime) {
 		await this.prepare();
+
+		this._source.play();
+		this._source.currentTime = fromTime;
+		this._source.pause();
+
+		await new Promise((res)=>{ setTimeout(res, 300); });
 
 		await this.recordCanvas();
 
