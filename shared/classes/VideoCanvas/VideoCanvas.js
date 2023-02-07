@@ -32,6 +32,7 @@ export default class VideoCanvas {
 		this.blobURL = null;
 
 		this._recordedChunks = [];
+		this._recordedFrames = 0;
 		this._recordedBlob = null;
 
 		this._finalBlob = null;
@@ -155,6 +156,7 @@ export default class VideoCanvas {
 
 		this._finalBlob = null;
 
+		this._recordedFrames = 0;
 		// this._source.pause();
 		this._source.play();
 		this._source.currentTime = fromTime;
@@ -171,7 +173,7 @@ export default class VideoCanvas {
 
 		await new Promise((res)=>{
 			const timeEventHandler = ()=>{
-				if (this._source.currentTime >= toTime) {
+				if (this._source.currentTime >= toTime || this._source.currentTime < fromTime) {
 					// we are done
 					this._source.pause();
 
@@ -387,6 +389,7 @@ export default class VideoCanvas {
 					blurValue = blurValue.toFixed(2);
 
 					this._ctx.filter = 'blur('+blurValue+'px)';
+					this._recordedFrames++;
 					this._ctx.drawImage( player, 0, 0, this.sampleWidth, this.sampleHeight );
 				}
 

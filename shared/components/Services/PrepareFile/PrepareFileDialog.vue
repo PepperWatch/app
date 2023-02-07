@@ -192,6 +192,7 @@ export default {
 
 			let preview = null;
 			if (this.preparedType == 'video') {
+				console.log('range', this.range.min, this.range.max);
 				preview = await videoProcessor.makePreview({
 					fromSeconds: this.range.min,
 					toSeconds: this.range.max,
@@ -206,7 +207,7 @@ export default {
 				const thumbVideoProcessor = new VideoProcessor({
 					file: preview,
 				});
-				const screenshotBlob = await thumbVideoProcessor.getScreenShotBlob(1);
+				const screenshotBlob = await thumbVideoProcessor.getScreenShotBlob(0);
 				this.finalThumb = screenshotBlob;
 			}
 
@@ -214,7 +215,7 @@ export default {
 			// console.error('preview', preview);
 			//
 			if (this.preparedType == 'video') {
-				const screenshotBlob = await videoProcessor.getScreenShotBlob(5);
+				const screenshotBlob = await videoProcessor.getScreenShotBlob(this.range.min);
 				this.finalThumb = screenshotBlob;
 
 				this.sampleWidth = videoProcessor.sampleWidth;
@@ -302,7 +303,7 @@ export default {
 				});
 
 				this.finalFile = this.file;
-				const screenshotBlob = await videoProcessor.getScreenShotBlob(5);
+				const screenshotBlob = await videoProcessor.getScreenShotBlob(this.range.min);
 				this.finalThumb = screenshotBlob;
 
 				this.sampleWidth = videoProcessor.sampleWidth;
