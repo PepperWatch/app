@@ -17,9 +17,11 @@
 						<DialogMenuItem @click="onUploadRaw"
 							title="Upload As Is"
 							description="Just as you do from Telegram application"
-							icon="visibility" />
+							icon="visibility"
+							v-if="isForTelegram"
+							/>
 						<DialogMenuItem @click="onClickEncoded"
-							title="Upload Encoded"
+							:title="isForTelegram ? 'Upload Encoded' : 'Encode'"
 							description="Keep preview visisble, but let full version available only to you"
 							icon="lock" />
 
@@ -68,7 +70,7 @@
 						</div>
 
 						<DialogMenuItem @click="onClickDoEncodeWithPassword"
-							:title="(encodingShowPassword ? 'Encode the Media with Password and Upload' : 'Encode the Media with Password')"
+							:title="(encodingShowPassword ? (isForTelegram ? 'Encode the Media with Password and Upload' : 'Encode the Media with Password and Get the File' ) : 'Encode the Media with Password')"
 							description="Encode private media and hide it in the public preview"
 							icon="lock"
 							:loading="encoding" />
@@ -115,6 +117,10 @@ export default {
 	props: {
 		// ...your custom props
 		file: Object,
+		isForTelegram: {
+			type: Boolean,
+			default: false,
+		}
 	},
 
 	components: {
@@ -186,42 +192,52 @@ export default {
 		async onClickDoGenerate() {
 			this.generatingPreview = true;
 
-			const videoProcessor = new VideoProcessor({
-				file: this.file,
-			});
+			try {
 
-			let preview = null;
-			if (this.preparedType == 'video') {
-				console.log('range', this.range.min, this.range.max);
-				preview = await videoProcessor.makePreview({
-					fromSeconds: this.range.min,
-					toSeconds: this.range.max,
-					blurValue: this.blur,
-				});
-			} else if (this.preparedType == 'photo') {
-				preview = await videoProcessor.downsampleImage({
-					duration: 1,
-					blurValue: this.blur,
+				const videoProcessor = new VideoProcessor({
+					file: this.file,
 				});
 
-				const thumbVideoProcessor = new VideoProcessor({
-					file: preview,
-				});
-				const screenshotBlob = await thumbVideoProcessor.getScreenShotBlob(0);
-				this.finalThumb = screenshotBlob;
+				let preview = null;
+				if (this.preparedType == 'video') {
+					console.log('range', this.range.min, this.range.max);
+					preview = await videoProcessor.makePreview({
+						fromSeconds: this.range.min,
+						toSeconds: this.range.max,
+						blurValue: this.blur,
+					});
+				} else if (this.preparedType == 'photo') {
+					preview = await videoProcessor.downsampleImage({
+						duration: 1,
+						blurValue: this.blur,
+					});
+
+					const thumbVideoProcessor = new VideoProcessor({
+						file: preview,
+					});
+					const screenshotBlob = await thumbVideoProcessor.getScreenShotBlob(0);
+					this.finalThumb = screenshotBlob;
+				}
+
+				this.containerBlob = preview;
+				// console.error('preview', preview);
+				//
+				if (this.preparedType == 'video') {
+					const screenshotBlob = await videoProcessor.getScreenShotBlob(this.range.min);
+					this.finalThumb = screenshotBlob;
+
+					this.sampleWidth = videoProcessor.sampleWidth;
+					this.sampleHeight = videoProcessor.sampleHeight;
+					this.sampleDuration = this.range.max - this.range.min;
+				}
+
+			} catch (e) {
+				console.error(e);
+				this.generatingPreview = false;
+
+				return false;
 			}
 
-			this.containerBlob = preview;
-			// console.error('preview', preview);
-			//
-			if (this.preparedType == 'video') {
-				const screenshotBlob = await videoProcessor.getScreenShotBlob(this.range.min);
-				this.finalThumb = screenshotBlob;
-
-				this.sampleWidth = videoProcessor.sampleWidth;
-				this.sampleHeight = videoProcessor.sampleHeight;
-				this.sampleDuration = this.range.max - this.range.min;
-			}
 
 
 			this.generatingPreview = false;

@@ -13,6 +13,8 @@ export default class TelegramFileContentFile extends CommonTelegramMethods {
 		this._arrayBuffer = null;
 
 		this._mimeType = 'video/mp4';
+
+		this._blobURL = null;
 	}
 
 	async getSWURL() {
@@ -79,6 +81,28 @@ export default class TelegramFileContentFile extends CommonTelegramMethods {
 		await this.prepare();
 
 		return this._arrayBuffer.byteLength;
+	}
+
+	async getBlobURL() {
+		await this.prepare();
+
+		if (this._blobURL) {
+			return this._blobURL;
+		}
+
+        const fileSize = await this.size();
+        const chunk = await this.getSlice(0, fileSize);
+		const blob = new Blob([chunk], {type: this.mimeType });
+
+		this._blobURL = window.URL.createObjectURL(blob);
+
+		return this._blobURL;
+	}
+
+	async revokeBlobURL() {
+		if (this._blobURL) {
+			window.URL.revokeObjectURL(this._blobURL);
+		}
 	}
 
 	async download() {

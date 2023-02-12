@@ -23,10 +23,18 @@ export default class LocalFileInformation {
 
 		this.previewThumbBlob = null;
 		this._lowPreview = null;
+
+		this._fileAb = null;
 	}
 
 	async getAsArrayBuffer() {
-		return await this._file.arrayBuffer();
+		if (this._fileAb) {
+			return this._fileAb;
+		}
+
+		this._fileAb = await this._file.arrayBuffer();
+
+		return this._fileAb;
 	}
 
 	get file() {

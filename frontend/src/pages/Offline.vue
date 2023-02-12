@@ -1,22 +1,22 @@
 <template>
 
-	<div>
+    <div>
 
         <div class="row q-col-gutter-md">
             <div class="col-12 col-md-4 q-mb-sm">
                 <div>
                     <!-- <h1 class="text-primary serif" style="margin-top: 0; margin-bottom: 16px;">Another level of security for your media files</h1> -->
 
-                    <h5 class="text-primary">Decode Pepperwatch Media File</h5>
+                    <h5 class="text-primary">Encode Media</h5>
 
                     <p class="text-primary">
-                        <q-btn unelevated color="primary" size="md" @click="onSelectFileClick">Select Local Media File With Hidden Data</q-btn>
+                        <q-btn unelevated color="primary" size="md" @click="onSelectFileClick">Select Local Media File</q-btn>
                         <input type="file" @change="fileSelected" class="fileInput" ref="fileInput">
                         <AllBodyDropFileZone @file="fileSelected" />
                     </p>
 
                     <p class="text-primary">
-                        or just drop your pepperwatch container file into this page
+                        or just drop your media files into this page
                     </p>
 
                 </div>
@@ -31,12 +31,14 @@
         </div>
 
         <MediaBrowser :file="fileToShow" @hide="onMediaBrowserHide" />
-		<MP4StegAsync />
-	</div>
+        <MP4StegAsync />
+    </div>
 
 </template>
 
 <script>
+// import Telegram from 'shared/components/Auth/Telegram';
+import PrepareFileDialog from 'shared/components/Services/PrepareFile/PrepareFileDialog.vue';
 import PreparedLocalFile from 'shared/components/Services/PrepareFile/PreparedLocalFile.vue';
 import AllBodyDropFileZone from 'shared/components/Helpers/AllBodyDropFileZone';
 import MP4StegAsync from 'shared/components/AsyncComponents/MP4StegAsync.js';
@@ -44,19 +46,17 @@ import MP4StegAsync from 'shared/components/AsyncComponents/MP4StegAsync.js';
 import MediaBrowser from 'shared/components/Services/Telegram/MediaBrowser.vue';
 
 export default {
-	name: 'Decode',
-	title: 'Decode Container',
-	authRequired: false,
-	path: '/decode',
-
-	components: {
-		PreparedLocalFile,
-		AllBodyDropFileZone,
-		MP4StegAsync,
-		MediaBrowser,
-	},
+	name: 'Encode/Decode Offline',
+    path: '/offline',
 	props: {
 	},
+    components: {
+        AllBodyDropFileZone,
+        PreparedLocalFile,
+        MP4StegAsync,
+        MediaBrowser,
+        // Drive,
+    },
 	data() {
 		return {
             isLoading: false,
@@ -66,6 +66,8 @@ export default {
             fileToShow: null,
 		}
 	},
+    watch: {
+    },
 	methods: {
         onShowPreview(file) {
             this.fileToShow = file;
@@ -88,18 +90,63 @@ export default {
                 return;
             }
 
-            this.prepared.push({
-				file: files[0],
-				thumb: files[0],
-				id: (''+Math.random()),
+                // this.prepared.push({
+                //     file: files[0],
+                //     thumb: files[0],
+                //     id: ( ''+Math.random() ),
+                // });
+
+                // this.fileToShow = files[0];
+
+            this.showDialog(files[0]);
+            // this.$refs.fileInput.value = null;
+
+        },
+        async showDialog(file) {
+            this.$q.dialog({
+                component: PrepareFileDialog,
+                componentProps: {
+                    file: file,
+                    isForTelegram: false,
+                }
+            }).onOk((results) => {
+
+                console.error(results);
+                this.prepared.push({
+                    file: results.file,
+                    thumb: results.thumb,
+                    id: ( ''+Math.random() ),
+                });
+
+            }).onCancel(() => {
+                // console.log('Cancel')
+            }).onDismiss(() => {
+                // console.log('Called on OK or Cancel')
             });
-			this.fileToShow = files[0];
         },
 	},
-	mounted() {
-	},
+    computed: {
+    },
+    mounted() {
+    },
 }
 </script>
-<style scoped>
 
+<style scoped="scoped">
 </style>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+    h6 {
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0 0 16px 0;
+    }
+
+    a.text-link {
+        color: var(--q-primary);
+        cursor: pointer;
+        font-weight: bold;
+    }
+</style>
+

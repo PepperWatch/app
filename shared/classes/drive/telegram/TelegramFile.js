@@ -611,6 +611,14 @@ export default class TelegramFile extends CommonTelegramMethods {
 	}
 
 	async getSlice(offset, length) {
+		if (this._toBeUploadedFileInfo) {
+			const ab = await this._toBeUploadedFileInfo.getAsArrayBuffer();
+			const slice = Buffer( ab.slice(offset, offset + length) );
+			// console.error(slice);
+
+			return slice;
+		}
+
 		const minChunkSize = 512 * 1024;
 
 		const downloadFrom = Math.floor(offset / minChunkSize) * minChunkSize;

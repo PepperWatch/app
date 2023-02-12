@@ -37,11 +37,13 @@
 </style>
 <script>
 import MediaBrowserUnlock from './MediaBrowserUnlock.vue';
+import TelegramFile from 'shared/classes/drive/telegram/TelegramFile.js';
 
 export default {
 	props: {
 		// ...your custom props
 		telegramFile: Object,
+		file: Object,
 	},
 
 	components: {
@@ -79,18 +81,49 @@ export default {
 		async onUnlockDecoded() {
 			const contentFiles = this.telegramFileToUnlock.contentFiles;
 			const contentFile = contentFiles[0];
-			this.telegramFileToUnlock = null;
 
 			this.showingType = await contentFile.getType();
 			if (this.showingType == 'video') {
-				this.videoSrc = await contentFile.getSWURL();
+				if (this.telegramFileToUnlock.isToBeUploaded) {
+					this.videoSrc = await contentFile.getBlobURL();
+				} else {
+					this.videoSrc = await contentFile.getSWURL();
+				}
 			} else if (this.showingType == 'photo') {
-				this.imageSrc = await contentFile.getSWURL();
+				if (this.telegramFileToUnlock.isToBeUploaded) {
+					this.imageSrc = await contentFile.getBlobURL();
+				} else {
+					this.imageSrc = await contentFile.getSWURL();
+				}
 			}
+
+			this.telegramFileToUnlock = null;
 		},
 	},
 
 	watch: {
+		async file() {
+			if (this.file) {
+				const tgFile = new TelegramFile({
+					file: this.file,
+					id: (''+Math.random()),
+				});
+
+				this.telegramFileToShow = tgFile;
+				this.thereMayBeSomethingEncoded = false;
+
+				this.showingType = await this.telegramFileToShow.getType();
+				if (this.showingType == 'video') {
+					this.videoSrc = window.URL.createObjectURL(this.file);
+					this.thereMayBeSomethingEncoded = true;
+				} else if (this.showingType == 'photo') {
+					this.imageSrc = window.URL.createObjectURL(this.file);
+				}
+				this.showing = true;
+			} else {
+				this.showing = false;
+			}
+		},
 		async telegramFile() {
 			if (this.telegramFile) {
 				this.telegramFileToShow = this.telegramFile;

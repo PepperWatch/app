@@ -10,7 +10,9 @@
 
 			<q-space />
 
-			<!-- <q-btn flat to="/prepared">Mint Yours</q-btn> -->
+			<q-btn flat to="/offline">Encode</q-btn>
+			<q-btn flat to="/decode">Decode</q-btn>
+			<q-btn flat to="/telegram">Telegram Storage</q-btn>
 
 
 			<Notifications />

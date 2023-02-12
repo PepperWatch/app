@@ -85,7 +85,8 @@ export default {
             this.$q.dialog({
                 component: PrepareFileDialog,
                 componentProps: {
-                    file: telegramFile.originalFile(),
+                    file: telegramFile.originalFile ? telegramFile.originalFile() : telegramFile,
+                    isForTelegram: true,
                 }
             }).onOk((results) => {
 
@@ -136,7 +137,6 @@ export default {
                 drive: this.folder._drive,
                 folder: this.folder,
                 id: (''+Math.random()),
-
             });
 
             await telegramFile.prepareLocal();

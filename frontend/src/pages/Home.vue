@@ -22,10 +22,14 @@
                     <p class="text-primary">
                         <b>Ready?</b><br />
 
-                        <q-btn unelevated color="primary" size="md" to="/telegram">Browse your Telegram storage</q-btn>
+                        <q-btn unelevated color="primary" size="md" to="/offline">Encode</q-btn>&nbsp;
+                        <q-btn unelevated color="primary" size="md" to="/decode">Decode</q-btn>
+                        <br />or<br />
+                        <q-btn unelevated color="primary" size="md" to="/telegram">Use your Telegram account</q-btn>
+                        <br />as a free cloud storage<br />
                     </p>
                     <p class="text-primary q-gutter-sm">
-                        <b>or follow us:</b><br />
+                        <b>don't forget to follow us:</b><br />
 
                         <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://github.com/PepperWatch/app"><Icon forWhat="github" />&nbsp;github</q-btn>
                         <q-btn unelevated outline color="white" text-color="primary" size="sm" target="_blank" href="https://twitter.com/pepper_watch"><Icon forWhat="twitter" />&nbsp;twitter</q-btn>

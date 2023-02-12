@@ -200,7 +200,7 @@ class TelegramWorker extends CommonTelegramMethods {
         const request = new this.Api.messages.SendMedia({
             peer: entity,
             media: media,
-            message: 'Test caption',
+            message: 'https://pepperwatch.com',
         });
         const result = await this._client.invoke(request);
 
