@@ -73,12 +73,14 @@ export default {
 
             window.URL.revokeObjectURL(blobUrl);
 		},
+		sizeToHuman(size) {
+            const sizeI = Math.floor( Math.log(size) / Math.log(1024) );
+            return ( size / Math.pow(1024, sizeI) ).toFixed(0) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][sizeI];
+		},
 		async initialize() {
 			this.initializing = true;
 
 			await new Promise((res)=>{ setTimeout(res, 200); });
-
-			console.error('fileAtoms', this.fileAtoms);
 
 			try {
 				const chunks = [];
@@ -91,7 +93,7 @@ export default {
 							const trackType = (track.isVideo() ? 'video' : 'audio');
 							for (let chunk of chunksInfo) {
 								chunk.type = trackType;
-								chunk.label = '<span class="'+(trackType == 'video' ? 'optionVideo' : 'optionAudio')+'">@'+chunk.offset+', '+chunk.length+' bytes of '+chunk.type+'</span>';
+								chunk.label = '<span class="'+(trackType == 'video' ? 'optionVideo' : 'optionAudio')+'">@'+chunk.offset+', '+this.sizeToHuman(chunk.length)+' of '+chunk.type+'</span>';
 								chunk.value = chunk.offset;
 
 
@@ -107,7 +109,7 @@ export default {
 
 				const headerChunk = {
 					type: 'header',
-					label: '<span class="optionHeader">@'+this.atom.start+', 8 bytes header</span>',
+					label: '<span class="optionHeader">@'+this.atom.start+', 8 B header</span>',
 					value: this.atom.start,
 					offset: this.atom.start,
 					length: 8,
@@ -127,7 +129,7 @@ export default {
 						const length = nextChunk.offset - offset;
 						const strangeChunk = {
 							type: 'unknown',
-							label: '<span class="optionUnknown">@'+offset+', '+length+' bytes of unknown</span>',
+							label: '<span class="optionUnknown">@'+offset+', '+this.sizeToHuman(length)+' of unknown</span>',
 							value: offset,
 							length: length,
 							offset: offset,
@@ -147,7 +149,7 @@ export default {
 
 					const strangeChunk = {
 						type: 'unknown',
-						label: '<span class="optionUnknown">@'+offset+', '+length+' bytes of unknown</span>',
+						label: '<span class="optionUnknown">@'+offset+', '+this.sizeToHuman(length)+' of unknown</span>',
 						value: offset,
 						length: length,
 						offset: offset,
@@ -162,8 +164,6 @@ export default {
 				console.error(e);
 				this.availableChunks = [];
 			}
-
-			console.error('this.availableChunks', this.availableChunks);
 
 			if (this.availableChunks.length) {
 				setTimeout(()=>{

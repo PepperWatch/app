@@ -1,6 +1,6 @@
 <template>
 
-    <div :style="{backgroundColor: color, marginLeft: (indent*5)+'px'}">
+    <div :style="{backgroundColor: color, marginLeft: (indent ? 10 : 0)+'px'}">
         <q-item clickable ripple @click="onClick">
             <q-item-section class="text-black q-pl-md" >
                 <div>{{atom.name}}</div>
@@ -35,6 +35,8 @@
         <AnalyseFileDialogAtom v-for="atom in visibleAtoms"
             v-bind:key="atom.start" :atom="atom" :indent="indent + 1" :file="file" :fileAtoms="fileAtoms" ref="childsRefs"
             />
+
+        <div v-if="visibleAtoms.length" style="padding-bottom: 10px;"></div>
     </div>
 
 </template>
