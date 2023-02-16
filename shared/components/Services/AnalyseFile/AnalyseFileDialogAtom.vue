@@ -27,7 +27,7 @@
             </q-item-section>
             <q-item-section top class="text-black q-mr-md q-pt-md q-pb-md" side>
                 <div class="text-black q-gutter-xs">
-                <q-btn class="gt-xs" size="10px" flat dense round icon="download" color="primary" @click.prevent="download" />
+                <q-btn size="10px" flat dense round icon="download" color="primary" @click.prevent="download" />
                 </div>
             </q-item-section>
         </q-item>

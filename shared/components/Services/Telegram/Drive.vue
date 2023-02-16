@@ -7,7 +7,7 @@
         </q-btn> -->
             <q-toolbar-title>
             <q-breadcrumbs active-color="white" style="font-size: 16px">
-                <q-breadcrumbs-el label="Your Telegram Files" @click="onBack" style="cursor: pointer;" />
+                <q-breadcrumbs-el label="Your Telegram Files" @click="onBack" style="cursor: pointer;" class="gt-sm" />
                 <q-breadcrumbs-el :label="browsingFolder.name" v-if="browsingFolder && browsingReady" icon="folder_open" />
                 <template v-slot:separator>
                 <q-icon

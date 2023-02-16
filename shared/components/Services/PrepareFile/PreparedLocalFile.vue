@@ -1,15 +1,15 @@
 <template>
 
     <q-item>
-        <q-item-section class="q-pl-md">{{file.name}}</q-item-section>
-        <q-item-section avatar class="q-pl-md q-pt-md q-pb-md">
+        <q-item-section class="q-pl-md" style="overflow: hidden;">{{file.name}}</q-item-section>
+        <q-item-section avatar class="q-pl-md q-pt-md q-pb-md gt-sm">
             <img :src="thumbURL" height="50" v-if="thumbURL" @error="onThumbError">
         </q-item-section>
-        <q-item-section side avatar class="q-mr-md">
+        <q-item-section  avatar class="q-mr-md">
             <div class="text-grey-8 q-gutter-xs">
-                <q-btn class="gt-xs" size="18px" flat dense round icon="analytics" color="primary" @click="analyse" />
-                <q-btn class="gt-xs" size="18px" flat dense round icon="visibility" color="primary" @click="preview" />
-                <q-btn class="gt-xs" size="18px" flat dense round icon="download"  color="primary" @click="download" />
+                <q-btn size="18px" flat dense round icon="analytics" color="primary" @click="analyse" />
+                <q-btn size="18px" flat dense round icon="visibility" color="primary" @click="preview" />
+                <q-btn size="18px" flat dense round icon="download"  color="primary" @click="download" />
             </div>
         </q-item-section>
     </q-item>
