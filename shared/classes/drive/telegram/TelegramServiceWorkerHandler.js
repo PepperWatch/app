@@ -6,6 +6,7 @@ export default class TelegramServiceWorkerHandler extends CommonTelegramMethods 
 
 		this._drive = params.drive || null;
 		this._sw = null;
+		this._debug = true;
 	}
 
 	getScope() {

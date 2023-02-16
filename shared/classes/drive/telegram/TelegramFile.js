@@ -632,7 +632,7 @@ export default class TelegramFile extends CommonTelegramMethods {
 	}
 
 	async getSlice(offset, length) {
-		if (this._toBeUploadedFileInfo) {
+		if (this._toBeUploadedFileInfo && !this._messageMedia) {
 			const ab = await this._toBeUploadedFileInfo.getAsArrayBuffer();
 			const slice = Buffer( ab.slice(offset, offset + length) );
 			// console.error(slice);
