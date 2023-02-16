@@ -12,6 +12,7 @@
 
 			<q-btn flat to="/offline">Encode</q-btn>
 			<q-btn flat to="/decode">Decode</q-btn>
+			<q-btn flat to="/analyse">MP4 Atoms</q-btn>
 			<q-btn flat to="/telegram">Telegram Storage</q-btn>
 
 

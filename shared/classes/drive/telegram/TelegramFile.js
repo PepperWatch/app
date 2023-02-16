@@ -46,6 +46,27 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return this._contentFiles;
 	}
 
+
+	async analyse() {
+		try {
+			const mp4 = await window.newMP4Steg();
+
+			const thisSize = await this.size();
+			const fileForReadable = {
+				size: thisSize,
+				getSlice: async(offset, length) => {
+					return await this.getSlice(offset, length);
+				},
+			};
+
+			await mp4.loadFile({file: fileForReadable});
+
+			return mp4._atoms;
+		} catch(e) {
+			return [];
+		}
+	}
+
 	async tryToDecodeWith(keyOrPassword) {
 		this._contentFiles = [];
 

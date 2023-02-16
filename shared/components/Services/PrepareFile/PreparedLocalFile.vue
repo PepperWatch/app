@@ -7,6 +7,7 @@
         </q-item-section>
         <q-item-section side avatar class="q-mr-md">
             <div class="text-grey-8 q-gutter-xs">
+                <q-btn class="gt-xs" size="18px" flat dense round icon="analytics" color="primary" @click="analyse" />
                 <q-btn class="gt-xs" size="18px" flat dense round icon="visibility" color="primary" @click="preview" />
                 <q-btn class="gt-xs" size="18px" flat dense round icon="download"  color="primary" @click="download" />
             </div>
@@ -24,7 +25,7 @@ export default {
         file: Object,
         thumb: Object,
     },
-    emits: ['preview'],
+    emits: ['preview', 'analyse'],
     components: {
     },
     data() {
@@ -35,6 +36,9 @@ export default {
     watch: {
     },
     methods: {
+        async analyse() {
+            this.$emit('analyse', this.file);
+        },
         preview() {
             this.$emit('preview', this.file);
         },

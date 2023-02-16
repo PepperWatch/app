@@ -7,16 +7,16 @@
                 <div>
                     <!-- <h1 class="text-primary serif" style="margin-top: 0; margin-bottom: 16px;">Another level of security for your media files</h1> -->
 
-                    <h5 class="text-primary">Decode Pepperwatch Media File</h5>
+                    <h5 class="text-primary">Analyse MP4 File Atoms</h5>
 
                     <p class="text-primary">
-                        <q-btn unelevated color="primary" size="md" @click="onSelectFileClick">Select Local Media File With Hidden Data</q-btn>
+                        <q-btn unelevated color="primary" size="md" @click="onSelectFileClick">Select Local MP4 File</q-btn>
                         <input type="file" @change="fileSelected" class="fileInput" ref="fileInput">
                         <AllBodyDropFileZone @file="fileSelected" />
                     </p>
 
                     <p class="text-primary">
-                        or just drop your pepperwatch container file into this page
+                        or just drop .mp4 file into this page
                     </p>
 
                 </div>
@@ -50,10 +50,10 @@ import MediaBrowser from 'shared/components/Services/Telegram/MediaBrowser.vue';
 import AnalyseFileDialog from 'shared/components/Services/AnalyseFile/AnalyseFileDialog.vue';
 
 export default {
-	name: 'Decode',
-	title: 'Decode Container',
+	name: 'Analyse',
+	title: 'Analyse MP4 Atoms',
 	authRequired: false,
-	path: '/decode',
+	path: '/analyse',
 
 	components: {
 		PreparedLocalFile,
@@ -90,19 +90,6 @@ export default {
         onSelectFileClick() {
             this.$refs.fileInput.click();
         },
-        // async sample() {
-        //     const res = await fetch("//commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4");
-        //     const blob = await res.blob();
-
-        //     const filename = ('ForBiggerMeltdowns.mp4').split(/[\\/]/).pop();
-
-        //     const file = new window.File([blob], filename, {
-        //         lastModified: Date.now(),
-        //         type: blob.type,
-        //     });
-
-        //     this.fileSelected({target: {files: [file]}});
-        // },
         async fileSelected(ev) {
             let files = [];
             if (ev.target && ev.target.files) {
@@ -120,9 +107,8 @@ export default {
 				thumb: files[0],
 				id: (''+Math.random()),
             });
-			// this.fileToAnalyse = files[0];
-            //
-            this.fileToShow = files[0];
+
+            this.fileToAnalyse = files[0];
         },
 	},
 	mounted() {
