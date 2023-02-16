@@ -8,13 +8,12 @@
 			</q-page>
 		</q-page-container>
 
-		<!-- <Footer /> -->
+		<Footer />
 	</q-layout>
 </template>
-
 <script>
 import Header from './Header';
-// import Footer from './Footer';
+import Footer from './Footer';
 import RoutedPage from './RoutedPage.vue';
 
 export default {
@@ -23,7 +22,7 @@ export default {
 	components: {
 		RoutedPage,
 		Header,
-		// Footer,
+		Footer,
 	},
 
 	methods: {
