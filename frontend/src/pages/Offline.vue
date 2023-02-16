@@ -24,13 +24,15 @@
             <div class="col-12 col-md-8">
 
                 <q-list bordered separator v-if="prepared.length">
-                    <PreparedLocalFile v-for="data in prepared" @preview="onShowPreview" v-bind:key="data.id" :file="data.file" :thumb="data.thumb" />
+                    <PreparedLocalFile v-for="data in prepared" @preview="onShowPreview"
+                        @analyse="onShowAnalyse" v-bind:key="data.id" :file="data.file" :thumb="data.thumb" />
                 </q-list>
 
             </div>
         </div>
 
         <MediaBrowser :file="fileToShow" @hide="onMediaBrowserHide" />
+        <AnalyseFileDialog :file="fileToAnalyse" @hide="onAnalyseFileDialogHide" />
         <MP4StegAsync />
     </div>
 
@@ -44,6 +46,7 @@ import AllBodyDropFileZone from 'shared/components/Helpers/AllBodyDropFileZone';
 import MP4StegAsync from 'shared/components/AsyncComponents/MP4StegAsync.js';
 // import Drive from 'shared/classes/drive/telegram/Drive.js';
 import MediaBrowser from 'shared/components/Services/Telegram/MediaBrowser.vue';
+import AnalyseFileDialog from 'shared/components/Services/AnalyseFile/AnalyseFileDialog.vue';
 
 export default {
 	name: 'Encode/Decode Offline',
@@ -55,6 +58,7 @@ export default {
         PreparedLocalFile,
         MP4StegAsync,
         MediaBrowser,
+        AnalyseFileDialog,
         // Drive,
     },
 	data() {
@@ -64,11 +68,18 @@ export default {
             // folders: [],
             //
             fileToShow: null,
+            fileToAnalyse: null,
 		}
 	},
     watch: {
     },
 	methods: {
+        onShowAnalyse(file) {
+            this.fileToAnalyse = file;
+        },
+        onAnalyseFileDialogHide() {
+            this.fileToAnalyse = null;
+        },
         onShowPreview(file) {
             this.fileToShow = file;
         },
