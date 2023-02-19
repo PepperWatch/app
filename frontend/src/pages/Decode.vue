@@ -90,19 +90,6 @@ export default {
         onSelectFileClick() {
             this.$refs.fileInput.click();
         },
-        // async sample() {
-        //     const res = await fetch("//commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4");
-        //     const blob = await res.blob();
-
-        //     const filename = ('ForBiggerMeltdowns.mp4').split(/[\\/]/).pop();
-
-        //     const file = new window.File([blob], filename, {
-        //         lastModified: Date.now(),
-        //         type: blob.type,
-        //     });
-
-        //     this.fileSelected({target: {files: [file]}});
-        // },
         async fileSelected(ev) {
             let files = [];
             if (ev.target && ev.target.files) {

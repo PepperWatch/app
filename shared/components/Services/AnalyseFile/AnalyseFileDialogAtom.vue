@@ -59,6 +59,8 @@ import AnalyseFileDialogAtom from './AnalyseFileDialogAtom.vue';
 import { atomTypes } from './atomTypes.js';
 
 import MDAT from './atoms/MDAT.vue';
+import MVHD from './atoms/MVHD.vue';
+import TKHD from './atoms/TKHD.vue';
 
 export default {
     name: 'AnalyseFileDialogAtom',
@@ -75,6 +77,8 @@ export default {
     components: {
         AnalyseFileDialogAtom,
         MDAT,
+        MVHD,
+        TKHD,
     },
     data() {
         return {
