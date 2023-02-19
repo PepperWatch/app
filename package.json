@@ -33,7 +33,7 @@
     "lockfile": "^1.0.4",
     "minio": "^7.0.28",
     "mongoose": "^6.0.12",
-    "mp4steg": "PepperWatch/mp4steg#943e0a0a59d67666824a7e81d1e0c854c19b0e67",
+    "mp4steg": "PepperWatch/mp4steg#8ae914f1008d7345ba4d6402896071046fbf2a60",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.5",
     "secp256k1": "^5.0.0",
