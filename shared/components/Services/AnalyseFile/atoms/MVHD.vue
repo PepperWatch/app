@@ -127,10 +127,14 @@ export default {
 				// 3 bytes - Three bytes of space for future movie header flags.
 
 				const creationTime = (await this.atom.unpackFromOffset(12,4,'>I'))[0];
-				this.creationDate = new Date(baseDate + creationTime * 1000);
+				if (creationTime) {
+					this.creationDate = new Date(baseDate + creationTime * 1000);
+				}
 
 				const modificationTime = (await this.atom.unpackFromOffset(16,4,'>I'))[0];
-				this.modificationDate = new Date(baseDate + modificationTime * 1000);
+				if (modificationTime) {
+					this.modificationDate = new Date(baseDate + modificationTime * 1000);
+				}
 
 				this.timeScale = (await this.atom.unpackFromOffset(20,4,'>I'))[0];
 				this.duration = (await this.atom.unpackFromOffset(24,4,'>I'))[0];

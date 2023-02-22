@@ -63,6 +63,8 @@ import MVHD from './atoms/MVHD.vue';
 import TKHD from './atoms/TKHD.vue';
 import FTYP from './atoms/FTYP.vue';
 import MDHD from './atoms/MDHD.vue';
+import META from './atoms/META.vue';
+import JustString from './atoms/JustString.vue';
 
 export default {
     name: 'AnalyseFileDialogAtom',
@@ -83,6 +85,20 @@ export default {
         TKHD,
         FTYP,
         MDHD,
+        META,
+        MODL: JustString,
+        CLSF: JustString,
+        YRRC: JustString,
+        ALBM: JustString,
+        LOCI: JustString,
+        KYWD: JustString,
+        RTNG: JustString,
+        GNRE: JustString,
+        PERF: JustString,
+        DSCP: JustString,
+        TITL: JustString,
+        AUTH: JustString,
+        CPRT: JustString,
     },
     data() {
         return {
@@ -150,7 +166,12 @@ export default {
             const sizeI = Math.floor( Math.log(this.atom.size) / Math.log(1024) );
             this.humanSize = ( this.atom.size / Math.pow(1024, sizeI) ).toFixed(0) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][sizeI];
             this.atoms = this.atom.childs;
-            this.description = atomTypes[this.atom.name].desc;
+
+            if (atomTypes[this.atom.name]) {
+                this.description = atomTypes[this.atom.name].desc;
+            } else {
+                this.description = 'Unknown Atom';
+            }
 
 
             // if there component for this type:
