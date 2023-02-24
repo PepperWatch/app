@@ -14,6 +14,18 @@
 
 					<div class="prepareFileDialogMenuBlock" :class="{prepareFileDialogMenuBlockActive: (selectedUploadMethod == null)}">
 
+
+						<q-item :clickable="false" v-if="!isBrowserOk" style="margin-top: 16px; margin-bottom: 16px;">
+						<q-item-section avatar class="q-pl-md">
+						<q-icon color="negative" name="warning" />
+						</q-item-section>
+
+						<q-item-section>
+						<q-item-label>May not work in your browser </q-item-label>
+						<q-item-label caption>The encoding algorithm is very heavy and is optimized for desktop Chrome browser and may crush on your device. We are working on support for other browsers. Please feel free to let us know about any issues via the contact page or GitHub's issues.</q-item-label>
+						</q-item-section>
+						</q-item>
+
 						<DialogMenuItem @click="onUploadRaw"
 							title="Upload As Is"
 							description="Just as you do from Telegram application"
@@ -139,6 +151,8 @@ export default {
 
     data() {
         return {
+			isBrowserOk: false,
+
             preparedSize: 0,
             preparedType: null,
             previewImageURL: null,
@@ -170,6 +184,40 @@ export default {
     },
 
 	methods: {
+		isGoodBrowser() {
+			try {
+				var isChromium = window.chrome;
+				var winNav = window.navigator;
+				var vendorName = winNav.vendor;
+				var isOpera = typeof window.opr !== "undefined";
+				var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+				var isIOSChrome = winNav.userAgent.match("CriOS");
+
+				if (isIOSChrome) {
+					// is Google Chrome on IOS
+					return false;
+				} else if (
+					isChromium !== null &&
+					typeof isChromium !== "undefined" &&
+					vendorName === "Google Inc." &&
+					isOpera === false &&
+					isIEedge === false
+				) {
+					// is Google Chrome
+					return true;
+				} else {
+					// not Google Chrome
+					if (winNav.userAgent.indexOf("Firefox") > -1) {
+						return true;
+					}
+				}
+
+				return false;
+			} catch(e) {
+				return false;
+			}
+		},
+
 		async notify(stage, frame) {
 			if (stage) {
 				this.__lastNotifyStage = stage;
@@ -407,6 +455,7 @@ export default {
 		// following method is REQUIRED
 		// (don't change its name --> "show")
 		show () {
+			this.isBrowserOk = this.isGoodBrowser();
 			this.$refs.dialog.show();
 			this.initialize();
 		},
