@@ -1,7 +1,10 @@
 
+import LocalCachedMethods from './abstract/LocalCachedMethods.js';
 
-export default class MP4Encoder {
+export default class MP4Encoder extends LocalCachedMethods {
 	constructor() {
+		super();
+
 		this._webWorkerBlobUrl = null;
 		this._worker = null;
 

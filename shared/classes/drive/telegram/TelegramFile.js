@@ -5,6 +5,17 @@ import CommonTelegramMethods from './CommonTelegramMethods.js';
 
 const bigInt = require("big-integer");
 
+/**
+ * Class works both for telegram files and for local user files
+ * Does not require Telegram connection or even wrapper to work
+ * though on higher level lets you upload/download media binary (both content and encoded containers)
+ * to Telegram storage (prefer to use Saved folder)
+ *
+ * - thumb previews generation
+ * - mp4steg integration
+ * - binary seek read
+ */
+
 export default class TelegramFile extends CommonTelegramMethods {
 	constructor(params = {}) {
 		super();
@@ -32,6 +43,21 @@ export default class TelegramFile extends CommonTelegramMethods {
 		this._debug = true;
 	}
 
+	/**
+	 * Try to check the file to determine if there's place something hidden may be in
+	 * It does not try to decode it, no keys or something,
+	 * just to check if there's something we can possibly try to decode
+	 * @return {Boolean} Is there
+	 */
+	async isThereMayBeSomethingEncoded() {
+
+	}
+
+	/**
+	 * Get the URL for serviceWorker request
+	 * check TelegramServiceWorkerHandler and /public/service-worker.js in frontend's root
+	 * @return {String} [description]
+	 */
 	async getSWURL() {
 		const type = await this.getType();
 		if (type == 'video') {
@@ -42,11 +68,21 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return '/askfor/'+this.id+'.dat';
 	}
 
+	/**
+	 * List of encoded files inside of decoded MP4Steg container
+	 * This array will have some items after successful tryToDecodeWith(...) call
+	 * returns a list of TelegramFileContentFile instances
+	 * @return {Array} [description]
+	 */
 	get contentFiles() {
 		return this._contentFiles;
 	}
 
-
+	/**
+	 * Analyse MP4 atoms of media file and returns a list of them
+	 * @return {Array} [description]
+	 * Take a look at mp4steg library for ret details
+	 */
 	async analyse() {
 		try {
 			const mp4 = await window.newMP4Steg();
@@ -67,6 +103,12 @@ export default class TelegramFile extends CommonTelegramMethods {
 		}
 	}
 
+	/**
+	 * Tries to decode MP4Steg conainer using key or password
+	 * After successful call there will be something in .contentFiles property
+	 * @param  {[type]} keyOrPassword [description]
+	 * @return {[type]}               [description]
+	 */
 	async tryToDecodeWith(keyOrPassword) {
 		this._contentFiles = [];
 
@@ -96,25 +138,21 @@ export default class TelegramFile extends CommonTelegramMethods {
 
 			this._contentFiles.push(contentFile);
 
-			const slice = await contentFile.getSlice(0, 10);
-			this.log('slice', slice);
-			const slice2 = await contentFile.getSlice(2, 10);
-			this.log('slice', slice2);
+			// const slice = await contentFile.getSlice(0, 10);
+			// this.log('slice', slice);
+			// const slice2 = await contentFile.getSlice(2, 10);
+			// this.log('slice', slice2);
 		}
 
 		this.log(this._contentFiles);
 
 		return this._contentFiles;
-	// 	await mp4Steg.loadFile({file: containerBlob});
-	// 	console.error('mp4Steg', mp4Steg);
-
-	// 	const randomKey = window.crypto.getRandomValues(new Uint8Array(32));
-
-	// 	mp4Steg.setKey(randomKey);
-
-	// 	await mp4Steg.loadFile({file: containerBlob});
 	}
 
+	/**
+	 * Create blob url for local file
+	 * @return {String} [description]
+	 */
 	toBeUploadedOriginalURL() {
 		if (this._toBeUploadedFileInfo) {
 			return window.URL.createObjectURL(this._toBeUploadedFileInfo.file);
@@ -123,6 +161,10 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return null;
 	}
 
+	/**
+	 * returns File of local
+	 * @return {[type]} [description]
+	 */
 	originalFile() {
 		if (this._toBeUploadedFileInfo) {
 			return this._toBeUploadedFileInfo.file;
@@ -131,6 +173,11 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return null;
 	}
 
+	/**
+	 * Prepare some calculations for local binary media (previews, sizes etc)
+	 * check LocalFileInformation class for details
+	 * @return {[type]} [description]
+	 */
 	async prepareLocal() {
 		// get width and height
 		if (this._toBeUploadedFileInfo) {
@@ -138,6 +185,14 @@ export default class TelegramFile extends CommonTelegramMethods {
 		}
 	}
 
+	/**
+	 * Helper function to create TelegramFile instance out of public URL
+	 * gets binary from url, and returns TelegramFile with it as content
+	 * can be uploaded to telegram or used for local mp4steg manipulation
+	 * useful for testing purposes
+	 * @param  {[type]} url [description]
+	 * @return {[type]}     [description]
+	 */
 	async fromURL(url) {
 		const res = await fetch(url);
 		const blob = await res.blob();
@@ -160,19 +215,23 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return ret;
 	}
 
-	copy() {
-		const file = new TelegramFile({
-			provider: this.provider,
-			drive: this._drive,
-			folder: this._folder,
-			messageMedia: this._messageMedia,
-			message: this._message,
-			id: `${this.id}_copy_${Math.random()}`,
-		});
+	// copy() {
+	// 	const file = new TelegramFile({
+	// 		provider: this.provider,
+	// 		drive: this._drive,
+	// 		folder: this._folder,
+	// 		messageMedia: this._messageMedia,
+	// 		message: this._message,
+	// 		id: `${this.id}_copy_${Math.random()}`,
+	// 	});
 
-		return file;
-	}
+	// 	return file;
+	// }
 
+	/**
+	 * Unique TelegramFile identifier
+	 * @return {[type]} [description]
+	 */
 	get id() {
 		if (this._id) {
 			return this._id;
@@ -189,14 +248,26 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return null;
 	}
 
+	/**
+	 * whether it's the local file or Telegram file representation
+	 * @return {Boolean} [description]
+	 */
 	get isToBeUploaded() {
 		return this._isToBeUploaded;
 	}
 
+	/**
+	 * Telegram class controller
+	 * @return {[type]} [description]
+	 */
 	get provider() {
 		return this._provider;
 	}
 
+	/**
+	 * Telegram connection client
+	 * @return {[type]} [description]
+	 */
 	get client() {
 		if (this.provider && this.provider.client) {
 			return this.provider.client;
@@ -205,6 +276,10 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return null;
 	}
 
+	/**
+	 * Gets the type of this file
+	 * @return {String} [description]
+	 */
 	async getType() {
 		if (this._messageMedia) {
 			if (this._messageMedia.photo) {
@@ -223,10 +298,18 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return null;
 	}
 
+	/**
+	 * Unique URL to be cached in IndexDB
+	 * @return {String} [description]
+	 */
 	get previewCacheURL() {
 		return ''+this.id+'_preview.jpg';
 	}
 
+	/**
+	 * Mime type
+	 * @return {String} [description]
+	 */
 	get mimeType() {
 		if (this._messageMedia) {
 			if (this._messageMedia.className == "MessageMediaPhoto") {
@@ -239,6 +322,10 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return null;
 	}
 
+	/**
+	 * Filename
+	 * @return {String} [description]
+	 */
 	get fileName() {
 		if (this._messageMedia) {
 			if (this._messageMedia.className == "MessageMediaPhoto") {
@@ -260,6 +347,10 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return 'dat.dat';
 	}
 
+	/**
+	 * Width of the media
+	 * @return {Number} [description]
+	 */
 	get width() {
 		if (this._messageMedia) {
 			if (this._messageMedia.className == "MessageMediaPhoto") {
@@ -286,6 +377,10 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return null;
 	}
 
+	/**
+	 * Height of the media
+	 * @return {Number} [description]
+	 */
 	get height() {
 		if (this._messageMedia) {
 			if (this._messageMedia.className == "MessageMediaPhoto") {
@@ -312,6 +407,10 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return null;
 	}
 
+	/**
+	 * Width to Height ratio
+	 * @return {Number} [description]
+	 */
 	get ratio() {
 		const w = this.width;
 		const h = this.height;
@@ -321,6 +420,10 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return null;
 	}
 
+	/**
+	 * Whether the file has high version preview
+	 * @return {Boolean} [description]
+	 */
 	hasHighPreview() {
 		if (this._highPreviewBlobURL) {
 			return this._highPreviewBlobURL;
@@ -328,12 +431,22 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return false;
 	}
 
+	/**
+	 * Sets window.Response object as high version preview
+	 * Useful to populating data back from IndexDB
+	 * @return {Boolean} [description]
+	 */
 	async setResponseAsHighPreview(response) {
 		const blob = await response.blob();
 		this._highPreviewBlob = blob;
 		await this.getHighPreview();
 	}
 
+	/**
+	 * Get high version preview and save it in IndexDB if needed
+	 * returns Blob URL
+	 * @return {[type]} [description]
+	 */
 	async getHighPreview() {
 		if (this._highPreviewBlobURL) {
 			return this._highPreviewBlobURL;
@@ -395,6 +508,11 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return this._highPreviewBlobURL;
 	}
 
+	/**
+	 * Get low version preview
+	 * returns base64 url
+	 * @return {[type]} [description]
+	 */
 	getLowPreview() {
 		if (this._lowPreview) {
 			return this._lowPreview;
@@ -441,6 +559,7 @@ export default class TelegramFile extends CommonTelegramMethods {
 		// console.log(this._messageMedia);
 	}
 
+
 	isSeekable() {
 		if (this._messageMedia.className == 'MessageMediaDocument') {
 			return true;
@@ -449,42 +568,11 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return false;
 	}
 
-	// async uploadEncoded(containerBlob) {
-	// 	if (!this._isToBeUploaded) {
-	// 		return false;
-	// 	}
-
-	// 	const mp4Steg = await window.newMP4Steg();
-	// 	console.error('mp4Steg', mp4Steg);
-
-	// 	const randomKey = window.crypto.getRandomValues(new Uint8Array(32));
-
-	// 	mp4Steg.setKey(randomKey);
-
-	// 	await mp4Steg.loadFile({file: containerBlob});
-
-	// 	console.error(mp4Steg._atoms);
-
-	// 	const id = (''+Math.random()).split('0.').join('');
-
-	// 	const meta = {
-
-	// 	};
-
-	// 	await mp4Steg.embedFile({file: this._toBeUploadedFileInfo.file, meta: {id: id, meta:meta}});
-
-	// 	const writable = await mp4Steg.embed();
-	// 	const blob = await writable.toBlob();
-	// 	// console.error(writable);
-
-	// 	const fileToSwitch = new window.File([blob], ''+id+'.mp4', {
-	// 		lastModified: Date.now(),
-	// 		type: 'video/mp4',
-	// 	});
-
-	// 	return await this.upload(fileToSwitch);
-	// }
-
+	/**
+	 * Uploads the file to telegram. Works only for local files and requires telegram connection
+	 * @param  {[type]} options [description]
+	 * @return {[type]}         [description]
+	 */
 	async upload(options) {
 		console.error('options', options);
 
@@ -551,16 +639,6 @@ export default class TelegramFile extends CommonTelegramMethods {
 				fileName = this._toBeUploadedFileInfo.fileName;
 			}
 
-			// const totalSize = await this._toBeUploadedFileInfo.getSize();
-			// const ab = await this._toBeUploadedFileInfo.getAsArrayBuffer();
-
-			// await this.provider.writeFile({
-			// 	fileId: fileId,
-			// 	bytes: ab,
-			// 	// totalSize: totalSize,
-			// });
-
-
 			const message = await this.provider.endFile({
 				fileId: fileId,
 				bytes: ab,
@@ -594,6 +672,10 @@ export default class TelegramFile extends CommonTelegramMethods {
 		}
 	}
 
+	/**
+	 * Fetches all file and send it as disposition attachment download in browser
+	 * @return {[type]} [description]
+	 */
 	async download() {
         const fileSize = await this.size();
         const chunk = await this.getSlice(0, fileSize);
@@ -616,6 +698,13 @@ export default class TelegramFile extends CommonTelegramMethods {
 		window.URL.revokeObjectURL(blobUrl);
 	}
 
+	/**
+	 * Is there downloaded chunk of a range
+	 * helper function for getSlice
+	 * @param  {[type]}  offset [description]
+	 * @param  {[type]}  length [description]
+	 * @return {Boolean}        [description]
+	 */
 	hasChunksFor(offset, length) {
 		const minChunkSize = 512 * 1024;
 
@@ -631,11 +720,17 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return true;
 	}
 
+	/**
+	 * reads binary portion of a file
+	 * works in a same way for local files and for telegram stored files
+	 * @param  {Number} offset [description]
+	 * @param  {Number} length [description]
+	 * @return {Buffer}        [description]
+	 */
 	async getSlice(offset, length) {
 		if (this._toBeUploadedFileInfo && !this._messageMedia) {
 			const ab = await this._toBeUploadedFileInfo.getAsArrayBuffer();
 			const slice = Buffer( ab.slice(offset, offset + length) );
-			// console.error(slice);
 
 			return slice;
 		}
@@ -646,14 +741,6 @@ export default class TelegramFile extends CommonTelegramMethods {
 		const downloadSize = Math.ceil((length) / minChunkSize) * minChunkSize;
 
 		if (!this.hasChunksFor(offset, length)) {
-
-			// const params = {
-			// 	offset: bigInt(downloadFrom),
-			// 	limit: bigInt(downloadSize),
-			// 	requestSize: bigInt(downloadSize),
-			// 	file: this._messageMedia,
-			// 	chunkSize: minChunkSize,
-			// };
 
 			const promises = [];
 
@@ -680,29 +767,6 @@ export default class TelegramFile extends CommonTelegramMethods {
 			}
 
 			await Promise.all(promises);
-
-			// let chunkIndex = downloadFrom;
-			// for (let i = 0; i < bytes.length; i += minChunkSize) {
-			// 	const chunk = bytes.slice(i, i + minChunkSize);
-
-			// 	this._downloadedChunks[''+chunkIndex] = Buffer(chunk);
-			// 	console.error('Got chunk', chunkIndex);
-			// 	chunkIndex += minChunkSize;
-			// }
-
-			// const downloader = await this.client.iterDownload(params);
-
-			// let chunkIndex = downloadFrom;
-			// for await (const downloaded of downloader){
-			// 	this._downloadedChunks[''+chunkIndex] = downloaded;
-			// 	console.error('Got chunk', chunkIndex);
-			// 	chunkIndex += minChunkSize;
-
-			// 	if (this.hasChunksFor(offset, length)) {
-			// 		break;
-			// 	}
-			// }
-
 		}
 
 		let data = Buffer.alloc(0);
@@ -732,6 +796,10 @@ export default class TelegramFile extends CommonTelegramMethods {
 		return data.slice(0, length);
 	}
 
+	/**
+	 * Returns total size of a file
+	 * @return {Number} [description]
+	 */
 	async size() {
 		if (this._messageMedia) {
 			if (this._messageMedia.className == 'MessageMediaDocument') {

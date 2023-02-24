@@ -2,18 +2,8 @@ import LocalCachedMethods from 'shared/classes/abstract/LocalCachedMethods.js';
 
 export default class CommonTelegramMethods extends LocalCachedMethods {
 	constructor(params = {}) {
-		super();
+		super(params);
 
-		this._debug = params.debug || false;
-	}
-
-	log(...args) {
-		if (!this._debug) {
-			return;
-		}
-
-		args.unshift(''+this.constructor.name+' | ');
-		console.info.apply(null, args);
 	}
 
 	fileNameToType(fileName) {

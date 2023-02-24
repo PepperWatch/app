@@ -1,11 +1,21 @@
 
 export default class LocalCachedMethods extends EventTarget {
-	constructor() {
+	constructor(params = {}) {
 		super();
 
 		this._singleThreads = {
 
 		};
+		this._debug = params.debug || false;
+	}
+
+	log(...args) {
+		if (!this._debug) {
+			return;
+		}
+
+		args.unshift(''+this.constructor.name+' | ');
+		console.info.apply(null, args);
 	}
 
 	isThereSingleThread(threadId) {

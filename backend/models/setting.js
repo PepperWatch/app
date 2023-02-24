@@ -4,7 +4,7 @@ const ReCaptcha = require('../includes/ReCaptcha.js');
 const SignInWithGoogle = require('../includes/SignInWithGoogle.js');
 const Storage = require('../includes/Storage.js');
 const DeployChecker = require('../includes/DeployChecker.js');
-const Solana = require('../includes/Solana.js');
+// const Solana = require('../includes/Solana.js');
 const Telegram = require('../includes/Telegram.js');
 
 module.exports = function(mongoose, connection, db) {
@@ -129,22 +129,22 @@ module.exports = function(mongoose, connection, db) {
         return this.__reCaptcha;
     };
 
-    schema.statics.getSolana = function(chainType = 'devnet') {
-        if (!this.__solana) {
-            this.__solana = {};
-        }
+    // schema.statics.getSolana = function(chainType = 'devnet') {
+    //     if (!this.__solana) {
+    //         this.__solana = {};
+    //     }
 
-        if (this.__solana[chainType]) {
-            return this.__solana[chainType];
-        }
+    //     if (this.__solana[chainType]) {
+    //         return this.__solana[chainType];
+    //     }
 
-        this.__solana[chainType] = new Solana({
-            db: db,
-            chainType: chainType,
-        });
+    //     this.__solana[chainType] = new Solana({
+    //         db: db,
+    //         chainType: chainType,
+    //     });
 
-        return this.__solana[chainType];
-    };
+    //     return this.__solana[chainType];
+    // };
 
     schema.statics.getSignInWithGoogle = function() {
         if (this.__signInWithGoogle) {

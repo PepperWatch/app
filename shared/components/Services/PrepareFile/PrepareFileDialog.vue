@@ -113,6 +113,8 @@ import DialogMenuItem from 'shared/components/Helpers/DialogMenu/DialogMenuItem.
 import DialogPasswordInput from 'shared/components/Helpers/DialogMenu/DialogPasswordInput.vue';
 import VideoProcessor from 'shared/classes/VideoProcessor.js';
 
+import { QSpinnerGears } from 'quasar'
+
 export default {
 	props: {
 		// ...your custom props
@@ -168,6 +170,40 @@ export default {
     },
 
 	methods: {
+		async notify(stage, frame) {
+			if (stage) {
+				this.__lastNotifyStage = stage;
+			} else {
+				if (this.__lastNotifyStage) {
+					stage = this.__lastNotifyStage;
+				}
+			}
+
+			if (!this._notify) {
+				this._notify = this.$q.notify({
+					message: stage,
+					caption: frame ? ('frame: '+frame) : '-',
+					color: 'primary',
+					spinner: QSpinnerGears,
+					group: false, // required to be updatable
+					timeout: 0, // we want to be in control when it gets dismissed
+				});
+			} else {
+				this._notify({
+					message: stage,
+					caption: frame ? ('frame: '+frame) : '-',
+				});
+			}
+		},
+
+		async finishNotify() {
+			if (this._notify) {
+				this._notify({
+					timeout: 500,
+				});
+			}
+		},
+
 		async initialize() {
 			this.preparedSize = this.file.size;
 
@@ -184,7 +220,6 @@ export default {
             }
 
             this.containerBlob = this.file;
-
 			// this.preparedType = await this.telegramFile.getType();
 			// this.previewImageURL = await this.telegramFile.getHighPreview();
 		},
@@ -192,11 +227,33 @@ export default {
 		async onClickDoGenerate() {
 			this.generatingPreview = true;
 
-			try {
+			let videoProcessor = null;
+			const videoProcessorEventHandler = (event)=>{
+				if (event.detail && event.detail.name) {
+					let frame = 0;
+					try {
+						frame = videoProcessor.getWorkerLastProcessedFrame();
+					} catch(e) {
+						console.log(e);
+					}
+					this.notify(event.detail.name, frame);
+				}
+			};
+			let videoProcessorFrameInterval = setInterval(()=>{
+				let frame = 0;
+				try {
+					frame = videoProcessor.getWorkerLastProcessedFrame();
+				} catch(e) {
+					console.log(e);
+				}
+				this.notify(null, frame);
+			}, 200);
 
-				const videoProcessor = new VideoProcessor({
+			try {
+				videoProcessor = new VideoProcessor({
 					file: this.file,
 				});
+				videoProcessor.addEventListener('stage', videoProcessorEventHandler);
 
 				let preview = null;
 				if (this.preparedType == 'video') {
@@ -234,11 +291,17 @@ export default {
 			} catch (e) {
 				console.error(e);
 				this.generatingPreview = false;
+				clearInterval(videoProcessorFrameInterval);
+				videoProcessor.removeEventListener('stage', videoProcessorEventHandler);
+
+				this.finishNotify();
 
 				return false;
 			}
 
-
+			clearInterval(videoProcessorFrameInterval);
+			this.finishNotify();
+			videoProcessor.removeEventListener('stage', videoProcessorEventHandler);
 
 			this.generatingPreview = false;
 			this.previewEdit = null;

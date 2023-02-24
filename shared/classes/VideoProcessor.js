@@ -3,8 +3,12 @@ import VideoCanvas from './VideoCanvas/VideoCanvas.js';
 import MP4Encoder from './MP4Encoder.js';
 import FinalPart from './VideoCanvas/FinalPart.js';
 
-export default class VideoProcessor {
+import LocalCachedMethods from './abstract/LocalCachedMethods.js';
+
+export default class VideoProcessor extends LocalCachedMethods {
 	constructor({file}) {
+		super();
+
 		Object.assign(this, {file});
 
 		if (!this.file) {
@@ -19,6 +23,12 @@ export default class VideoProcessor {
 
 		this._introLengthInFrames = 75;
 		this._outtroLengthInFrames = 25;
+
+		this._debug = true;
+
+		// this._mp4EncodeEventListener = (event)=>{
+
+		// };
 	}
 
 	async free() {
@@ -32,10 +42,6 @@ export default class VideoProcessor {
 	get originalWidth() { return this._videoCanvas.originalWidth; }
 	get originalHeight() { return this._videoCanvas.originalHeight; }
 	get originalDuration() { return this._videoCanvas.originalDuration; }
-
-	log(str) {
-		console.log('VideoProcessor | ', str);
-	}
 
 	async getOriginalHash() {
 		return await this.userFile.hash();
@@ -113,6 +119,8 @@ export default class VideoProcessor {
 		const blurValue = params.blurValue || 0;
 		const imageFile = this.file;
 
+		this.nextStage('Loading the image', 999);
+
 		const url = window.URL.createObjectURL(imageFile); // @todo: resolve URL after
 
 		const img = await new Promise((resolve, reject) => {
@@ -144,6 +152,8 @@ export default class VideoProcessor {
 
 		let canvas = null;
 		this.log('creating the canvas to convert image to png...');
+
+		this.nextStage('Converting the image to PNG', 999);
 
 		canvas = document.createElement('canvas');
 
@@ -179,15 +189,21 @@ export default class VideoProcessor {
 			}, 'image/png');
 		});
 
+		this.nextStage('Converting the PNG to video', 999);
+
 		const task = await VideoTask.execute('imageVideo', {ab: imageAb, filename: 'image.png', duration: duration, toWidth: imageWidth, toHeight: imageHeight});
+
+		this.nextStage('Adding empty audio over it', 999);
 
 		const emptyAudio = await this.getEmptyAudioBlob();
 		await task.executeOver('emptyAudio', {emptyAudio: emptyAudio});
 
 		if (blurValue >= 1) {
+			this.nextStage('Adding the blur over video', 999);
 			await task.executeOver('blur', {radius: blurValue});
 		}
 
+		this.nextStage('Composing tracks', 999);
 
 		return await task.asBlob();
 	}
@@ -226,7 +242,7 @@ export default class VideoProcessor {
 				await trimmed.executeOver('blur', {radius: this.blurValue});
 			}
 		} catch(e) {
-			console.error(e);
+			// console.error(e);
 
 
 			// try to downsample with canvas
@@ -356,6 +372,8 @@ export default class VideoProcessor {
 		if (mp4Encoder) {
 			mp4Encoder._lastProcessedFrame = null;
 		}
+
+		this.dispatchEvent(new CustomEvent('stage', { detail: {name: name, expectedFrames: expectedFrames} }));
 	}
 
 	async getReadyPercent() {
