@@ -186,6 +186,12 @@ export default {
 	methods: {
 		isGoodBrowser() {
 			try {
+				if ((('ontouchstart' in window) ||
+					(navigator.maxTouchPoints > 0) ||
+					(navigator.msMaxTouchPoints > 0))) {
+					return false;
+				}
+
 				var isChromium = window.chrome;
 				var winNav = window.navigator;
 				var vendorName = winNav.vendor;
