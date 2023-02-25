@@ -37,34 +37,72 @@
                     </p>
                 </div>
             </div>
-            <div class="col-12 col-md-8 relative-position video-panes">
+            <div class="col-12 col-md-8 relative-position video-panes rightPane">
 
                 <div class="row q-col-gutter-md">
-                    <div class="col-4">
+                    <h5 class="text-primary">PepperWatch Sample</h5>
 
-                        <div class="column-inner-1 column-inner-shift" ref="column_1">
-                            <template v-for="item in items.c1"  :key="item._id" >
-                                <HomeCard :video="item" @loaded="homeCardLoaded" />
-                            </template>
-                        </div>
+                    <div style="width: 100%; padding-top: 0;">
+
+    <div class="home-feature-card">
+        <span>
+            <q-icon name="video_file" color="secondary" />
+        </span>
+
+        <div>Media for container. 2MB<a href="#"><q-icon name="download" color="secondary" /></a></div>
+
+    </div>
+    <div class="home-feature-card">
+        <span>
+            <q-icon name="note_add" color="secondary" />
+        </span>
+
+        <div>Media to cipher. 5MB<a href="#"><q-icon name="download" color="secondary" /></a></div>
+
+    </div>
+    <div class="home-feature-card">
+        <span>
+            <q-icon name="enhanced_encryption" color="secondary" />
+        </span>
+
+        <div>Encoded MP4. 7MB<a href="#"><q-icon name="download" color="secondary" /></a></div>
+    </div>
 
                     </div>
-                    <div class="col-4">
+                    <div style="width: 100%; text-align: center;">
+                        Key: <span id="the_key_content">a354a4eec607fcf4cc0091f91742687c88587bed8c6c586824273ecec0e5ce4a</span>
 
-                        <div class="column-inner-2 " ref="column_2">
-                            <template v-for="item in items.c2"  :key="item._id" >
-                                <HomeCard :video="item" @loaded="homeCardLoaded" />
-                            </template>
-                        </div>
-
+                        <br>
+                        Try to <router-link to="/decode">decode it</router-link>
                     </div>
-                    <div class="col-4">
 
-                        <div class="column-inner-1 column-inner-shift"  ref="column_3">
-                            <template v-for="item in items.c3"  :key="item._id" >
-                                <HomeCard :video="item" @loaded="homeCardLoaded" />
-                            </template>
-                        </div>
+                    <div >
+                    <h5 class="text-primary"><q-icon name="health_and_safety" />PepperWatch is a client-side in-browser application</h5>
+
+                    <p class="text-primary">
+The PepperWatch app doesn't send anything to servers and doesn't store any of your data or media files. Doesn't even set cookies in your browser. While we try to maximize your privacy, we can't help you restore encoded data in any way. Nobody knows you were here.
+                    </p>
+                    <p class="text-primary">
+Furthermore, PepperWatch is an <a href="https://github.com/PepperWatch/app" target="_blank">open-source</a> application. And you are free to install and run it on your server or the local machine.
+                    </p>
+
+<h5 class="text-primary"><q-icon name="vpn_lock" />PepperWatch encodes your media and hides it</h5>
+
+                    <p class="text-primary">
+
+Uses <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">AES-256</a> encryption to cipher data and store it in hidden parts of MP4 files. Nobody knows it's there and even if they know they can't decrypt it.
+                    </p>
+                    <p class="text-primary">
+
+We also offer a free browser-based <router-link to="/analyse">MP4 analyzer</router-link>, so you can try to find something hidden in your media files.
+                    </p>
+
+<h5 class="text-primary"><q-icon name="sms" />PepperWatch offers Telegram storage UI (totally optional)</h5>
+
+                    <p class="text-primary">
+
+You can <router-link to="/telegram">connect to your Telegram account</router-link> and upload/download your private media to your Telegram account for free. Use it in the same way you use your Telegram messenger. With an additional layer of security and privacy. Even if somebody gets access to your telegram account - they can't decrypt your pepperwatch media files stored there.
+                    </p>
 
                     </div>
                 </div>
@@ -80,6 +118,38 @@
 
 </template>
 
+<style scoped="scoped">
+    .q-inner-loading--dark {
+        background: transparent;
+    }
+    .q-inner-loading {
+        background: transparent;
+    }
+    .video-panes {
+        min-height: 20vh;
+    }
+    .home-feature-card {
+        width: 33%;
+        max-width: 33%;
+        overflow: hidden;
+        float: left;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: block;
+    }
+    .home-feature-card img {
+        max-width: 100%;
+    }
+    .home-feature-card span {
+        display: block;
+        text-align: center;
+        font-size: 5rem !important;
+    }
+    .home-feature-card div {
+        text-align: center;
+        display: block;
+    }
+</style>
 <script>
 import HomeCard from '../components/HomeCard';
 import Icon from 'shared/components/Icon';
@@ -232,20 +302,16 @@ export default {
 }
 </script>
 
-<style scoped="scoped">
-    .q-inner-loading--dark {
-        background: transparent;
-    }
-    .q-inner-loading {
-        background: transparent;
-    }
-    .video-panes {
-        min-height: 20vh;
-    }
-</style>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+    .rightPane .text-primary a {
+        color: var(--q-primary) !important;
+    }
+    .rightPane .text-primary a:hover {
+        text-decoration: none;
+    }
+
     h6 {
         font-size: 16px;
         font-weight: bold;
@@ -253,7 +319,13 @@ export default {
     }
 
     h5 {
-        margin: 0 0 16px 0;
+        margin: 0 0 12px 0;
+        font-size: 1.2rem !important;
+    }
+
+    h5 i {
+        margin-right: 8px;
+        font-size: 1.5rem !important;
     }
 
     .home-card {

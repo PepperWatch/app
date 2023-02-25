@@ -214,6 +214,7 @@ export default {
 				} else {
 					// not Google Chrome
 					if (winNav.userAgent.indexOf("Firefox") > -1) {
+						// should work in Firefox too
 						return true;
 					}
 				}
