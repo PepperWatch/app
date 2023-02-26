@@ -49,7 +49,7 @@
             <q-icon name="video_file" color="secondary" />
         </span>
 
-        <div>Media for container. 2MB<a href="#"><q-icon name="download" color="secondary" /></a></div>
+        <div>Media for container. 1.1MB<a href="https://pepperwatch.github.io/v/container.mp4" target="_blank" download="container.mp4"><q-icon name="download" color="secondary" /></a></div>
 
     </div>
     <div class="home-feature-card">
@@ -57,7 +57,7 @@
             <q-icon name="note_add" color="secondary" />
         </span>
 
-        <div>Media to cipher. 5MB<a href="#"><q-icon name="download" color="secondary" /></a></div>
+        <div>Media to cipher. 6.1MB<a href="https://pepperwatch.github.io/v/content.mp4" target="_blank" download="content.mp4"><q-icon name="download" color="secondary" /></a></div>
 
     </div>
     <div class="home-feature-card">
@@ -65,7 +65,7 @@
             <q-icon name="enhanced_encryption" color="secondary" />
         </span>
 
-        <div>Encoded MP4. 7MB<a href="#"><q-icon name="download" color="secondary" /></a></div>
+        <div>Encoded MP4. 7.3MB<a href="https://pepperwatch.github.io/v/encoded.mp4" target="_blank" download="encoded.mp4"><q-icon name="download" color="secondary" /></a></div>
     </div>
 
                     </div>
@@ -151,7 +151,7 @@ You can <router-link to="/telegram">connect to your Telegram account</router-lin
     }
 </style>
 <script>
-import HomeCard from '../components/HomeCard';
+// import HomeCard from '../components/HomeCard';
 import Icon from 'shared/components/Icon';
 
 export default {
@@ -160,7 +160,7 @@ export default {
 	props: {
 	},
     components: {
-        HomeCard,
+        // HomeCard,
         Icon,
     },
 	data() {

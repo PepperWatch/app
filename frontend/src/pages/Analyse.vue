@@ -122,6 +122,7 @@ export default {
             });
 
             this.fileToAnalyse = files[0];
+            this.$refs.fileInput.value = null;
         },
 	},
 	mounted() {
