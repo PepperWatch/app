@@ -110,6 +110,7 @@ export default {
                 // this.fileToShow = files[0];
 
             this.showDialog(files[0]);
+            this.$refs.fileInput.value = null;
             // this.$refs.fileInput.value = null;
 
         },

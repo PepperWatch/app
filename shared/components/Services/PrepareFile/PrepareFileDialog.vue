@@ -6,7 +6,7 @@
 				<q-list>
 					<q-item>
 						<q-item-section top class="q-ml-none">
-							<PrepareFileDialogPreview ref="preview" :file="file" :edit="previewEdit" @blur="onBlur" @range="onRange" />
+							<PrepareFileDialogPreview ref="preview" :file="fileToPreview" :edit="previewEdit" @blur="onBlur" @range="onRange" />
 							<!-- <img :src="previewImageURL" style="width: 100%"> -->
 						</q-item-section>
 					</q-item>
@@ -66,6 +66,16 @@
 							:loading="generatingPreview"
 							:disable="generatingPreview"
 							/>
+						<q-separator spaced  />
+
+						<DialogMenuItem @click="onClickDoUseTwo"
+							title="Select Ready Public Preview"
+							description="If you already have MP4 with public version of the media"
+							icon="lan"
+							:loading="generatingPreview"
+							:disable="generatingPreview"
+							/>
+                        <input type="file" @change="containerFileSelected" class="fileInput" ref="containerFileInput" accept=".mp4">
 
 					</div>
 
@@ -153,6 +163,8 @@ export default {
         return {
 			isBrowserOk: false,
 
+			fileToPreview: null,
+
             preparedSize: 0,
             preparedType: null,
             previewImageURL: null,
@@ -214,6 +226,7 @@ export default {
 				} else {
 					// not Google Chrome
 					if (winNav.userAgent.indexOf("Firefox") > -1) {
+						// should work in Firefox too
 						return true;
 					}
 				}
@@ -259,6 +272,7 @@ export default {
 		},
 
 		async initialize() {
+			this.fileToPreview = this.file;
 			this.preparedSize = this.file.size;
 
             const re = /(?:\.([^.]+))?$/;
@@ -276,6 +290,40 @@ export default {
             this.containerBlob = this.file;
 			// this.preparedType = await this.telegramFile.getType();
 			// this.previewImageURL = await this.telegramFile.getHighPreview();
+		},
+
+		async containerFileSelected(ev) {
+            let files = [];
+            if (ev.target && ev.target.files) {
+                files = ev.target.files;
+            } else {
+                files.push(ev);
+            }
+
+            if (!files[0]) {
+                return;
+            }
+
+			this.generatingPreview = true;
+
+			this.containerBlob = files[0];
+			this.fileToPreview = this.containerBlob;
+
+			const thumbVideoProcessor = new VideoProcessor({
+				file: files[0],
+			});
+			const screenshotBlob = await thumbVideoProcessor.getScreenShotBlob(0);
+			this.finalThumb = screenshotBlob;
+			this.sampleWidth = thumbVideoProcessor.sampleWidth;
+			this.sampleHeight = thumbVideoProcessor.sampleHeight;
+			this.sampleDuration = 1;
+			this.$refs.preview.setBlur(0);
+
+			this.generatingPreview = false;
+		},
+
+		async onClickDoUseTwo() {
+            this.$refs.containerFileInput.click();
 		},
 
 		async onClickDoGenerate() {
@@ -503,6 +551,7 @@ export default {
 				if (this.encodingShowPassword) {
 					this.encodingShowPassword = false;
 				} else {
+					this.fileToPreview = this.file;
 					this.selectedUploadMethod = null;
 					this.$refs.preview.setBlur(0);
 				}

@@ -51,7 +51,7 @@
     "eslint-plugin-vue": "^7.0.0",
     "nodemon": "^2.0.14",
     "pinia": "^2.0.14",
-    "quasar": "^2.6.6",
+    "quasar": "^2.11.6",
     "replace-in-file-webpack-plugin": "^1.0.6",
     "ts-loader": "^8.0.16",
     "val-loader": "^2.1.2",

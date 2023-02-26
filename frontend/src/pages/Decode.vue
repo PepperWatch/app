@@ -110,6 +110,7 @@ export default {
 			// this.fileToAnalyse = files[0];
             //
             this.fileToShow = files[0];
+            this.$refs.fileInput.value = null;
         },
 	},
 	mounted() {

@@ -102,6 +102,8 @@ export default {
     },
     data() {
         return {
+            initializedFile: null,
+
             isInitialized: false,
 
             preparedType: null,
@@ -117,6 +119,17 @@ export default {
         }
     },
     watch: {
+        file: function(newFile) {
+            console.error('preview file changed');
+
+            clearTimeout(this.__initializationTimeout);
+            if (newFile) {
+                this.isInitialized = false;
+                this.__initializationTimeout = setTimeout(()=>{
+                    this.initialize();
+                }, 100);
+            }
+        },
     },
     methods: {
         setBlur(value) {
@@ -190,7 +203,12 @@ export default {
         },
     },
     mounted() {
-        this.initialize();
+        if (this.file) {
+            this.__initializationTimeout = setTimeout(()=>{
+                this.initialize();
+            }, 100);
+        }
+        // this.initialize();
     },
     computed: {
     },
