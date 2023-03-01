@@ -8,6 +8,10 @@ const path = require('path');
 const isProd = process.env.NODE_ENV === 'production';
 const prefixed = process.env.BUILD_PREFIXED;
 
+const part = process.env.PART || '';
+
+const buildDir = (part === 'admin' ? 'admin/dist' : 'frontend/dist');
+
 module.exports = {
   productionSourceMap: !isProd,
   publicPath: ((isProd && prefixed ) ? ('/'+prefixed) : undefined),
@@ -18,14 +22,20 @@ module.exports = {
       rtlSupport: false
     }
   },
+  outputDir: buildDir,
   configureWebpack: {
     resolve: {
-      alias: {
-        components: path.join(__dirname, 'src/components'),
-        forms: path.join(__dirname, 'src/forms'),
-        classes: path.join(__dirname, 'src/classes'),
-        shared: path.join(__dirname, '../shared'),
-      },
+      alias: (part === 'admin' ? ({
+        components: path.join(__dirname, 'admin/src/components'),
+        forms: path.join(__dirname, 'admin/src/forms'),
+        classes: path.join(__dirname, 'admin/src/classes'),
+        shared: path.join(__dirname, 'shared'),
+      }) : ({
+        components: path.join(__dirname, 'frontend/src/components'),
+        forms: path.join(__dirname, 'frontend/src/forms'),
+        classes: path.join(__dirname, 'frontend/src/classes'),
+        shared: path.join(__dirname, 'shared'),
+      })),
       extensions: ['.vue', '.js'],
     },
     // output: {
@@ -37,7 +47,7 @@ module.exports = {
     },
     plugins: (isProd ? ([
       new ReplaceInFileWebpackPlugin([{
-                dir: 'dist',
+                dir: buildDir,
                 test: /\.js$/,
                 rules: [{
                     search: /home[a-zA-Z0-9_]+node_modules_/ig,

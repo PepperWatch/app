@@ -1,4 +1,8 @@
 dist
+admin/dist
+admin/node_modules
+frontend/dist
+frontend/node_modules
 
 # Logs
 logs

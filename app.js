@@ -9,22 +9,24 @@ const commands = {
 	dev: [
 		{
 			id: 'admin',
-			cwd: path.join(__dirname, 'admin'),
+			// cwd: path.join(__dirname, 'admin'),
 			env: {
 				API_URL: "http://localhost:9999/",
 				BUILD_PREFIXED: "admin",
+				PART: "admin",
 			},
-			command: '../node_modules/.bin/vue-cli-service',
-			args: ['serve'],
+			command: 'node_modules/.bin/vue-cli-service',
+			args: ['serve', 'admin/src/main.js'],
 		},
 		{
 			id: 'frontend',
-			cwd: path.join(__dirname, 'frontend'),
+			// cwd: path.join(__dirname, 'frontend'),
 			env: {
 				API_URL: "http://localhost:9999/",
+				PART: "frontend",
 			},
-			command: '../node_modules/.bin/vue-cli-service',
-			args: ['serve', '--port', '8090'],
+			command: 'node_modules/.bin/vue-cli-service',
+			args: ['serve', 'frontend/src/main.js', '--port', '8090'],
 		},
 		{
 			id: 'backend',
@@ -38,34 +40,28 @@ const commands = {
 	],
 	build: [
 		{
-			id: 'notify',
-			cwd: path.join(__dirname, 'backend'),
-			env: {
-			},
-			command: 'node',
-			args: ['prebuild.js'],
-		},
-		{
 			id: 'admin',
-			cwd: path.join(__dirname, 'admin'),
+			// cwd: path.join(__dirname, 'admin'),
 			env: {
 				BUILD_PREFIXED: "admin",
 				API_URL: "/",
+				PART: "admin",
 				NODE_ENV: "production"
 			},
-			command: '../node_modules/.bin/vue-cli-service',
-			args: ['build', '--mode production'],
+			command: 'node_modules/.bin/vue-cli-service',
+			args: ['build', 'admin/src/main.js', '--mode production'],
 		},
 		{
 			id: 'frontend',
-			cwd: path.join(__dirname, 'frontend'),
+			// cwd: path.join(__dirname, 'frontend'),
 			env: {
 				BUILD_PREFIXED: "",
 				API_URL: "/",
+				PART: "frontend",
 				NODE_ENV: "production"
 			},
-			command: '../node_modules/.bin/vue-cli-service',
-			args: ['build', '--mode production'],
+			command: 'node_modules/.bin/vue-cli-service',
+			args: ['build', 'frontend/src/main.js', '--mode production'],
 		},
 	],
 	run: [
@@ -73,7 +69,7 @@ const commands = {
 			id: 'backend',
 			cwd: path.join(__dirname, 'backend'),
 			env: {
-				PORT: process.env.PORT || "9999",
+				PORT: "9999",
 			},
 			command: 'node',
 			args: ['app.js'],
@@ -110,7 +106,7 @@ function log(processId, str) {
 		clearConsole();
 
 		for (let processId in out) {
-			const toDisplay = out[processId].slice(-5);
+			const toDisplay = out[processId].slice(-10);
 			for (let line of toDisplay) {
 				console.log(`${processId}: ${line}`);
 			}
