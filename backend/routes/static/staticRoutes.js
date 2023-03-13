@@ -14,6 +14,8 @@ class Handler {
             let decoratorAlreadyRegistered = false;
             for (let staticSettings of this._settings.statics) {
 
+                console.log(staticSettings);
+
                 this._fastify._server.register(require('@fastify/static'), {
                     root: staticSettings.root,
                     prefix: staticSettings.prefix,
