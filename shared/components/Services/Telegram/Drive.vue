@@ -142,6 +142,7 @@ import MP4StegAsync from 'shared/components/AsyncComponents/MP4StegAsync.js';
 import Telegram from 'shared/components/Auth/Telegram';
 import AllBodyDropFileZone from 'shared/components/Helpers/AllBodyDropFileZone';
 
+import TelegramThreadInvoker from 'shared/classes/drive/telegram/TelegramThreadInvoker.js';
 //
 export default {
     name: 'Drive',
@@ -179,6 +180,10 @@ export default {
                 this.initialized = false;
 
                 this.uploadDisabled = true;
+
+                if (this.__threadWorker) {
+                    this.__threadWorker.clear();
+                }
             }
         }
     },
@@ -219,10 +224,14 @@ export default {
         },
         async loadMore(index, done) {
             if (!this.browsing && this.drive) {
+                this.__threadWorker.stop(); // pause it so we don't load things while checking the cache
+
                 const loaded = await this.drive.fetchMoreFolders();
                 if (loaded) {
                     await this.drive.restoreFilePreviewsFromCache();
                 }
+
+                this.__threadWorker.start();
             }
 
             done();
@@ -247,12 +256,16 @@ export default {
                     await this.__browsingReadyPromise; // wait for onBrowsingReady
                     this.__broswingReadyPromiseResolver = null;
                     this.__browsingReadyPromise = null;
+
+                    this.__threadWorker.stop();
                 }
             } else {
                 this.browsing = false;
                 this.browsingFolder = null;
 
                 this.$q.localStorage.set('tg_browsing_folder', null);
+
+                this.__threadWorker.start();
             }
         },
         onBrowsingReady() {
@@ -281,6 +294,8 @@ export default {
                 this.browsingFolder = null;
                 this.$q.localStorage.set('tg_browsing_folder', null);
             }, 300);
+
+            this.__threadWorker.start();
         },
         async initialize() {
             if (!this.$store.telegram.provider) {
@@ -298,6 +313,15 @@ export default {
                 savedFolderId = ''+meId;
             }
 
+
+            this.__threadWorker = new TelegramThreadInvoker({
+                callback: async(folder)=>{
+                    if ((!folder.hasHighPreview() && folder.isWritable())) {
+                        await folder.getHighPreview();
+                    }
+                },
+            });
+
             this.drive = new Drive();
             this.drive.setProvider(this.$store.telegram.provider);
 
@@ -305,6 +329,7 @@ export default {
 
             this.__driveFolderListener = (e) => {
                 this.folders.push(e.detail.folder);
+                this.__threadWorker.push(e.detail.folder);
 
                 if (initialBrowsingFolderId && e.detail.folder.id == initialBrowsingFolderId) {
                     setTimeout(()=>{
@@ -322,7 +347,8 @@ export default {
                 .then(async()=>{
                     await this.drive.restoreFilePreviewsFromCache();
                     // await this.folder.restoreFilePreviewsFromCache();
-                    this.loadPreviewInterval();
+                    // this.loadPreviewInterval();
+                    this.__threadWorker.start();
                 });
 
             this.initialized = true;
@@ -331,37 +357,37 @@ export default {
             //     this.showUploadDialog();
             // }, 200);
         },
-        loadPreviewInterval() {
-            const fn = async()=>{
-                try {
-                    if (!this.browsing) {
-                        // load preview for files
-                        const folder = this.folders.find((folder)=>(!folder.hasHighPreview() && folder.isWritable()));
-                        if (folder) {
-                            await folder.getHighPreview();
-                        }
-                    }
-                } catch(e) {
-                    console.error(e);
-                }
+        // loadPreviewInterval() {
+        //     const fn = async()=>{
+        //         // try {
+        //         //     if (!this.browsing) {
+        //         //         // load preview for files
+        //         //         const folder = this.folders.find((folder)=>(!folder.hasHighPreview() && folder.isWritable()));
+        //         //         if (folder) {
+        //         //             await folder.getHighPreview();
+        //         //         }
+        //         //     }
+        //         // } catch(e) {
+        //         //     console.error(e);
+        //         // }
 
-                clearTimeout(this._loadPreviewInterval);
-                this._loadPreviewInterval = setTimeout(fn, 500);
-            };
+        //         clearTimeout(this._loadPreviewInterval);
+        //         this._loadPreviewInterval = setTimeout(fn, 500);
+        //     };
 
-            fn();
+        //     fn();
 
 
-            // this._loadPreviewInterval = setInterval(()=>{
-            //     if (!this.browsing) {
-            //         // load preview for files
-            //         const folder = this.folders.find((folder)=>(!folder.hasHighPreview() && folder.isWritable()));
-            //         if (folder) {
-            //             folder.getHighPreview();
-            //         }
-            //     }
-            // }, 500);
-        },
+        //     // this._loadPreviewInterval = setInterval(()=>{
+        //     //     if (!this.browsing) {
+        //     //         // load preview for files
+        //     //         const folder = this.folders.find((folder)=>(!folder.hasHighPreview() && folder.isWritable()));
+        //     //         if (folder) {
+        //     //             folder.getHighPreview();
+        //     //         }
+        //     //     }
+        //     // }, 500);
+        // },
     },
     mounted() {
         if (this.$store.telegram.provider) {
@@ -370,6 +396,11 @@ export default {
     },
     unmounted() {
         this.drive.removeEventListener('folder', this.__driveFolderListener);
+
+        if (this.__threadWorker) {
+            this.__threadWorker.clear();
+            this.__threadWorker.stop();
+        }
     },
     computed: {
         authenticated() {

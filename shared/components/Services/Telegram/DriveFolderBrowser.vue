@@ -33,6 +33,8 @@ import RowBuilder from './RowBuilder.js';
 import PrepareFileDialog from 'shared/components/Services/PrepareFile/PrepareFileDialog.vue';
 import TelegramFile from 'shared/classes/drive/telegram/TelegramFile.js';
 
+import TelegramThreadInvoker from 'shared/classes/drive/telegram/TelegramThreadInvoker.js';
+
 class BackItem extends EventTarget {
     constructor() {
         super();
@@ -147,65 +149,16 @@ export default {
 
             // await file.upload();
         },
-        // drop: function(ev) {
-        //     // Prevent default behavior (Prevent file from being opened)
-        //     ev.preventDefault();
-
-        //     this.isDragging = false;
-
-        //     if (ev.dataTransfer.items) {
-        //         // Use DataTransferItemList interface to access the file(s)
-        //         for (let i = 0; i < ev.dataTransfer.items.length; i++) {
-        //             // If dropped items aren't files, reject them
-        //             if (ev.dataTransfer.items[i].kind === 'file') {
-        //                 const file = ev.dataTransfer.items[i].getAsFile();
-        //                 this.uploadUserFile(file);
-        //             }
-        //         }
-        //     } else {
-        //         // Use DataTransfer interface to access the file(s)
-        //         for (let i = 0; i < ev.dataTransfer.files.length; i++) {
-        //             // console.log('... 2 file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
-        //             this.uploadUserFile(ev.dataTransfer.files[i]);
-        //         }
-        //     }
-        //     // this.$emit('files', this.fileListFileSet);
-        // },
-        // dragenter: function(ev) {
-        //     if (!ev.dataTransfer) {
-        //         return;
-        //     }
-        //     this.isDragging = true;
-        //     ev.stopPropagation();
-        //     ev.preventDefault();
-        //     this.dragCounter++;
-        //     ev.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-        // },
-        // dragover: function(ev) {
-        //     if (!ev.dataTransfer) {
-        //         return;
-        //     }
-        //     this.isDragging = true;
-        //     ev.stopPropagation();
-        //     ev.preventDefault();
-        //     ev.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-        // },
-        // dragleave: function(ev) {
-        //     if (!ev.dataTransfer) {
-        //         return;
-        //     }
-        //     this.dragCounter--;
-        //     if (this.dragCounter === 0) {
-        //         this.isDragging = false;
-        //     }
-        // },
         async loadMore(index, done) {
             if (this.browsing) {
+                this.__threadWorker.stop();
 
                 const loaded = await this.folder.fetchMoreFiles();
                 if (loaded) {
                     await this.folder.restoreFilePreviewsFromCache();
                 }
+
+                this.__threadWorker.start();
             }
 
             done();
@@ -214,6 +167,14 @@ export default {
             this.browsing = true;
             this.$emit('browsing', this.folder);
 
+            this.__threadWorker = new TelegramThreadInvoker({
+                callback: async(file)=>{
+                    if (!file.hasHighPreview()) {
+                        await file.getHighPreview();
+                    }
+                },
+            });
+
             // let clicked = false;
             this.__folderFileListener = (e) => {
                 if (!e.detail.file.ratio) {
@@ -221,6 +182,7 @@ export default {
                 }
                 this.rowBuilder.push(e.detail.file);
                 this.files.push(e.detail.file);
+                this.__threadWorker.push(e.detail.file);
 
                 // if (!clicked) {
                 //     clicked = true;
@@ -242,12 +204,15 @@ export default {
                 this.folder.fetchMoreFiles()
                     .then(async()=>{
                         await this.folder.restoreFilePreviewsFromCache();
-                        this.loadPreviewInterval();
+                        // this.loadPreviewInterval();
+
+                        this.__threadWorker.start();
 
                         this.$emit('ready');
                     });
             } else {
-                this.loadPreviewInterval();
+                this.__threadWorker.start();
+                // this.loadPreviewInterval();
                 this.$emit('ready');
             }
 
@@ -257,22 +222,24 @@ export default {
             this.$emit('browsing', null);
             this.$emit('back');
 
-            clearInterval(this._loadPreviewInterval);
+            this.__threadWorker.stop();
+
+            // clearInterval(this._loadPreviewInterval);
             this.folder.removeEventListener('file', this.__folderFileListener);
             this.folder.removeEventListener('end', this.__folderEndListener);
         },
-        loadPreviewInterval() {
-            clearInterval(this._loadPreviewInterval);
-            this._loadPreviewInterval = setInterval(()=>{
-                if (this.browsing) {
-                    // load preview for files
-                    const file = this.files.find((file)=>(!file.hasHighPreview()));
-                    if (file) {
-                        file.getHighPreview();
-                    }
-                }
-            }, 500);
-        },
+        // loadPreviewInterval() {
+        //     clearInterval(this._loadPreviewInterval);
+        //     this._loadPreviewInterval = setInterval(()=>{
+        //         if (this.browsing) {
+        //             // load preview for files
+        //             const file = this.files.find((file)=>(!file.hasHighPreview()));
+        //             if (file) {
+        //                 file.getHighPreview();
+        //             }
+        //         }
+        //     }, 500);
+        // },
     },
     created() {
         if (this.folder.hasHighPreview()) {
@@ -301,6 +268,7 @@ export default {
     },
     unmounted() {
         this.folder.removeEventListener('preview', this.__folderPreviewListener);
+        this.__threadWorker.stop();
     },
     computed: {
         filteredFiles() {
