@@ -1,7 +1,13 @@
 <template>
 
     <q-card class="drive-folder-file" :class="{ isToBeUploaded: isToBeUploaded }" @click="onClick">
-        <q-img :src="previewImage" :placeholder-src="placeholderPreviewImage" no-spinner no-transition fit="cover">
+         <div class="drive-folder-file-back" v-if="shouldHaveBack">
+            <img :src="previewImage" v-if="previewImage" />
+        </div>
+        <div class="drive-folder-file-back drive-folder-file-back-blurred" v-if="shouldHaveBack">
+            <img :src="previewImage" v-if="previewImage" />
+        </div>
+        <q-img :src="previewImage" :placeholder-src="placeholderPreviewImage" no-spinner no-transition :fit="shouldHaveBack ? 'contain' : 'cover'">
  <!--            <div class="absolute-bottom text-subtitle2 text-center">
                 {{name}}
             </div> -->
@@ -31,6 +37,34 @@
     .isToBeUploaded img {
         opacity: 0.2;
     }
+
+    .drive-folder-file-back {
+        position: absolute;
+        left: 2px; right: 2px; top: 2px; bottom: 2px;
+        border-radius: 4px !important;
+        overflow: hidden;
+    }
+
+
+    .drive-folder-file-back img {
+        object-position: 50% 50%;
+        object-fit: cover;
+        width: 100%;
+        height: 200px;
+        border-radius: 4px !important;
+        opacity: 0.3;
+    }
+
+    .drive-folder-file-back-blurred img {
+        filter: blur(10px);
+    }
+
+    @media screen and (max-width: 900px) {
+        .drive-folder-file-back img {
+            height: 100px;
+        }
+    }
+
 </style>
 <script>
 //
@@ -50,12 +84,15 @@ export default {
 
             progress: null,
             isToBeUploaded: true,
+
+            shouldHaveBack: false,
         }
     },
     watch: {
     },
     methods: {
         async onClick() {
+            console.error('this.file.ratio', this.file.ratio);
             this.$emit('click', this.file);
 
             // const type = await this.file.getType();
@@ -82,6 +119,10 @@ export default {
         } else {
             this.previewImage = this.file.getLowPreview();
             this.placeholderPreviewImage = ''+this.previewImage;
+        }
+
+        if (this.file.ratio < 0.51 || this.file.ratio > 3) {
+            this.shouldHaveBack = true;
         }
     },
     mounted() {

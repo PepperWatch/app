@@ -35,9 +35,12 @@
         width: 100%;
         max-width: 100% !important;
         cursor: pointer;
+        overflow: hidden;
+        border-radius: 4px !important;
     }
     .rowItem img {
         height: 200px;
+        object-fit: cover;
     }
     .rowItem .q-img {
         height: 200px;
