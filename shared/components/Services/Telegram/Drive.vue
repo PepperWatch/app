@@ -357,37 +357,6 @@ export default {
             //     this.showUploadDialog();
             // }, 200);
         },
-        // loadPreviewInterval() {
-        //     const fn = async()=>{
-        //         // try {
-        //         //     if (!this.browsing) {
-        //         //         // load preview for files
-        //         //         const folder = this.folders.find((folder)=>(!folder.hasHighPreview() && folder.isWritable()));
-        //         //         if (folder) {
-        //         //             await folder.getHighPreview();
-        //         //         }
-        //         //     }
-        //         // } catch(e) {
-        //         //     console.error(e);
-        //         // }
-
-        //         clearTimeout(this._loadPreviewInterval);
-        //         this._loadPreviewInterval = setTimeout(fn, 500);
-        //     };
-
-        //     fn();
-
-
-        //     // this._loadPreviewInterval = setInterval(()=>{
-        //     //     if (!this.browsing) {
-        //     //         // load preview for files
-        //     //         const folder = this.folders.find((folder)=>(!folder.hasHighPreview() && folder.isWritable()));
-        //     //         if (folder) {
-        //     //             folder.getHighPreview();
-        //     //         }
-        //     //     }
-        //     // }, 500);
-        // },
     },
     mounted() {
         if (this.$store.telegram.provider) {

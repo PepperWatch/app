@@ -225,7 +225,12 @@ export default class Folder extends CommonTelegramMethods {
 			}
 
 			return canUpload;
+		} else if (this._dialog.entity.className == 'Channel' && this._dialog.entity && this._dialog.entity.adminRights && this._dialog.entity.adminRights.postMessages) {
+			// channel, where you can post messages
+			return true;
 		}
+
+
 
 		return false;
 	}
