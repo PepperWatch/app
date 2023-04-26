@@ -14,6 +14,13 @@
 							@enter="onClickDecodeWithPassword"
 							autofocus
 							/>
+
+						<DialogCheckboxInput
+							v-model="decodingPersistPassword"
+							:disable="decoding"
+							label="persist password for this session"
+							/>
+						<q-separator spaced  />
 					</div>
 
 					<DialogMenuItem @click="onClickDecodeWithPassword"
@@ -50,6 +57,7 @@
 <script>
 import DialogMenuItem from 'shared/components/Helpers/DialogMenu/DialogMenuItem.vue';
 import DialogPasswordInput from 'shared/components/Helpers/DialogMenu/DialogPasswordInput.vue';
+import DialogCheckboxInput from 'shared/components/Helpers/DialogMenu/DialogCheckboxInput.vue';
 
 export default {
 	props: {
@@ -60,6 +68,7 @@ export default {
 	components: {
 		DialogMenuItem,
 		DialogPasswordInput,
+		DialogCheckboxInput,
 	},
 
 	emits: ['hide', 'decoded'],
@@ -74,12 +83,21 @@ export default {
 			decodingShowPassword: false,
 			decodingPassword: '',
 			decodingPasswordError: null,
+
+			decodingPersistPassword: false,
 		}
 	},
 
 	methods: {
 		async onDoDecode() {
+			if (this.decodingPersistPassword) {
+				this.$q.sessionStorage.set('decodeEncodePassword', this.decodingPassword);
+			} else {
+				this.$q.sessionStorage.set('decodeEncodePassword', null);
+			}
+
 			this.decoding = true;
+			console.error('decoding');
 
 			let decodedContentFiles = null;
 			try {
@@ -101,19 +119,34 @@ export default {
 					this.decodingPasswordError = '';
 				}, 1000);
 			} else {
+				const contentFile = decodedContentFiles[0];
+				if (contentFile) {
+					await contentFile.prepare();
+				}
+
+
 				this.$emit('decoded');
 			}
 
+			console.error('decoding2');
 			this.decoding = false;
 		},
 		onClickDecodeWithPassword() {
 			if (!this.decodingShowPassword) {
+				const persistedPassword = this.$q.sessionStorage.getItem('decodeEncodePassword');
+				if (persistedPassword) {
+					this.decodingPassword = persistedPassword;
+					this.decodingPersistPassword = true;
+				}
+
 				this.decodingShowPassword = true;
 			} else {
 				this.onDoDecode();
 			}
 		},
 		onCancelClick() {
+			this.decodingPassword = '';
+
 			if (this.decodingShowPassword) {
 				this.decodingShowPassword = false;
 			} else {

@@ -11,7 +11,8 @@
 			<q-space />
 
 			<q-card-section class="text-center	">
-				<q-btn flat round icon="lock_open" @click="onShowUnlock" :disabled="!thereMayBeSomethingEncoded" />
+				<q-btn v-if="!showingPrivate" flat color="primary" icon="lock_open" @click="onShowUnlock" :disabled="!thereMayBeSomethingEncoded" label="unlock private media" />
+				<q-btn v-if="showingPrivate" flat color="primary" icon="lock" @click="onShowUnlock" :disabled="true" :ripple="false" label="showing private media" />
 			</q-card-section>
 		</q-card>
 
@@ -63,6 +64,8 @@ export default {
 			imageSrc: null,
 
 			thereMayBeSomethingEncoded: false,
+
+			showingPrivate: false,
 		}
 	},
 
@@ -89,12 +92,16 @@ export default {
 				} else {
 					this.videoSrc = await contentFile.getSWURL();
 				}
+
+				this.showingPrivate = true;
 			} else if (this.showingType == 'photo') {
 				if (this.telegramFileToUnlock.isToBeUploaded) {
 					this.imageSrc = await contentFile.getBlobURL();
 				} else {
 					this.imageSrc = await contentFile.getSWURL();
 				}
+
+				this.showingPrivate = true;
 			}
 
 			this.telegramFileToUnlock = null;
@@ -120,6 +127,7 @@ export default {
 					this.imageSrc = window.URL.createObjectURL(this.file);
 				}
 				this.showing = true;
+				this.showingPrivate = false;
 			} else {
 				this.showing = false;
 			}
@@ -138,6 +146,7 @@ export default {
 					this.imageSrc = await this.telegramFile.getSWURL();
 				}
 				this.showing = true;
+				this.showingPrivate = false;
 			} else {
 				this.showing = false;
 			}

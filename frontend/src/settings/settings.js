@@ -1,5 +1,5 @@
 import {
-	Dialog, LocalStorage, Notify,
+	Dialog, LocalStorage, Notify, SessionStorage,
 } from 'quasar';
 
 import 'quasar/dist/quasar.css'
@@ -33,6 +33,7 @@ export default {
 		plugins: {
 			Dialog,
 			LocalStorage,
+			SessionStorage,
 			Notify,
 		}
 	},

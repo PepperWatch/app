@@ -1,8 +1,9 @@
 <template>
 
     <q-item :active="true">
-        <q-item-section class="q-pa-md">
-			<q-input v-model="value" :label="label" :disable="!!disable" filled :type="isPwd ? 'password' : 'text'" :error="!!errorMessage" :error-message="errorMessage" @keyup="onKeyUp" :autofocus="autofocus">
+        <q-item-section class="q-px-md q-pt-md">
+			<q-input v-model="value" :label="label" :disable="!!disable" filled :type="isPwd ? 'password' : 'text'" :error="!!errorMessage" :error-message="errorMessage" @keyup="onKeyUp" :autofocus="autofocus" hide-bottom-space
+							>
 				<template v-slot:append>
 				<q-icon
 				:name="isPwd ? 'visibility_off' : 'visibility'"

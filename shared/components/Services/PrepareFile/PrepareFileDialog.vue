@@ -89,6 +89,12 @@
 								:errorMessage="encodingPasswordError"
 								:disable="encoding"
 								/>
+							<DialogCheckboxInput
+								v-model="encodingPersistPassword"
+								:disable="encoding"
+								label="persist password for this session"
+								/>
+							<q-separator spaced  />
 						</div>
 
 						<DialogMenuItem @click="onClickDoEncodeWithPassword"
@@ -133,6 +139,7 @@ import MP4StegAsync from 'shared/components/AsyncComponents/MP4StegAsync.js';
 import PrepareFileDialogPreview from './PrepareFileDialogPreview.vue';
 import DialogMenuItem from 'shared/components/Helpers/DialogMenu/DialogMenuItem.vue';
 import DialogPasswordInput from 'shared/components/Helpers/DialogMenu/DialogPasswordInput.vue';
+import DialogCheckboxInput from 'shared/components/Helpers/DialogMenu/DialogCheckboxInput.vue';
 import VideoProcessor from 'shared/classes/VideoProcessor.js';
 
 import { QSpinnerGears } from 'quasar'
@@ -152,6 +159,7 @@ export default {
 		PrepareFileDialogPreview,
 		DialogMenuItem,
 		DialogPasswordInput,
+		DialogCheckboxInput,
 	},
 
 	emits: [
@@ -192,6 +200,8 @@ export default {
             encodingShowPassword: false,
             encodingPassword: '',
             encodingPasswordError: '',
+
+			encodingPersistPassword: false,
         }
     },
 
@@ -412,6 +422,13 @@ export default {
 		async onClickDoEncodeWithPassword() {
 			if (!this.encodingShowPassword) {
 				this.encodingShowPassword = true;
+
+				const persistedPassword = this.$q.sessionStorage.getItem('decodeEncodePassword');
+				if (persistedPassword) {
+					this.encodingPassword = persistedPassword;
+					this.encodingPersistPassword = true;
+				}
+
 				return false;
 			}
 
@@ -422,6 +439,12 @@ export default {
 					this.encodingPasswordError = '';
 				}, 1000);
 				return false;
+			}
+
+			if (this.encodingPersistPassword) {
+				this.$q.sessionStorage.set('decodeEncodePassword', this.encodingPassword);
+			} else {
+				this.$q.sessionStorage.set('decodeEncodePassword', null);
 			}
 
 			this.encoding = true;
@@ -451,6 +474,7 @@ export default {
 			});
 
 			this.encoding = false;
+			this.encodingShowPassword = false;
 
 			this.onOKClick();
 		},
