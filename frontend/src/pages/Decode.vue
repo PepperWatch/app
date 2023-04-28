@@ -37,6 +37,10 @@
         <MediaBrowser :file="fileToShow" @hide="onMediaBrowserHide" />
         <AnalyseFileDialog :file="fileToAnalyse" @hide="onAnalyseFileDialogHide" />
 		<MP4StegAsync />
+
+        <MetamaskOnRequest ref="metamask" auto />
+        <span @click="onRequest">connect</span>
+
 	</div>
 
 </template>
@@ -48,6 +52,8 @@ import MP4StegAsync from 'shared/components/AsyncComponents/MP4StegAsync.js';
 // import Drive from 'shared/classes/drive/telegram/Drive.js';
 import MediaBrowser from 'shared/components/Services/Telegram/MediaBrowser.vue';
 import AnalyseFileDialog from 'shared/components/Services/AnalyseFile/AnalyseFileDialog.vue';
+
+import MetamaskOnRequest from 'shared/components/AsyncComponents/MetamaskOnRequest.vue';
 
 export default {
 	name: 'Decode',
@@ -61,6 +67,8 @@ export default {
 		MP4StegAsync,
 		MediaBrowser,
         AnalyseFileDialog,
+
+        MetamaskOnRequest,
 	},
 	props: {
 	},
@@ -75,6 +83,12 @@ export default {
 		}
 	},
 	methods: {
+        async onRequest() {
+            const metamask = await this.$refs.metamask.request();
+            console.log(metamask);
+            metamask.signMessage('test message');
+        },
+
         onShowAnalyse(file) {
             this.fileToAnalyse = file;
         },
