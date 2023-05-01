@@ -37,6 +37,7 @@
         <MediaBrowser :file="fileToShow" @hide="onMediaBrowserHide" />
         <AnalyseFileDialog :file="fileToAnalyse" @hide="onAnalyseFileDialogHide" />
 		<MP4StegAsync />
+
 	</div>
 
 </template>

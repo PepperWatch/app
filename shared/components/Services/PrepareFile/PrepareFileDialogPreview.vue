@@ -7,7 +7,7 @@
             <q-slider
             v-model="blur"
             :min="0"
-            :max="20"
+            :max="50"
             :step="0.01"
             vertical
             reverse

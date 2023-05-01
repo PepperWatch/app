@@ -103,6 +103,21 @@
 							icon="lock"
 							:loading="encoding" />
 
+						<div class="prepareFileDialogMenuBlock"
+						:class="{prepareFileDialogMenuBlockActive: (!encodingShowPassword)}" >
+
+							<q-separator spaced  />
+
+							<DialogMenuItem @click="onClickDoEncodeWithMetamask"
+								:title="((isForTelegram ? 'Encode the Media with Metamask and Upload' : 'Encode the Media with Metamask and Get the File' ))"
+								description="Encode private media and hide it in the public preview"
+								icon="metamask"
+								:loading="encoding"  />
+
+						</div>
+
+						<MetamaskOnRequest ref="metamask" auto />
+
 					</div>
 
 					<q-separator spaced  />
@@ -141,6 +156,7 @@ import DialogMenuItem from 'shared/components/Helpers/DialogMenu/DialogMenuItem.
 import DialogPasswordInput from 'shared/components/Helpers/DialogMenu/DialogPasswordInput.vue';
 import DialogCheckboxInput from 'shared/components/Helpers/DialogMenu/DialogCheckboxInput.vue';
 import VideoProcessor from 'shared/classes/VideoProcessor.js';
+import MetamaskOnRequest from 'shared/components/AsyncComponents/MetamaskOnRequest.vue';
 
 import { QSpinnerGears } from 'quasar'
 
@@ -160,6 +176,7 @@ export default {
 		DialogMenuItem,
 		DialogPasswordInput,
 		DialogCheckboxInput,
+		MetamaskOnRequest,
 	},
 
 	emits: [
@@ -369,6 +386,7 @@ export default {
 
 				let preview = null;
 				if (this.preparedType == 'video') {
+
 					console.log('range', this.range.min, this.range.max);
 					preview = await videoProcessor.makePreview({
 						fromSeconds: this.range.min,
@@ -417,6 +435,85 @@ export default {
 
 			this.generatingPreview = false;
 			this.previewEdit = null;
+		},
+
+		async onClickDoEncodeWithMetamask() {
+			this.encoding = true;
+
+			// we use expected encoded size as a hash for metamask message signing
+			// so we can have same message to sign both on encode and decode step
+			// while not exposing to much info for reverse engineering
+
+			// 1st step, get expected final size of encoded data:
+
+			let expectedSize = 0;
+
+			try {
+				const mp4Steg = await window.newMP4Steg(); // MP4StegAsync component should be present on the page
+
+				await mp4Steg.loadFile({file: this.containerBlob});
+				mp4Steg.setPassword(''+Math.random()); // we do not encode data here, it's just for the size calculation
+
+				const id = (''+Math.random()).split('0.').join('').padStart(5, '0').slice(-5);
+				const meta = {
+				};
+
+				await mp4Steg.embedFile({file: this.file, meta: {id: id, meta:meta}});
+
+				expectedSize = await mp4Steg.getExpectedSize();
+			} catch (e) {
+				console.error(e);
+
+				expectedSize = 0;
+			}
+
+			if (!expectedSize) {
+				// some error
+				this.encoding = false;
+				return false;
+			}
+
+			const message = "Generate the key to encrypt/decrypt MP4 of size: "+expectedSize+"\n\nPlease be sure you are on pepperwatch.com domain and https is on";
+
+            const metamask = await this.$refs.metamask.request();
+
+            if (!metamask) {
+				// metamask not installed or user declined connection
+
+				this.encoding = false;
+				return false;
+            }
+
+            const key = await metamask.signMessage(message);
+
+            if (!key) {
+
+				this.encoding = false;
+				return false;
+            }
+
+            /// MP4Steg will PBKDF2 the key to AES key size, so we don't care about it's length. So let's pass it as a string
+			const mp4Steg = await window.newMP4Steg(); // MP4StegAsync component should be present on the page
+
+			await mp4Steg.loadFile({file: this.containerBlob});
+			mp4Steg.setPassword(''+key);
+			const id = (''+Math.random()).split('0.').join('').padStart(5, '0').slice(-5);
+			const meta = {
+			};
+			await mp4Steg.embedFile({file: this.file, meta: {id: id, meta:meta}});
+
+			const writable = await mp4Steg.embed();
+			const blob = await writable.toBlob();
+
+			this.finalFile = new window.File([blob], ''+id+'.mp4', {
+				lastModified: Date.now(),
+				type: 'video/mp4',
+			});
+
+			this.encoding = false;
+			this.encodingShowPassword = false;
+
+			this.onOKClick();
 		},
 
 		async onClickDoEncodeWithPassword() {

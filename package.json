@@ -1,6 +1,6 @@
 {
   "name": "pepperwatch",
-  "version": "0.1.0",
+  "version": "0.1.11",
   "private": true,
   "scripts": {
     "serve": "node app.js run",
@@ -29,7 +29,7 @@
     "lockfile": "^1.0.4",
     "minio": "^7.0.28",
     "mongoose": "^6.0.12",
-    "mp4steg": "PepperWatch/mp4steg#2c503d75eef185b25f678f546a34d483857cd725",
+    "mp4steg": "PepperWatch/mp4steg#d17214b28b81b264e115bbcbb15f94fbc61fdd59",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.5",
     "secp256k1": "^5.0.0",
@@ -61,6 +61,7 @@
     "vue-router": "^4.0.11",
     "vue3-apexcharts": "^1.4.1",
     "vuedraggable": "^4.1.0",
+    "web3": "^1.9.0",
     "worker-loader": "^3.0.8"
   },
   "eslintConfig": {

@@ -33,6 +33,10 @@ export default class Metamask extends EventTarget {
 		return this._connectedAddress;
 	}
 
+	get connectedNetId() {
+		return this._connectedNetId;
+	}
+
 	get web3() {
 		return this._web3;
 	}
@@ -42,11 +46,13 @@ export default class Metamask extends EventTarget {
 	}
 
 	async connect() {
-		await this.init();
+		try {
+			await this.init();
+		} catch (e) {
+			console.error(e);
+		}
 
-		await window.ethereum.enable();
-
-		await this.checkTheData();
+		return this._isConnected;
 	}
 
 	static getSingleton() {
@@ -56,6 +62,32 @@ export default class Metamask extends EventTarget {
 			Metamask.__singleInstance = new Metamask();
 			return Metamask.__singleInstance;
 		}
+	}
+
+	/**
+	 * Check if account is already connected. So there will be no Metamask window on connect
+	 * and we can auto-connect user
+	 * @return {Boolean} [description]
+	 */
+	async isAlreadyConnected() {
+		if (!window.ethereum) {
+			return false;
+		}
+
+		const accounts = await window.ethereum.request({method: 'eth_accounts'});
+		if (accounts && accounts.length > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	accountsChanged() {
+		this.checkTheData();
+	}
+
+	networkChanged() {
+		this.checkTheData();
 	}
 
 	async init() {
@@ -72,6 +104,13 @@ export default class Metamask extends EventTarget {
 			this._web3 = window.web3;
 			this._isInstalled = true;
 
+			window.ethereum.on('accountsChanged', () => {
+				this.accountsChanged();
+			});
+			window.ethereum.on('networkChanged', (networkId) => {
+				this.networkChanged(networkId);
+			})
+
 			try {
 				await window.ethereum.enable();
 				await this.checkTheData();
@@ -87,23 +126,47 @@ export default class Metamask extends EventTarget {
 		} else {
 			// MetaMast not installed
 			this._isInstalled = false;
+
+			this.dispatchEvent(new Event('notinstalled'));
+
+			this._initPromise = null; // can start init again
 		}
 
 		this._initPromiseResolver();
 	}
 
 	async checkTheData() {
-		this._connectedAddress = await this.getConnectedAddress();
-		this._connectedNetId = await this.getConnectedNetId();
+		try {
+			this._connectedAddress = await this.getConnectedAddress();
+			this._connectedNetId = await this.getConnectedNetId();
 
-		if (nets[this._connectedNetId]) {
-			this._netName = nets[this._connectedNetId].name;
-			this.log('connected to '+this._netName);
+			if (this._connectedNetId && this._connectedAddress) {
+				this._isConnected = true;
+			} else {
+				this._isConnected = false;
+			}
+		} catch(e) {
+			this._connectedAddress = null;
+			this._connectedNetId = null;
 		}
 
-		this.dispatchEvent(new Event('connected'));
+		if (this._connectedNetId && this._connectedAddress) {
+			this._netName = 'UNKNOWN';
+			if (nets[this._connectedNetId]) {
+				this._netName = nets[this._connectedNetId].name;
+				this.log('connected to '+this._netName);
+			}
+			this._isConnected = true;
+		} else {
+			this._netName = null;
+			this._isConnected = false;
+		}
 
-		console.error(this);
+		if (this._isConnected) {
+			this.dispatchEvent(new Event('connected'));
+		} else {
+			this.dispatchEvent(new Event('disconnected'));
+		}
 	}
 
 	async getConnectedAddress() {
@@ -132,6 +195,21 @@ export default class Metamask extends EventTarget {
 					rej(e);
 				});
 		});
+	}
+
+	async signMessage(string) {
+		// https://docs.metamask.io/wallet/how-to/sign-data/#use-personal_sign
+		const msg = `0x${Buffer.from(string, 'utf8').toString('hex')}`;
+		const from = this.connectedAddress;
+
+		const params = {
+			method: 'personal_sign',
+			params: [msg, from],
+		};
+
+		const sign = await this.callMethod(params);
+
+		return sign;
 	}
 
 	async getEncryptionPublicKey() {
