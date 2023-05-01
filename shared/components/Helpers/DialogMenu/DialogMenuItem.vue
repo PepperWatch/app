@@ -2,7 +2,8 @@
 
     <q-item :clickable="!active" @click="onClick" :disable="disable" :active="active">
         <q-item-section avatar class="q-pl-md">
-            <q-icon color="primary" :name="icon" v-if="!loading" />
+            <Icon forWhat="metamask" v-if="!loading && icon == 'metamask'"/>
+            <q-icon color="primary" :name="icon" v-if="!loading && icon != 'metamask'" style="width: 24px; height: 24px;" />
             <q-spinner-dots color="primary" size="40px" v-if="loading" />
         </q-item-section>
 
@@ -16,6 +17,7 @@
 <style type="text/css">
 </style>
 <script>
+import Icon from 'shared/components/Icon';
 
 export default {
     name: 'DialogMenuItem',
@@ -41,6 +43,9 @@ export default {
             type: Boolean,
             default: false,
         },
+    },
+    components: {
+        Icon,
     },
     emits: ['click'],
     data() {
