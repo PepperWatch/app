@@ -3,6 +3,7 @@ admin/dist
 admin/node_modules
 frontend/dist
 frontend/node_modules
+package-lock.json
 
 # Logs
 logs
