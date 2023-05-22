@@ -25,7 +25,7 @@ app.config.globalProperties.$store = store();
 app.mount('#app');
 
 try {
-	document.querySelector('.preloader').classList.add('ready');
+	document.querySelector('.preloader').classList.add('ready'); console.log(1);
 } catch(e) {
 	console.error(e);
 }

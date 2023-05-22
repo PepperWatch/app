@@ -90,30 +90,47 @@ function clearConsole() {
 const out = {};
 let clearConsoleTimeout = null;
 
+function doOutput() {
+	clearConsole();
+
+	for (let processId in out) {
+		const toDisplay = out[processId].slice(-15);
+		for (let line of toDisplay) {
+			// console.log(new TextEncoder().encode(line))
+			console.log(`${processId}: ${line}`);
+		}
+		console.log('');
+		console.log('');
+	}
+}
+
 function log(processId, str) {
 	if (!out[processId]) {
 		out[processId] = [];
 	}
 
-	const data = (''+str).trim();
-	if (data) {
-		out[processId].push(data);
-		console.log(`${processId}: ${data}`);
+	let data = (''+str).trim();
+	const clearLineStrings = [String.fromCharCode(27)+"[2K", String.fromCharCode(27)+"[1A", String.fromCharCode(27)+"[G"];
+	for (const clearLineString of clearLineStrings) {
+		data = data.split(clearLineString).join('');
 	}
+	data = data.split("\r").join("\n").split("\n\n").join('').split("\n");
+
+	for (const line of data) {
+		if (line && (!out[processId].length || out[processId][out[processId].length - 1] != line)) {
+			out[processId].push(line);
+			console.log(`${processId}: ${data}`);
+		}
+	}
+
+	// if (data) {
+	// 	out[processId].push(data);
+	// 	console.log(`${processId}: ${data}`);
+	// }
 
 	clearTimeout(clearConsoleTimeout);
 	clearConsoleTimeout = setTimeout(()=>{
-		clearConsole();
-
-		for (let processId in out) {
-			const toDisplay = out[processId].slice(-10);
-			for (let line of toDisplay) {
-				console.log(`${processId}: ${line}`);
-			}
-			console.log('');
-			console.log('');
-		}
-
+		doOutput();
 	}, 2000);
 }
 
